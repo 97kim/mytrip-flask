@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <!-- 구글폰트 -->
+    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+
+    <title>스파르타코딩클럽 | 팀프로젝트</title>
+
+    <!-- style -->
+    <style>
+        * {
+            font-family: 'Stylish', sans-serif;
+        }
+
+        .wrap {
+            width: 900px;
+            margin: auto;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            geoInfo();
+        });
+
+        function geoInfo() {
+            function onGeoOK(position) { //위치 정보 공유 승인 시
+                const lat = position.coords.latitude; //위도
+                const lng = position.coords.longitude; //경도
+
+                $.ajax({
+                    type: "POST",
+                    url: "/near",
+                    data: {lat_give: lat, lng_give: lng},
+                    success: function (response) {
+                        $('#card-box').empty();
+                        nearList = response['nearList'];
+                        for (let i = 0; i < nearList.length; i++) {
+                            let title = nearList[i]['title'];
+                            let address = nearList[i]['addr1'];
+                            let image = nearList[i]['firstimage'];
+
+                            let temp_html = `<div class="card">
+                                        <img src="${image}" class="card-img-top" alt="내 위치 근처 여행지">
+                                            <div class="card-body" style="background-color: white;">
+                                                <h5 class="card-title">${title}</h5>
+                                                <p class="card-address">${address}</p>
+                                            </div>
+                                     </div>`
+                            $('#card-box').append(temp_html);
+                        }
+                    }
+                })
+            }
+
+            function onGeoError() { //위치 정보 공유 거부 시
+                alert('현재 위치를 찾을 수 없습니다.')
+            }
+
+            // 1번째 파라미터: 위치 공유 승인 시, 2번째 파라미터: 위치 공유 거부 시 실행
+            navigator.geolocation.getCurrentPosition(onGeoOK, onGeoError);
+        }
+
+    </script>
+
+</head>
+
+<body>
+<div class="wrap">
+    <div class="jumbotron">
+        <h1 class="display-4">내 주변 여행지 추천</h1>
+        <p class="lead">현재 위치를 기준으로 여행 코스를 추천합니다.</p>
+        <hr class="my-4">
+    </div>
+
+    <div class="card-columns" id="card-box">
+        <div class="card">
+            <img class="card-img-top"
+                 src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"
+                 alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">타이틀</h5>
+                <p class="card-address">주소</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
