@@ -17,14 +17,23 @@
 <br>
 
 ### 🧙 멤버구성
-김경중
-서태욱
-신시우
+김경중<br>
+서태욱<br>
+신시우<br>
 장효진
 
 <br>
 
 ### 📌 기술 선택 이유!
+
+<img src="https://img.shields.io/badge/Flask-000000?style=plastic&logo=Flask&logoColor=white"/></a>
+<img src="https://img.shields.io/badge/MongoDB-47A248?style=plastic&logo=MongoDB&logoColor=white"/></a>
+<img src="https://img.shields.io/badge/Bootstrap-7952B3?style=plastic&logo=Bootstrap&logoColor=white"/></a>
+<img src="https://img.shields.io/badge/CodePen-000000?style=plastic&logo=CodePen&logoColor=white"/></a>
+<img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=plastic&logo=Amazon%20AWS&logoColor=white"/></a>
+
+- 강의를 보면서 배웠던 기술들이고, 아직 무거운 앱을 만드는 것이 아니기 때문에 Flask와 MongoDB가 적합하다고 생각했다.
+- css를 하나하나 조정하며 예쁘게 꾸미고 싶지만, 모두 백엔드 개발 희망자이기도 해서 UI는 부트스트랩과 CodePen을 참고했다. 
 
 <br>
 
