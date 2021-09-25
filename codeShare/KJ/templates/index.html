@@ -22,11 +22,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
 
-    <!--jquery, ajax cdn-->
+    <!--jquery cdn-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
 
     <!--slick cdn-->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
@@ -51,9 +48,9 @@
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light">
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">여행어때</a>
+        <a class="navbar-brand" href="/" style="color: #073A96">여행어때,</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -74,6 +71,8 @@
 </div>
 
 <div class="wrap">
+    <button type="button" id="btn_prev"><i class="fas fa-chevron-left"></i></button>
+    <button type="button" id="btn_next"><i class="fas fa-chevron-right"></i></button>
     <ul class="cards slider-div" id="nearCard">
         <div class="beforeRender">
             <div id="container">
@@ -84,12 +83,57 @@
             </div>
         </div>
     </ul>
+
+    <div class="container">
+        <form>
+            <div class="file-upload mb-3">
+                <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">사진 선택
+                </button>
+                <div class="image-upload-wrap">
+                    <input class="file-upload-input" id="file" type="file" onchange="readURL(this);" accept="image/*"/>
+                    <div class="drag-text">
+                        <h6>드래그 해서 올리거나 사진을 선택하세요!</h6>
+                    </div>
+                </div>
+                <div class="file-upload-content">
+                    <img class="file-upload-image" src="#" alt="your image"/>
+                    <div class="image-title-wrap">
+                        <button type="button" onclick="removeUpload()" class="remove-image">지우기 - <span
+                                class="image-title">Uploaded Image</span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="input-text mb-3">
+                <input type="text" class="title" id="title" placeholder="제목 ...">
+            </div>
+            <div class="input-text mb-3">
+                <input type="text" class="place" id="place" placeholder="장소 ...">
+            </div>
+            <div class="input-textarea mb-3">
+                <textarea class="review" id="review" rows="7" placeholder="리뷰 ..."></textarea>
+            </div>
+            <div class="btn-wrapper">
+                <button class="save-btn" type="button" onclick="save()">글쓰기</button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<footer class="fixed-bottom" style="height: 50px; background-color: #E6DEDD;">
+
+</footer>
+
+
+<!--bootstrap popper js-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
 
 <!--bootstrap js-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
         crossorigin="anonymous"></script>
+
 <!--slick js-->
 <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 </body>
