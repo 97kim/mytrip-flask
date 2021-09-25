@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import requests
 import xmltodict
 import json
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -12,12 +13,11 @@ db = client.myTrip
 
 @app.route('/')
 def home():
-
     return render_template('index.html')
+
 
 @app.route('/near', methods=['POST'])
 def near_place():
-
     lat_receive = request.form['lat_give']
     lng_receive = request.form['lng_give']
 
@@ -38,6 +38,38 @@ def near_place():
     nearList = jsonBody['response']['body']['items']['item']
 
     return jsonify({'nearList': nearList})
+
+
+@app.route('/trips', methods=['POST'])
+def write_place():
+    title_receive = request.form['title_give']
+    place_receive = request.form['place_give']
+    review_receive = request.form['review_give']
+    file = request.files["file_give"]
+
+    print(title_receive, place_receive, review_receive, file)
+
+    today = datetime.now()
+    mytime = today.strftime('%Y-%m-%d-%H-%M-%S')
+    date = today.strftime('%Y.%m.%d')
+
+    filename = f'file-{mytime}'
+    extension = file.filename.split('.')[-1]
+
+    save_to = f'static/{filename}.{extension}'
+    file.save(save_to)
+
+    doc = {
+        'title': title_receive,
+        'place': place_receive,
+        'review': review_receive,
+        'file': f'{filename}.{extension}',
+        'date': date
+    }
+
+    db.trips.insert_one(doc)
+    return jsonify({'msg': '작성 완료!'})
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
