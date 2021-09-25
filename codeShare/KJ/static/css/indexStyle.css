@@ -1,0 +1,38 @@
+/* 글씨체 - 여기어때 잘난체 */
+@font-face {
+    font-family: 'yg-jalnan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.navbar {
+    margin-bottom: 30px;
+    font-family: 'yg-jalnan', verdana, tahoma;
+    background-color: white;
+    color: black;
+    box-shadow: 1px 3px 3px #DDD;
+}
+
+.navbar a {
+    color: #333;
+}
+
+.nearTitle {
+    font-family: 'yg-jalnan', verdana, tahoma;
+
+    margin-left: 16px;
+    margin-bottom: 30px;
+}
+
+.wrap {
+    width: 80%;
+    margin: auto;
+}
+
+.beforeRender {
+    width: 100%;
+    height: 300px;
+    background-color: #EEEEEE;
+    border-radius: calc(var(--curve) * 1px);
+}
