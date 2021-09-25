@@ -61,7 +61,7 @@ function geoInfo() {
                     let distance = nearList[i]['dist'];
 
                     let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                        <a href="" class="card">
+                                        <a href="#" class="card">
                                             <img src="${image}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                             <div class="card__overlay">
                                                 <div class="card__header">
