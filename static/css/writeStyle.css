@@ -1,6 +1,6 @@
 /* file uploader css */
 
-.wrap {
+.container {
     font-size: 14px;
     width: 600px;
     margin: auto;
@@ -8,8 +8,8 @@
 
 .writeTitle {
     font-family: 'yg-jalnan', verdana, tahoma;
-    width: 600px;
-    margin: 80px auto 20px auto;
+    margin-top: 80px;
+    margin-bottom: 20px;
 }
 
 .file-upload {
