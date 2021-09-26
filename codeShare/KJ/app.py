@@ -10,8 +10,7 @@ app = Flask(__name__)
 client = MongoClient('localhost', 27017)
 db = client.myTrip
 
-
-@app.route('/')
+@app.route('/', methods=['GET'])
 def home():
     return render_template('index.html')
 
@@ -40,8 +39,13 @@ def near_place():
     return jsonify({'nearList': nearList})
 
 
+@app.route('/trips/form', methods=['GET'])
+def write():
+    return render_template('write.html')
+
+
 @app.route('/trips', methods=['POST'])
-def write_place():
+def write_trip():
     title_receive = request.form['title_give']
     place_receive = request.form['place_give']
     review_receive = request.form['review_give']
@@ -56,7 +60,7 @@ def write_place():
     filename = f'file-{mytime}'
     extension = file.filename.split('.')[-1]
 
-    save_to = f'static/{filename}.{extension}'
+    save_to = f'static/img/{filename}.{extension}'
     file.save(save_to)
 
     doc = {
@@ -69,6 +73,12 @@ def write_place():
 
     db.trips.insert_one(doc)
     return jsonify({'msg': '작성 완료!'})
+
+@app.route('/trips', methods=['GET'])
+def show_trips():
+    all_trips = list(db.trips.find({}, {'_id': False}))
+
+    return jsonify({'all_trips': all_trips})
 
 
 if __name__ == '__main__':
