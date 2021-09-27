@@ -10,6 +10,7 @@ app = Flask(__name__)
 client = MongoClient('localhost', 27017)
 db = client.myTrip
 
+
 @app.route('/', methods=['GET'])
 def home():
     return render_template('index.html')
@@ -37,6 +38,28 @@ def near_place():
     nearList = jsonBody['response']['body']['items']['item']
 
     return jsonify({'nearList': nearList})
+
+
+temp_dict={} # /near/place POST 요청에 받은 데이터를 담아 /near/place/<contentId> GET 요청에 보내주기 위한 용도
+
+@app.route('/near/place', methods=['POST'])
+def near_detail():
+    title_receive = request.form['title_give']
+    address_receive = request.form['address_give']
+    file_receive = request.form['file_give']
+    distance_receive = request.form['distance_give']
+    placeLat_receive = request.form['placeLat_give']
+    placeLng_receive = request.form['placeLng_give']
+    contentId_receive = request.form['contentId_give']
+
+    temp_dict[contentId_receive] = [title_receive, address_receive, file_receive, distance_receive, placeLat_receive, placeLng_receive]
+
+    return jsonify({'result': 'success'})
+
+@app.route('/near/place/<contentId>', methods=['GET'])
+def get_near_detail(contentId):
+
+    return render_template('nearDetail.html', tempList=temp_dict[contentId])
 
 
 @app.route('/trips/form', methods=['GET'])
@@ -74,6 +97,7 @@ def write_trip():
 
     db.trips.insert_one(doc)
     return jsonify({'msg': '작성 완료!'})
+
 
 @app.route('/trips', methods=['GET'])
 def show_trips():
