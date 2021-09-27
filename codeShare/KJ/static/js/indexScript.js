@@ -43,6 +43,8 @@ function slide() {
     })
 }
 
+let nearDict = {};
+
 // 현재 위치 불러와 근처 여행지 조회
 function geoInfo() {
     function onGeoOK(position) { //위치 정보 공유 승인 시
@@ -61,46 +63,54 @@ function geoInfo() {
                     let address = nearList[i]['addr1'];
                     let file = nearList[i]['firstimage'];
                     let distance = nearList[i]['dist'];
+                    let placeLat = nearList[i]['mapy'];
+                    let placeLng = nearList[i]['mapx'];
+                    let contentId = nearList[i]['contentid'];
+
+                    let noImage = "../../static/img/No-Image.png";
 
                     if (!file) {
+                        nearDict[i] = [title, address, noImage, distance, placeLat, placeLng, contentId];
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                        <a href="#" class="card">
-                                            <img src="../static/img/No-Image.png" class="card__image" alt="이미지 없음"/>
-                                            <div class="card__overlay">
-                                                <div class="card__header">
-                                                    <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-                                                        <path/>
-                                                    </svg>
-                                                    <img class="card__thumb" src="../static/img/No-Image.png" alt="썸네일 이미지 없음"/>
-                                                    <div class="card__header-text">
-                                                        <h3 class="card__title">${title}</h3>
-                                                        <span class="card__status">${distance}m</span>
+                                            <a href="/near/place/${contentId}" class="card" onclick="get_detail(${i})">
+                                                <img src="../static/img/No-Image.png" class="card__image" alt="이미지 없음"/>
+                                                <div class="card__overlay">
+                                                    <div class="card__header">
+                                                        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                                                            <path/>
+                                                        </svg>
+                                                        <img class="card__thumb" src="../static/img/No-Image.png" alt="썸네일 이미지 없음"/>
+                                                        <div class="card__header-text">
+                                                            <h3 class="card__title">${title}</h3>
+                                                            <span class="card__status">${distance}m</span>
+                                                        </div>
                                                     </div>
+                                                    <p class="card__description">${address}</p>
                                                 </div>
-                                                <p class="card__description">${address}</p>
-                                            </div>
-                                        </a>
-                                    </li>`;
+                                            </a>
+                                        </li>`;
                         $('#nearCard').append(temp_html);
                     } else {
+                        nearDict[i] = [title, address, file, distance, placeLat, placeLng, contentId];
+
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                        <a href="#" class="card">
-                                            <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
-                                            <div class="card__overlay">
-                                                <div class="card__header">
-                                                    <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-                                                        <path/>
-                                                    </svg>
-                                                    <img class="card__thumb" src="${file}" alt="썸네일"/>
-                                                    <div class="card__header-text">
-                                                        <h3 class="card__title">${title}</h3>
-                                                        <span class="card__status">${distance}m</span>
+                                            <a href="/near/place/${contentId}" class="card" onclick="get_detail(${i})">
+                                                <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
+                                                <div class="card__overlay">
+                                                    <div class="card__header">
+                                                        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                                                            <path/>
+                                                        </svg>
+                                                        <img class="card__thumb" src="${file}" alt="썸네일"/>
+                                                        <div class="card__header-text">
+                                                            <h3 class="card__title">${title}</h3>
+                                                            <span class="card__status">${distance}m</span>
+                                                        </div>
                                                     </div>
+                                                    <p class="card__description">${address}</p>
                                                 </div>
-                                                <p class="card__description">${address}</p>
-                                            </div>
-                                        </a>
-                                    </li>`;
+                                            </a>
+                                        </li>`;
                         $('#nearCard').append(temp_html);
                     }
                     slide();
@@ -115,6 +125,31 @@ function geoInfo() {
 
     // 1번째 파라미터: 위치 공유 승인 시, 2번째 파라미터: 위치 공유 거부 시 실행
     navigator.geolocation.getCurrentPosition(onGeoOK, onGeoError);
+}
+
+function get_detail(i) {
+    // nearDict = {
+    //              i: [title, address, file, distance, placeLat, placeLng, contentId]
+    //             }
+
+    $.ajax({
+        type: "POST",
+        url: '/near/place',
+        data: {
+            title_give: nearDict[i][0],
+            address_give: nearDict[i][1],
+            file_give: nearDict[i][2],
+            distance_give: nearDict[i][3],
+            placeLat_give: nearDict[i][4],
+            placeLng_give: nearDict[i][5],
+            contentId_give: nearDict[i][6],
+        },
+        success: function (response) {
+            if (response['result'] == 'success') {
+                window.location.href = `/near/place/${nearDict[i][6]}`;
+            }
+        }
+    });
 }
 
 function slide2() {

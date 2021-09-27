@@ -3,9 +3,9 @@
     {{ super() }}
 
     <!--외부 static 파일 불러오기-->
-    <link rel="stylesheet" href="../static/css/public.css"/>
-    <link rel="stylesheet" href="../static/css/writeStyle.css"/>
-    <script type="text/javascript" src="../static/js/writeScript.js"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/public.css')}}"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/writeStyle.css')}}"/>
+    <script type="text/javascript" src="{{url_for('static',filename='js/writeScript.js')}}"></script>
 {% endblock %}
 
 {% block nav %}
