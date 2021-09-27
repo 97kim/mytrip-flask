@@ -1,0 +1,34 @@
+{% extends 'index.html' %}
+{% block head %}
+    {{ super() }}
+
+    <!--외부 static 파일 불러오기-->
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/nearDetail.css') }}"/>
+{% endblock %}
+
+{% block nav %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    <div class="wrap">
+        <div class="nearTitle">
+            <h5>{{ tempList[0] }}</h5>
+            <h5>주소: {{ tempList[1] }}</h5>
+            <img src="{{ tempList[2] }}" alt="이미지" width="500px" height="300px"/>
+            <h5>여기에서 {{ tempList[3] }}m 거리</h5>
+            <h5>위도: {{ tempList[4] }}</h5>
+            <h5>경도: {{ tempList[5] }}</h5>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+{% endblock %}
+
+{% block endBody %}
+    {{ super() }}
+{% endblock %}
