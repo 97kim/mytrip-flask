@@ -1,0 +1,165 @@
+<!Doctype html>
+<html lang="ko">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <!-- 구글폰트 -->
+    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+
+
+    <title>api test</title>
+
+    <!-- style -->
+    <style type="text/css">
+        * {
+            font-family: "Stylish", sans-serif;
+        }
+
+        .wrap {
+            width: 900px;
+            margin: auto;
+        }
+
+
+        .position {
+            margin-left: 100px;
+        }
+
+
+        #post-box {
+            width: 500px;
+            margin: 20px auto;
+            padding: 50px;
+            border: black solid;
+            border-radius: 5px;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            position()
+        });
+
+        function position() {
+            //내 위치 알아내기(경도, 위도)
+            $(function () {
+                // Geolocation API에 액세스할 수 있는지를 확인
+                if (navigator.geolocation) {
+                    //위치 정보를 얻기
+                    navigator.geolocation.getCurrentPosition(function (pos) {
+
+                        $('#x').html(pos.coords.latitude);
+                        $('#y').html(pos.coords.longitude);
+                    });
+                } else {
+                    alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.")
+                }
+            });
+        }
+
+        function geoInfo() {
+            position()
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                let x = pos.coords.latitude
+                let y = pos.coords.longitude
+
+                $.ajax({
+                    type: "POST",
+                    url: '/data/api?',
+                    data: {x_give:x, y_give:y},
+                    success: function (response) {
+                        let data = response['nearList']
+
+                        for (let i = 0; i < data.length; i++) {
+                            let title = data[i]['title']
+                            let image = data[i]['firstimage']
+                            let address = data[i]['addr1']
+                            console.log('dd')
+
+                            temp_html = `  <div class="card">
+                            <img class="card-img-top" src="${image}" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">${title}</h5>
+
+                            <div class="card-footer">
+                                <small class="text-muted">${address}</small>
+                            </div>
+                        </div>`
+                            $('#cards-box').append(temp_html)
+                        }
+                    }
+                })
+            })
+        }
+
+
+    </script>
+
+</head>
+
+<body>
+<div class="wrap">
+    <div class="jumbotron">
+        <h1 class="display-4">api란?</h1>
+        <p class="lead">api 공부</p>
+        <hr class="my-4">
+        <p class="lead">
+            <button onclick="geoInfo()" id="search_address" type="button" class="btn btn-primary">내 주변 찾아보기</button>
+        </p>
+    </div>
+    <div id="post-box" class="form-post" style="display:none">
+        <div>
+            <div class="form-group">
+                <label for="post-url">아티클 URL</label>
+                <input id="post-url" class="form-control" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="post-comment">간단 코멘트</label>
+                <textarea id="post-comment" class="form-control" rows="2"></textarea>
+            </div>
+        </div>
+    </div>
+    <div id="cards-box" class="card-columns">
+        <!--        <div class="card">-->
+        <!--            <img class="card-img-top" src="..." alt="Card image cap">-->
+        <!--            <div class="card-body">-->
+        <!--                <h5 class="card-title">상호명</h5>-->
+
+        <!--                <div class="card-footer">-->
+        <!--                    <small class="text-muted">주소</small>-->
+        <!--                </div>-->
+        <!--            </div>-->
+    </div>
+</div>
+<div class="position">
+    내위치정보
+    <span class="position_y" id="y"></span>
+    <span class="position_x" id="x"></span>
+</div>
+</body>
+
+</html>
+
+
+<!--     $.ajax({-->
+<!--                    type: 'GET',-->
+<!--                    url: '/api/list?sample_give=샘플데이터',-->
+<!--                    data: {},-->
+<!--                    success: function (response) {-->
+<!--                        alert(response['msg']);-->
+<!--                    }-->
+<!--                });-->
