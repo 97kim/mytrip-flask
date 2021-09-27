@@ -14,7 +14,8 @@
         <meta property="og:image" content="{{ url_for('static', filename='ogimage.png') }}"/>
 
         <!--파비콘(주소창 아이콘) 적용-->
-        <link rel="shortcut icon" href="../static/favicon.ico">
+        <link rel="shortcut icon" href="{{url_for('static',filename='favicon.ico')}}"/>
+
 
         <!--bootstrap cdn-->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -39,10 +40,10 @@
     {% endblock %}
 
     <!--외부 static 파일 불러오기-->
-    <link rel="stylesheet" href="../static/css/public.css"/>
-    <link rel="stylesheet" href="../static/css/indexStyle.css"/>
-    <link rel="stylesheet" href="../static/css/loading.css">
-    <script type="text/javascript" src="../static/js/indexScript.js"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/public.css')}}"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/indexStyle.css')}}"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/loading.css')}}">
+    <script type="text/javascript" src="{{url_for('static',filename='js/indexScript.js')}}"></script>
 
     <script>
         $(document).ready(function () {
