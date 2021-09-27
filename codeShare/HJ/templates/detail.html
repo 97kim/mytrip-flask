@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+{% block head %}
+    {{ super() }}
+
+    <!--외부 static 파일 불러오기-->
+    <link rel="stylesheet" href="../static/css/public.css"/>
+    <link rel="stylesheet" href="../static/css/detailStyle.css"/>
+    <script type="text/javascript" src="../static/js/detailScript.js"></script>
+    <script type="text/javascript" src="../static/js/indexScript.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            showTrips_detail()
+        });
+    </script>
+{% endblock %}
+
+{% block nav %}
+    {{ super() }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="wrap">
+        <div class="detailTitle">
+            <h6>상세페이지</h6>
+        </div>
+        <form>
+            <div class="trip-form" id="trip-Detail-Card-form">
+{#                <div class="trip-Detail-Card">#}
+{#                    <div class="card">#}
+{#                        <img class="card-img-top" src="..." alt="Card image cap">#}
+{#                        <div class="card-body">#}
+{#                            <h5 class="card-title">Card title that wraps to a new line</h5>#}
+{#                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in#}
+{#                                to#}
+{#                                additional content. This content is a little bit longer.</p>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+            </div>
+        </form>
+
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+{% endblock %}
+
+{% block endBody %}
+    {{ super() }}
+{% endblock %}
