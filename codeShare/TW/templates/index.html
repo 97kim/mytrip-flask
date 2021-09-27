@@ -53,7 +53,7 @@
         $(document).ready(function () {
             geoInfo();
 
-            bsCustomFileInput.init()
+            bsCustomFileInput.init();
             listing();
         });
 
@@ -74,14 +74,27 @@
                             let address = nearList[i]['addr1'];
                             let image = nearList[i]['firstimage'];
 
-                            let temp_html = `<div class="card">
+                            console.log(title, address, image)
+
+                            if (!image) {
+                                let temp_html = `<div class="card">
+                                        <img src="../static/img/no-image.png" class="card-img-top" alt="이미지 없음">
+                                            <div class="card-body" style="background-color: white;">
+                                                <h5 class="card-title">${title}</h5>
+                                                <p class="card-address">${address}</p>
+                                            </div>
+                                     </div>`;
+                                $('#card-box').append(temp_html);
+                            } else {
+                                let temp_html = `<div class="card">
                                         <img src="${image}" class="card-img-top" alt="내 위치 근처 여행지">
                                             <div class="card-body" style="background-color: white;">
                                                 <h5 class="card-title">${title}</h5>
                                                 <p class="card-address">${address}</p>
                                             </div>
-                                     </div>`
-                            $('#card-box').append(temp_html);
+                                     </div>`;
+                                $('#card-box').append(temp_html);
+                            }
                         }
                     }
                 })
@@ -147,7 +160,6 @@
                 }
             });
         }
-
 
 
     </script>
