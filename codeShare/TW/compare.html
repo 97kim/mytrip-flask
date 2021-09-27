@@ -1,0 +1,62 @@
+function geoInfo() {
+function onGeoOK(position) { //위치 정보 공유 승인 시
+const lat = position.coords.latitude; //위도
+const lng = position.coords.longitude; //경도
+
+$.ajax({
+type: "POST",
+url: "/near",
+data: {lat_give: lat, lng_give: lng},
+success: function (response) {
+$('#card-box').empty();
+nearList = response['nearList'];
+
+for (let i = 0; i < nearList.length; i++) {
+let title = nearList[i]['title'];
+let address = nearList[i]['addr1'];
+let file = nearList[i]['firstimage'];
+let distance = nearList[i]['dist'];
+
+if (!file) {
+let temp_html = `
+<li style="margin: 0 10px; height: 300px;">
+    <a href="#" class="card">
+        <img src="../static/img/No-Image.png" class="card__image" alt="이미지 없음"/>
+        <div class="card__overlay">
+            <div class="card__header">
+                <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                    <path/>
+                </svg>
+                <img class="card__thumb" src="../static/img/No-Image.png" alt="썸네일 이미지 없음"/>
+                <div class="card__header-text">
+                    <h3 class="card__title">${title}</h3>
+                    <span class="card__status">${distance}m</span>
+                </div>
+            </div>
+            <p class="card__description">${address}</p>
+        </div>
+    </a>
+</li>`;
+$('#nearCard').append(temp_html);
+} else {
+let temp_html = `
+<li style="margin: 0 10px; height: 300px;">
+    <a href="#" class="card">
+        <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
+        <div class="card__overlay">
+            <div class="card__header">
+                <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                    <path/>
+                </svg>
+                <img class="card__thumb" src="${file}" alt="썸네일"/>
+                <div class="card__header-text">
+                    <h3 class="card__title">${title}</h3>
+                    <span class="card__status">${distance}m</span>
+                </div>
+            </div>
+            <p class="card__description">${address}</p>
+        </div>
+    </a>
+</li>`;
+$('#nearCard').append(temp_html);
+}
