@@ -26,7 +26,7 @@ def near_place():
 
     key = 'tvZKl3gQbwlUbUigX5R%2FmUNfkrT%2FacEC89WdQBGT7XmcGdbuD6n24S98%2B0b4VE0o28TGoIQMjARPyGGpvzpYpw%3D%3D'
 
-    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey={key}&contentTypeId=12&mapX={lng_receive}6&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=A&numOfRows=12&pageNo=1'
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey={key}&contentTypeId=12&mapX={lng_receive}6&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
 
     r = requests.get(url, headers=headers)
 
