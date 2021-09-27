@@ -39,10 +39,10 @@
     {% endblock %}
 
     <!--외부 static 파일 불러오기-->
-    <link rel="stylesheet" href="../static/css/public.css"/>
-    <link rel="stylesheet" href="../static/css/indexStyle.css"/>
-    <link rel="stylesheet" href="../static/css/loading.css">
-    <script type="text/javascript" src="../static/js/indexScript.js"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/public.css')}}"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/indexStyle.css')}}"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/loading.css')}}">
+    <script type="text/javascript" src="{{url_for('static',filename='js/indexScript.js')}}"></script>
 
     <script>
         $(document).ready(function () {
