@@ -60,7 +60,8 @@ def write_trip():
     filename = f'file-{mytime}'
     extension = file.filename.split('.')[-1]
 
-    save_to = f'static/img/{filename}.{extension}'
+    save_to = f'codeShare/KJ/static/img/{filename}.{extension}'
+    # save_to = f'static/img/{filename}.{extension}'
     file.save(save_to)
 
     doc = {
