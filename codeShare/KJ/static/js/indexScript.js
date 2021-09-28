@@ -152,6 +152,7 @@ function get_detail(i) {
     });
 }
 
+
 function slide2() {
     $(function () {
         // Uncaught TypeError: Cannot read property 'add' of null” 오류 -> slick을 여러번 불러와서 발생
