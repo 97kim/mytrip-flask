@@ -72,7 +72,7 @@ function geoInfo() {
                     if (!file) {
                         nearDict[i] = [title, address, noImage, distance, placeLat, placeLng, contentId];
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                            <a href="/near/place/${contentId}" class="card" onclick="get_detail(${i})">
+                                             <a href="/near/place/${contentId}" class="card" onclick="get_detail(${i})">
                                                 <img src="../static/img/No-Image.png" class="card__image" alt="이미지 없음"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
@@ -94,7 +94,7 @@ function geoInfo() {
                         nearDict[i] = [title, address, file, distance, placeLat, placeLng, contentId];
 
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                            <a href="/near/place/${contentId}" class="card" onclick="get_detail(${i})">
+                                             <a href="/near/place/${contentId}" class="card" onclick="get_detail(${i})">
                                                 <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
@@ -152,6 +152,7 @@ function get_detail(i) {
     });
 }
 
+
 function slide2() {
     $(function () {
         // Uncaught TypeError: Cannot read property 'add' of null” 오류 -> slick을 여러번 불러와서 발생
@@ -204,6 +205,7 @@ function showTrips() {
         success: function (response) {
             tripList = response['all_trips'];
             for (let i = 0; i < tripList.length; i++) {
+                let trip_id = tripList[i]['id'];
                 let trip_title = tripList[i]['title'];
                 let trip_place = tripList[i]['place'];
                 let trip_file = tripList[i]['file'];
@@ -221,6 +223,8 @@ function showTrips() {
                                                     <div class="card__header-text">
                                                         <h3 class="card__title">${trip_title}</h3>
                                                         <span class="card__status">${trip_date}</span>
+                                                        <span onclick="window.location.href='/trips/form?id=${trip_id}'">수정</span>
+                                                        <span onclick="delTrip(${trip_id})">삭제</span>
                                                     </div>
                                                 </div>
                                                 <p class="card__description">${trip_place}</p>
@@ -232,4 +236,18 @@ function showTrips() {
             }
         }
     })
+}
+
+
+// 사용자가 올린 여행지 리뷰 삭제
+function delTrip(trip_id) {
+    $.ajax({
+        type: "DELETE",
+        url: "/trips",
+        data: {trip_id_give: trip_id},
+        success: function (response) {
+            alert(response['msg'])
+            window.location.reload();
+        }
+    });
 }

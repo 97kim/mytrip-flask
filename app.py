@@ -42,6 +42,7 @@ def near_place():
 
 temp_dict = {}  # /near/place POST 요청에 받은 데이터를 담아 /near/place/<contentId> GET 요청에 보내주기 위한 용도
 
+
 @app.route('/near/place', methods=['POST'])
 def near_detail():
     title_receive = request.form['title_give']
@@ -65,6 +66,9 @@ def get_near_detail(contentId):
 
 @app.route('/trips/form', methods=['GET'])
 def write():
+    if request.args.get('id') is not None:
+        return render_template('update.html')
+
     return render_template('write.html')
 
 
@@ -88,6 +92,7 @@ def write_trip():
     file.save(save_to)
 
     doc = {
+        'id': db.trips.count() + 1,
         'title': title_receive,
         'place': place_receive,
         'review': review_receive,
@@ -104,6 +109,37 @@ def show_trips():
     all_trips = list(db.trips.find({}, {'_id': False}))
 
     return jsonify({'all_trips': all_trips})
+
+
+@app.route('/trips/<id>', methods=['POST'])
+def update_trip(id):
+
+    trip_title_receive = request.form['title_give']
+    trip_place_receive = request.form['place_give']
+    trip_review_receive = request.form['review_give']
+    trip_file_receive = request.files['file_give']
+
+    today = datetime.now()
+    mytime = today.strftime('%Y-%m-%d-%H-%M-%S')
+    date = today.strftime('%Y.%m.%d')
+
+    filename = f'file-{mytime}'
+    extension = trip_file_receive.filename.split('.')[-1]
+
+    save_to = f'static/img/{filename}.{extension}'
+    trip_file_receive.save(save_to)
+
+    db.trips.update_one({'id': int(id)}, {'$set': {'title': trip_title_receive, 'place': trip_place_receive, 'review': trip_review_receive, 'file': f'{filename}.{extension}', 'date': date}})
+
+    return jsonify({'msg': '수정 완료!'})
+
+
+@app.route('/trips', methods=['DELETE'])
+def delete_trip():
+    trip_id_receive = request.form['trip_id_give']
+
+    db.trips.delete_one({'id': int(trip_id_receive)})
+    return jsonify({'msg': '삭제 완료!'})
 
 
 if __name__ == '__main__':
