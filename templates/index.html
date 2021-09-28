@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    {% block head %}
         <meta charset="UTF-8">
         <title>myTrip</title>
 
@@ -36,7 +35,6 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
               integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
               crossorigin="anonymous">
-    {% endblock %}
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{url_for('static',filename='css/public.css')}}"/>
@@ -53,7 +51,6 @@
 </head>
 
 <body>
-{% block nav %}
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/" style="color: #073A96">여행어때</a>
@@ -69,9 +66,7 @@
             </div>
         </div>
     </nav>
-{% endblock %}
 
-{% block content %}
     <div class="near-cards">
         <div class="wrap">
             <div class="slide-title">
@@ -103,9 +98,7 @@
             <ul class="cards slider-li2" id="tripCard"></ul>
         </div>
     </div>
-{% endblock %}
 
-{% block footer %}
     <!-- Site footer -->
     <footer class="site-footer">
         <div class="container">
@@ -167,9 +160,7 @@
             </div>
         </div>
     </footer>
-{% endblock %}
 
-{% block endBody %}
     <!--bootstrap popper js-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
             integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
@@ -179,7 +170,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
             crossorigin="anonymous"></script>
-{% endblock %}
 
 <!--slick js-->
 <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
