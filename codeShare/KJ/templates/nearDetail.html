@@ -1,3 +1,9 @@
+<!--
+	Dopetrope by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+
 {% extends 'index.html' %}
 {% block head %}
     {{ super() }}
@@ -5,6 +11,53 @@
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/nearDetail.css') }}"/>
+    <script type="text/javascript"
+            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=00r1clbpdg"></script>
+
+    <style >
+        #map {
+            width: 100%;
+            height: 300px;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            getMap();
+        });
+
+
+        function getMap() {
+            let map = new naver.maps.Map('map', {
+                center: new naver.maps.LatLng({{ tempList[4] }}, {{ tempList[5] }}),
+                zoom: 16,
+                zoomControl: true,
+                zoomControlOptions: {
+                    style: naver.maps.ZoomControlStyle.SMALL,
+                    position: naver.maps.Position.TOP_RIGHT
+                }
+            });
+
+            let marker = new naver.maps.Marker({
+                position: new naver.maps.LatLng({{ tempList[4] }}, {{ tempList[5] }}),
+                map: map,
+                icon: "{{ url_for('static', filename='img/marker.png') }}"
+            });
+
+            let infowindow = new naver.maps.InfoWindow({
+                content: `<div style="width: 50px;height: 20px;text-align: center"><h5>안녕!</h5></div>`,
+            });
+
+            naver.maps.Event.addListener(marker, "click", function () {
+                console.log(infowindow.getMap()); // 정보창이 열려있을 때는 연결된 지도를 반환하고 닫혀있을 때는 null을 반환
+                if (infowindow.getMap()) {
+                    infowindow.close();
+                } else {
+                    infowindow.open(map, marker);
+                }
+            });
+        }
+    </script>
 {% endblock %}
 
 {% block nav %}
@@ -12,15 +65,95 @@
 {% endblock %}
 
 {% block content %}
-    <div class="wrap">
-        <div class="nearTitle">
-            <h5>{{ tempList[0] }}</h5>
-            <h5>주소: {{ tempList[1] }}</h5>
-            <img src="{{ tempList[2] }}" alt="이미지" width="500px" height="300px"/>
-            <h5>여기에서 {{ tempList[3] }}m 거리</h5>
-            <h5>위도: {{ tempList[4] }}</h5>
-            <h5>경도: {{ tempList[5] }}</h5>
-        </div>
+
+    <div id="page-wrapper">
+        <section id="main">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8 col-12-medium">
+
+                        <!-- Content -->
+                        <article class="box post">
+                            <a href="#" class="image featured"><img src="{{ tempList[2] }}" alt=""/></a>
+                            <header>
+                                <h2>{{ tempList[0] }}</h2>
+                                <p>{{ tempList[1] }}</p>
+                            </header>
+                            <p>
+                                Praesent a dolor leo. Duis in felis in tortor lobortis volutpat et pretium tellus.
+                                Vestibulum ac ante nisl,
+                                a elementum odio. Duis semper risus et lectus commodo fringilla. Maecenas sagittis
+                                convallis
+                                justo vel mattis.
+                                placerat, nunc diam iaculis massa, et aliquet nibh leo non nisl vitae porta
+                                lobortis,
+                                enim
+                                neque fringilla nunc,
+                                eget faucibus lacus sem quis nunc suspendisse nec lectus sit amet augue rutrum
+                                vulputate
+                                ut
+                                ut mi. Aenean
+                                elementum, mi sit amet porttitor lorem ipsum dolor sit amet, consectetur adipiscing
+                                elit.
+                                Lorem ipsum dolor
+                                sit amet nullam consequat feugiat dolore tempus.
+                            </p>
+                            <section>
+                                <header>
+                                    <h3>여기에서 {{ tempList[3] }}m 거리</h3>
+                                </header>
+                                <p>
+                                    Elementum odio duis semper risus et lectus commodo fringilla. Maecenas sagittis
+                                    convallis justo vel mattis.
+                                    placerat, nunc diam iaculis massa, et aliquet nibh leo non nisl vitae porta
+                                    lobortis,
+                                    enim neque fringilla nunc,
+                                    eget faucibus lacus sem quis nunc suspendisse nec lectus sit amet augue rutrum
+                                    vulputate
+                                    ut ut mi. Aenean
+                                    elementum, mi sit amet porttitor lorem ipsum dolor sit amet, consectetur
+                                    adipiscing
+                                    elit. Lorem ipsum dolor
+                                    sit amet nullam consequat feugiat dolore tempus.
+                                </p>
+                            </section>
+                        </article>
+
+                    </div>
+                    <div class="col-4 col-12-medium">
+
+                        <!-- Sidebar -->
+                        <section class="box">
+                            <header>
+                                <h3>지도</h3>
+                            </header>
+                            <div id="map"></div>
+                            <footer>
+                                <a href="#" class="button alt">공유하기</a>
+                            </footer>
+                        </section>
+                        <section class="box">
+                            <header>
+                                <h3>Feugiat consequat</h3>
+                            </header>
+                            <p>Veroeros sed amet blandit consequat veroeros lorem blandit adipiscing et feugiat sed
+                                lorem
+                                consequat feugiat lorem dolore.</p>
+                            <ul class="divided">
+                                <li><a href="#">Sed et blandit consequat sed</a></li>
+                                <li><a href="#">Hendrerit tortor vitae sapien dolore</a></li>
+                                <li><a href="#">Sapien id suscipit magna sed felis</a></li>
+                                <li><a href="#">Aptent taciti sociosqu ad litora</a></li>
+                            </ul>
+                            <footer>
+                                <a href="#" class="button alt">Ipsum consequat</a>
+                            </footer>
+                        </section>
+
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
 {% endblock %}
