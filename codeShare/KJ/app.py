@@ -27,7 +27,7 @@ def near_place():
 
     key = 'tvZKl3gQbwlUbUigX5R%2FmUNfkrT%2FacEC89WdQBGT7XmcGdbuD6n24S98%2B0b4VE0o28TGoIQMjARPyGGpvzpYpw%3D%3D'
 
-    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey={key}&contentTypeId=12&mapX={lng_receive}6&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey={key}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
 
     r = requests.get(url, headers=headers)
 
@@ -40,7 +40,7 @@ def near_place():
     return jsonify({'nearList': nearList})
 
 
-temp_dict={} # /near/place POST 요청에 받은 데이터를 담아 /near/place/<contentId> GET 요청에 보내주기 위한 용도
+temp_dict = {}  # /near/place POST 요청에 받은 데이터를 담아 /near/place/<contentId> GET 요청에 보내주기 위한 용도
 
 @app.route('/near/place', methods=['POST'])
 def near_detail():
@@ -52,13 +52,14 @@ def near_detail():
     placeLng_receive = request.form['placeLng_give']
     contentId_receive = request.form['contentId_give']
 
-    temp_dict[contentId_receive] = [title_receive, address_receive, file_receive, distance_receive, placeLat_receive, placeLng_receive]
+    temp_dict[contentId_receive] = [title_receive, address_receive, file_receive, distance_receive, placeLat_receive,
+                                    placeLng_receive]
 
     return jsonify({'result': 'success'})
 
+
 @app.route('/near/place/<contentId>', methods=['GET'])
 def get_near_detail(contentId):
-
     return render_template('nearDetail.html', tempList=temp_dict[contentId])
 
 
@@ -83,8 +84,7 @@ def write_trip():
     filename = f'file-{mytime}'
     extension = file.filename.split('.')[-1]
 
-    save_to = f'codeShare/KJ/static/img/{filename}.{extension}'
-    # save_to = f'static/img/{filename}.{extension}'
+    save_to = f'static/img/{filename}.{extension}'
     file.save(save_to)
 
     doc = {
