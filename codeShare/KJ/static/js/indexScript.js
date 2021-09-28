@@ -62,7 +62,28 @@ function geoInfo() {
                     let file = nearList[i]['firstimage'];
                     let distance = nearList[i]['dist'];
 
-                    let temp_html = `<li style="margin: 0 10px; height: 300px;">
+                    if (!file) {
+                        let temp_html = `<li style="margin: 0 10px; height: 300px;">
+                                        <a href="#" class="card">
+                                            <img src="../static/img/No-Image.png" class="card__image" alt="이미지 없음"/>
+                                            <div class="card__overlay">
+                                                <div class="card__header">
+                                                    <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                                                        <path/>
+                                                    </svg>
+                                                    <img class="card__thumb" src="../static/img/No-Image.png" alt="썸네일 이미지 없음"/>
+                                                    <div class="card__header-text">
+                                                        <h3 class="card__title">${title}</h3>
+                                                        <span class="card__status">${distance}m</span>
+                                                    </div>
+                                                </div>
+                                                <p class="card__description">${address}</p>
+                                            </div>
+                                        </a>
+                                    </li>`;
+                        $('#nearCard').append(temp_html);
+                    } else {
+                        let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                         <a href="#" class="card">
                                             <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                             <div class="card__overlay">
@@ -79,8 +100,9 @@ function geoInfo() {
                                                 <p class="card__description">${address}</p>
                                             </div>
                                         </a>
-                                    </li>`
-                    $('#nearCard').append(temp_html);
+                                    </li>`;
+                        $('#nearCard').append(temp_html);
+                    }
                     slide();
                 }
             }
@@ -154,7 +176,7 @@ function showTrips() {
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                         <a href="#" class="card">
-                                            <img src="../static/img/${trip_file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
+                                            <img src="../static/img/${trip_file}" class="card__image" alt="사용자가 올린 여행지 사진"/>
                                             <div class="card__overlay">
                                                 <div class="card__header">
                                                     <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">

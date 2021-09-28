@@ -26,7 +26,7 @@ def near_place():
 
     key = 'tvZKl3gQbwlUbUigX5R%2FmUNfkrT%2FacEC89WdQBGT7XmcGdbuD6n24S98%2B0b4VE0o28TGoIQMjARPyGGpvzpYpw%3D%3D'
 
-    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey={key}&contentTypeId=12&mapX={lng_receive}6&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey={key}&contentTypeId=12&mapX={lng_receive}6&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=A&numOfRows=12&pageNo=1'
 
     r = requests.get(url, headers=headers)
 
@@ -60,8 +60,7 @@ def write_trip():
     filename = f'file-{mytime}'
     extension = file.filename.split('.')[-1]
 
-    save_to = f'codeShare/KJ/static/img/{filename}.{extension}'
-    # save_to = f'static/img/{filename}.{extension}'
+    save_to = f'static/img/{filename}.{extension}'
     file.save(save_to)
 
     doc = {
@@ -81,6 +80,9 @@ def show_trips():
 
     return jsonify({'all_trips': all_trips})
 
+@app.route('/trips/detail', methods=['GET'])
+def show_detail():
+    return render_template('detail.html')
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
