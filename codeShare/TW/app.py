@@ -17,6 +17,10 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
+@app.route('/detail')
+def detail():
+    return render_template("detail.html")
+
 @app.route('/near', methods=['POST'])
 def near_place():
     lat_receive = request.form['lat_give']
@@ -28,7 +32,7 @@ def near_place():
 
     key = 'yCqnJOVAESt5GI4cFvYqIuJ562aLN9%2BveH4QHFaOK2s%2Bs5yOmc6eAkAcPcOb5eZPp9VdX1Wct%2ByF78ZlquNDlQ%3D%3D'
 
-    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey={key}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=A&numOfRows=12&pageNo=1'
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey={key}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=12&pageNo=1'
 
     r = requests.get(url, headers=headers)
 
@@ -73,6 +77,15 @@ def save_diary():
     db.diary.insert_one(doc)
 
     return jsonify({'msg': '추천 완료!'})
+
+@app.route('/diary/delete', methods=['POST'])
+def delete_recommend():
+    title_receive = request.form['title_give']
+
+    db.diary.delete_one({'title': title_receive})
+
+    return jsonify({'msg': '삭제 되었습니다!'})
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)

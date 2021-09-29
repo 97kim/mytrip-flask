@@ -47,6 +47,9 @@
             margin-bottom: 20px;
         }
 
+
+
+
     </style>
 
     <script>
@@ -125,6 +128,9 @@
                                              <div class="card-body">
                                                   <h5 class="card-title">${title}</h5>
                                                   <p class="card-text">${content}</p>
+                                                    <div style="display: flex; justify-content: flex-end">
+                                                    <span onclick="console.log('test')">수정</span>
+                                                    <span onclick="delete_recommend('${title}')">삭제</span></div>
                                             </div>
                                          </div>`
                         $('#card-box1').append(temp_html)
@@ -154,6 +160,18 @@
                 processData: false,
                 success: function (response) {
                     alert(response["msg"])
+                    window.location.reload()
+                }
+            });
+        }
+
+        function delete_recommend(title) {
+            $.ajax({
+                type: "POST",
+                url: '/diary/delete',
+                data: {title_give: title},
+                success: function (response) {
+                    alert(response['msg'])
                     window.location.reload()
                 }
             });
@@ -199,7 +217,6 @@
     </div>
 
     <div class="card-columns" id="card-box1">
-
     </div>
 </div>
 </body>
