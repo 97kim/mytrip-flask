@@ -41,12 +41,6 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/writeStyle.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/writeScript.js') }}"></script>
 
-    <script>
-        $(document).ready(function () {
-            geoInfo(); // 위치 좌표 서버로 보내서 api 데이터 얻어온 뒤 화면에 출력
-            showTrips(); // 사용자가 올린 데이터 가져오기
-        });
-    </script>
 </head>
 
 <body>

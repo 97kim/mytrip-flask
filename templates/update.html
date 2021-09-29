@@ -41,6 +41,21 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/writeStyle.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/updateScript.js') }}"></script>
 
+    <script>
+        $(document).ready(function () {
+
+            $('#title').val(sessionStorage.getItem('title'));
+            $('#place').val(sessionStorage.getItem('place'));
+            $('#review').val(sessionStorage.getItem('review'));
+
+            $('.image-upload-wrap').hide();
+
+            $('#img').attr('src', `../static/img/${sessionStorage.getItem('file')}`);
+            $('.file-upload-content').show();
+
+        });
+    </script>
+
 </head>
 
 <body>
@@ -77,7 +92,7 @@
                 </div>
             </div>
             <div class="file-upload-content">
-                <img class="file-upload-image" src="#" alt="your image"/>
+                <img id="img" class="file-upload-image" src="#" alt="your image"/>
                 <div class="image-title-wrap">
                     <button type="button" onclick="removeUpload()" class="remove-image">지우기 - <span
                             class="image-title">Uploaded Image</span></button>

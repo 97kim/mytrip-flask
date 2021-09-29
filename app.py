@@ -35,6 +35,8 @@ def near_place():
     jsonDump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
     jsonBody = json.loads(jsonDump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
+    print(jsonBody)
+
     nearList = jsonBody['response']['body']['items']['item']
 
     return jsonify({'nearList': nearList})
@@ -66,10 +68,24 @@ def get_near_detail(contentId):
 
 @app.route('/trips/form', methods=['GET'])
 def write():
-    if request.args.get('id') is not None:
+    id = request.args.get('id')
+    if id is not None:
         return render_template('update.html')
 
     return render_template('write.html')
+
+
+@app.route('/trips/update', methods=['GET'])
+def update():
+    id = request.args.get('id')
+    tripList = list(db.trips.find({'id': int(id)}, {'_id': False}))
+
+    title = tripList[0]['title']
+    place = tripList[0]['place']
+    review = tripList[0]['review']
+    file = tripList[0]['file']
+
+    return jsonify({'title': title, 'place': place, 'review': review, 'file': file})
 
 
 @app.route('/trips', methods=['POST'])
@@ -78,8 +94,6 @@ def write_trip():
     place_receive = request.form['place_give']
     review_receive = request.form['review_give']
     file = request.files["file_give"]
-
-    print(title_receive, place_receive, review_receive, file)
 
     today = datetime.now()
     mytime = today.strftime('%Y-%m-%d-%H-%M-%S')
@@ -113,7 +127,6 @@ def show_trips():
 
 @app.route('/trips/<id>', methods=['POST'])
 def update_trip(id):
-
     trip_title_receive = request.form['title_give']
     trip_place_receive = request.form['place_give']
     trip_review_receive = request.form['review_give']
@@ -129,7 +142,9 @@ def update_trip(id):
     save_to = f'static/img/{filename}.{extension}'
     trip_file_receive.save(save_to)
 
-    db.trips.update_one({'id': int(id)}, {'$set': {'title': trip_title_receive, 'place': trip_place_receive, 'review': trip_review_receive, 'file': f'{filename}.{extension}', 'date': date}})
+    db.trips.update_one({'id': int(id)}, {
+        '$set': {'title': trip_title_receive, 'place': trip_place_receive, 'review': trip_review_receive,
+                 'file': f'{filename}.{extension}', 'date': date}})
 
     return jsonify({'msg': '수정 완료!'})
 
