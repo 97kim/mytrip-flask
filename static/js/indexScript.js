@@ -71,6 +71,7 @@ function geoInfo() {
 
                     if (!file) {
                         nearDict[i] = [title, address, noImage, distance, placeLat, placeLng, contentId];
+
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                              <a href="/near/place/${contentId}" class="card" onclick="get_detail(${i})">
                                                 <img src="../static/img/No-Image.png" class="card__image" alt="이미지 없음"/>
@@ -142,7 +143,7 @@ function get_detail(i) {
             distance_give: nearDict[i][3],
             placeLat_give: nearDict[i][4],
             placeLng_give: nearDict[i][5],
-            contentId_give: nearDict[i][6],
+            contentId_give: nearDict[i][6]
         },
         success: function (response) {
             if (response['result'] == 'success') {
@@ -223,7 +224,7 @@ function showTrips() {
                                                     <div class="card__header-text">
                                                         <h3 class="card__title">${trip_title}</h3>
                                                         <span class="card__status">${trip_date}</span>
-                                                        <span onclick="window.location.href='/trips/form?id=${trip_id}'">수정</span>
+                                                        <span onclick="updateTrip(${trip_id})">수정</span>
                                                         <span onclick="delTrip(${trip_id})">삭제</span>
                                                     </div>
                                                 </div>
@@ -231,11 +232,28 @@ function showTrips() {
                                             </div>
                                         </a>
                                     </li>`
-                $('#tripCard').append(temp_html);
+                $('#tripCard').prepend(temp_html);
                 slide2();
             }
         }
     })
+}
+
+function updateTrip(trip_id) {
+    $.ajax({
+        type: "GET",
+        url: `/trips/update?id=${trip_id}`,
+        data: {},
+        success: function (response) {
+            sessionStorage.setItem('id', trip_id);
+            sessionStorage.setItem('title', response['title']);
+            sessionStorage.setItem('place', response['place']);
+            sessionStorage.setItem('review', response['review']);
+            sessionStorage.setItem('file', response['file']);
+
+            window.location.href = `/trips/form?id=${trip_id}`;
+        }
+    });
 }
 
 
