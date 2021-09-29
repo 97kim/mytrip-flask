@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 
 from pymongo import MongoClient
+
 client = MongoClient('localhost', 27017)
 db = client.myTrip
 
@@ -17,9 +18,6 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route('/detail')
-def detail():
-    return render_template("detail.html")
 
 @app.route('/near', methods=['POST'])
 def near_place():
@@ -46,10 +44,12 @@ def near_place():
 
     return jsonify({'nearList': nearList})
 
+
 @app.route('/diary', methods=['GET'])
 def show_diary():
     diaries = list(db.diary.find({}, {'_id': False}))
     return jsonify({'all_diary': diaries})
+
 
 @app.route('/diary', methods=['POST'])
 def save_diary():
@@ -58,7 +58,7 @@ def save_diary():
 
     file = request.files["file_give"]
 
-    extension = file.filename.split('.')[-1] # -1은 "가장 마지막 .을 선택"의 의미
+    extension = file.filename.split('.')[-1]  # -1은 "가장 마지막 .을 선택"의 의미
 
     today = datetime.now()
     mytime = today.strftime('%Y-%m-%d-%H-%M-%S')
@@ -78,13 +78,47 @@ def save_diary():
 
     return jsonify({'msg': '추천 완료!'})
 
-@app.route('/diary/delete', methods=['POST'])
+
+@app.route('/diary/delete', methods=['DELETE'])
 def delete_recommend():
     title_receive = request.form['title_give']
 
     db.diary.delete_one({'title': title_receive})
 
     return jsonify({'msg': '삭제 되었습니다!'})
+
+
+@app.route('/update/form', methods=['GET'])
+def update_form():
+    return render_template('update.html')
+
+
+@app.route('/diary/<title>', methods=['POST'])
+def update(title):
+
+    title_receive = request.form['title_give']
+    content_receive = request.form['content_give']
+    file = request.files["file_give"]
+
+    extension = file.filename.split('.')[-1]  # -1은 "가장 마지막 .을 선택"의 의미
+
+    today = datetime.now()
+    mytime = today.strftime('%Y-%m-%d-%H-%M-%S')
+
+    filename = f'file={mytime}'
+
+    save_to = f'static/{filename}.{extension}'
+    file.save(save_to)
+
+    doc = {
+        'title': title_receive,
+        'content': content_receive,
+        'file': f'{filename}.{extension}'
+    }
+
+    db.diary.update_one({'title': title}, {'$set': {'title': title_receive, 'content': content_receive, 'file':f'{filename}.{extension}'}})
+
+    return jsonify({'msg': '수정 되었습니다!'})
 
 
 if __name__ == '__main__':

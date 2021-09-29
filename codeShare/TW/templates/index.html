@@ -128,8 +128,8 @@
                                              <div class="card-body">
                                                   <h5 class="card-title">${title}</h5>
                                                   <p class="card-text">${content}</p>
-                                                    <div style="display: flex; justify-content: flex-end">
-                                                    <span onclick="console.log('test')">수정</span>
+                                                    <div style="text-align:right">
+                                                    <span onclick="window.location.href='/update/form?title=${title}'">수정&nbsp;</span>
                                                     <span onclick="delete_recommend('${title}')">삭제</span></div>
                                             </div>
                                          </div>`
@@ -165,9 +165,10 @@
             });
         }
 
+
         function delete_recommend(title) {
             $.ajax({
-                type: "POST",
+                type: "DELETE",
                 url: '/diary/delete',
                 data: {title_give: title},
                 success: function (response) {
