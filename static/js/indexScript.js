@@ -67,10 +67,10 @@ function geoInfo() {
                     let place_lng = near_list[i]['mapx'];
                     let content_id = near_list[i]['contentid'];
 
-                    let noImage = "../../static/img/noImage.png";
+                    let no_image = "../../static/img/noImage.png";
 
                     if (!file) {
-                        near_dict[i] = [title, address, noImage, distance, place_lat, place_lng, content_id];
+                        near_dict[i] = [title, address, no_image, distance, place_lat, place_lng, content_id];
 
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                              <a href="/near/place/${content_id}" class="card" onclick="getDetail(${i})">
