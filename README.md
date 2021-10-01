@@ -27,11 +27,11 @@ https://kimkj.shop/
 
 ### 📌 기술 선택 이유!
 
-<img src="https://img.shields.io/badge/Flask-000000?style=plastic&logo=Flask&logoColor=white"/></a>
-<img src="https://img.shields.io/badge/MongoDB-47A248?style=plastic&logo=MongoDB&logoColor=white"/></a>
-<img src="https://img.shields.io/badge/Bootstrap-7952B3?style=plastic&logo=Bootstrap&logoColor=white"/></a>
-<img src="https://img.shields.io/badge/CodePen-000000?style=plastic&logo=CodePen&logoColor=white"/></a>
-<img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=plastic&logo=Amazon%20AWS&logoColor=white"/></a>
+<img src="https://img.shields.io/badge/Flask-000000?style=plastic&logo=Flask&logoColor=white"/>
+<img src="https://img.shields.io/badge/MongoDB-47A248?style=plastic&logo=MongoDB&logoColor=white"/>
+<img src="https://img.shields.io/badge/Bootstrap-7952B3?style=plastic&logo=Bootstrap&logoColor=white"/>
+<img src="https://img.shields.io/badge/CodePen-000000?style=plastic&logo=CodePen&logoColor=white"/>
+<img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=plastic&logo=Amazon%20AWS&logoColor=white"/>
 
 - 강의를 보면서 배웠던 기술들이고, 아직 무거운 웹앱을 만드는 것이 아니기 때문에 Flask와 MongoDB가 적합하다고 생각했습니다.
 - css를 하나하나 조정하며 예쁘게 꾸미고 싶지만, 모두 백엔드 개발 희망자이기도 해서 UI는 부트스트랩과 CodePen을 참고했습니다. 
@@ -55,4 +55,4 @@ https://kimkj.shop/
 <br>
 
 ### 📌 문제를 이렇게 해결했어요!
-1. 한국관광공사 Open Api 데이터에 사진이 없는 경우도 있었습니다. 이러한 부분을 모르고 사진을 요청해서 <u>HTTP 404 Not Found 에러</u>(서버가 요청받은 리소스를 찾을 수 없다는 것을 의미)가 발생했습니다. 
+1. 한국관광공사 Open Api 데이터에 사진이 없는 경우도 있었습니다. 이러한 부분을 모르고 사진을 요청해서 HTTP 404 Not Found 에러(서버가 요청받은 리소스를 찾을 수 없다는 것을 의미)가 발생했습니다. 
