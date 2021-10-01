@@ -24,7 +24,7 @@ def home():
 
 
 @app.route('/near', methods=['POST'])
-def near_place():
+def getNearPlace():
     lat_receive = request.form['lat_give']
     lng_receive = request.form['lng_give']
 
@@ -37,36 +37,36 @@ def near_place():
     r = requests.get(url, headers=headers)
 
     dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
-    jsonDump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
-    jsonBody = json.loads(jsonDump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
-    nearList = jsonBody['response']['body']['items']['item']
+    near_list = json_body['response']['body']['items']['item']
 
-    return jsonify({'nearList': nearList})
+    return jsonify({'near_list': near_list})
 
 
 temp_dict = {}  # /near/place POST 요청에 받은 데이터를 담아 /near/place/<contentId> GET 요청에 보내주기 위한 용도
 
 
 @app.route('/near/place', methods=['POST'])
-def near_detail():
+def postNearDetail():
     title_receive = request.form['title_give']
     address_receive = request.form['address_give']
     file_receive = request.form['file_give']
     distance_receive = request.form['distance_give']
-    placeLat_receive = request.form['placeLat_give']
-    placeLng_receive = request.form['placeLng_give']
-    contentId_receive = request.form['contentId_give']
+    place_lat_receive = request.form['place_lat_give']
+    place_lng_receive = request.form['place_lng_give']
+    content_id_receive = request.form['content_id_give']
 
-    temp_dict[contentId_receive] = [title_receive, address_receive, file_receive, distance_receive, placeLat_receive,
-                                    placeLng_receive]
+    temp_dict[content_id_receive] = [title_receive, address_receive, file_receive, distance_receive, place_lat_receive,
+                                    place_lng_receive]
 
     return jsonify({'result': 'success'})
 
 
-@app.route('/near/place/<contentId>', methods=['GET'])
-def get_near_detail(contentId):
-    return render_template('nearDetail.html', tempList=temp_dict[contentId])
+@app.route('/near/place/<content_id>', methods=['GET'])
+def getNearDetail(content_id):
+    return render_template('nearDetail.html', temp_list=temp_dict[content_id])
 
 
 @app.route('/trips/form', methods=['GET'])
@@ -81,18 +81,18 @@ def write():
 @app.route('/trips/update', methods=['GET'])
 def update():
     id = request.args.get('id')
-    tripList = list(db.trips.find({'id': int(id)}, {'_id': False}))
+    trip_list = list(db.trips.find({'id': int(id)}, {'_id': False}))
 
-    title = tripList[0]['title']
-    place = tripList[0]['place']
-    review = tripList[0]['review']
-    file = tripList[0]['file']
+    title = trip_list[0]['title']
+    place = trip_list[0]['place']
+    review = trip_list[0]['review']
+    file = trip_list[0]['file']
 
     return jsonify({'title': title, 'place': place, 'review': review, 'file': file})
 
 
 @app.route('/trips', methods=['POST'])
-def write_trip():
+def writeTrip():
     title_receive = request.form['title_give']
     place_receive = request.form['place_give']
     review_receive = request.form['review_give']
@@ -122,14 +122,14 @@ def write_trip():
 
 
 @app.route('/trips', methods=['GET'])
-def show_trips():
+def showTrips():
     all_trips = list(db.trips.find({}, {'_id': False}))
 
     return jsonify({'all_trips': all_trips})
 
 
 @app.route('/trips/<id>', methods=['POST'])
-def update_trip(id):
+def updateTrip(id):
     trip_title_receive = request.form['title_give']
     trip_place_receive = request.form['place_give']
     trip_review_receive = request.form['review_give']
@@ -153,7 +153,7 @@ def update_trip(id):
 
 
 @app.route('/trips', methods=['DELETE'])
-def delete_trip():
+def deleteTrip():
     trip_id_receive = request.form['trip_id_give']
 
     db.trips.delete_one({'id': int(trip_id_receive)})

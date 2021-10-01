@@ -1,8 +1,8 @@
 // 리뷰 작성
 function update() {
-    let getLink = window.location.search;
-    let doSplit = getLink.split('=');
-    let getId = doSplit[1];
+    let get_link = window.location.search;
+    let do_split = get_link.split('=');
+    let get_id = do_split[1];
 
     let title = $('#title').val()
     let place = $('#place').val()
@@ -11,7 +11,7 @@ function update() {
 
     let form_data = new FormData()
 
-    form_data.append("id_give", getId)
+    form_data.append("id_give", get_id)
     form_data.append("file_give", file)
     form_data.append("title_give", title)
     form_data.append("place_give", place)
@@ -19,7 +19,7 @@ function update() {
 
     $.ajax({
         type: "POST",
-        url: `/trips/${getId}`,
+        url: `/trips/${get_id}`,
         data: form_data,
         cache: false,
         contentType: false,

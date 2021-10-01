@@ -10,7 +10,7 @@
     <!--메타태그 설정-->
     <meta property="og:title" content="여행어때"/>
     <meta property="og:description" content="위치 기반 서비스로 근처의 여행지를 확인해보세요!"/>
-    <meta property="og:image" content="{{ url_for('static', filename='ogimage.png') }}"/>
+    <meta property="og:image" content="{{ url_for('static', filename='ogImage.png') }}"/>
 
     <!--파비콘(주소창 아이콘) 적용-->
     <link rel="shortcut icon" href="{{ url_for('static',filename='favicon.ico') }}"/>
@@ -57,7 +57,7 @@
 
         function getMap() {
             let map = new naver.maps.Map('map', {
-                center: new naver.maps.LatLng({{ tempList[4] }}, {{ tempList[5] }}),
+                center: new naver.maps.LatLng({{ temp_list[4] }}, {{ temp_list[5] }}),
                 zoom: 16,
                 zoomControl: true,
                 zoomControlOptions: {
@@ -67,7 +67,7 @@
             });
 
             let marker = new naver.maps.Marker({
-                position: new naver.maps.LatLng({{ tempList[4] }}, {{ tempList[5] }}),
+                position: new naver.maps.LatLng({{ temp_list[4] }}, {{ temp_list[5] }}),
                 map: map,
                 icon: "{{ url_for('static', filename='img/marker.png') }}"
             });
@@ -113,10 +113,10 @@
 
                     <!-- Content -->
                     <article class="box post">
-                        <a href="#" class="image featured"><img src="{{ tempList[2] }}" alt=""/></a>
+                        <a href="#" class="image featured"><img src="{{ temp_list[2] }}" alt=""/></a>
                         <header>
-                            <h2>{{ tempList[0] }}</h2>
-                            <p>{{ tempList[1] }}</p>
+                            <h2>{{ temp_list[0] }}</h2>
+                            <p>{{ temp_list[1] }}</p>
                         </header>
                         <p>
                             Praesent a dolor leo. Duis in felis in tortor lobortis volutpat et pretium tellus.
@@ -139,7 +139,7 @@
                         </p>
                         <section>
                             <header>
-                                <h3>여기에서 {{ tempList[3] }}m 거리</h3>
+                                <h3>여기에서 {{ temp_list[3] }}m 거리</h3>
                             </header>
                             <p>
                                 Elementum odio duis semper risus et lectus commodo fringilla. Maecenas sagittis
@@ -173,7 +173,7 @@
                     </section>
                     <section class="box">
                         <header>
-                            <h3>Feugiat consequat</h3>
+                            <h3>날씨</h3>
                         </header>
                         <p>Veroeros sed amet blandit consequat veroeros lorem blandit adipiscing et feugiat sed
                             lorem

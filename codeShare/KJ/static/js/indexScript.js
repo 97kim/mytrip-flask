@@ -67,7 +67,7 @@ function geoInfo() {
                     let placeLng = nearList[i]['mapx'];
                     let contentId = nearList[i]['contentid'];
 
-                    let noImage = "../../static/img/No-Image.png";
+                    let noImage = "../../static/img/noImage.png";
 
                     if (!file) {
                         nearDict[i] = [title, address, noImage, distance, placeLat, placeLng, contentId];

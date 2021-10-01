@@ -2,19 +2,25 @@
 
 .wrap {
     font-size: 14px;
-    width: 600px;
+    width: 50%;
     margin: auto;
+}
+
+@media (max-width: 600px) {
+    .wrap {
+        width: 80%;
+    }
 }
 
 .writeTitle {
     font-family: 'yg-jalnan', verdana, tahoma;
-    width: 600px;
+    width: 100%;
     margin: 80px auto 20px auto;
 }
 
 .file-upload {
     background-color: #ffffff;
-    width: 600px;
+    width: 100%;
     margin: 0 auto;
     padding: 20px;
     border-radius: 20px;
@@ -94,6 +100,12 @@
     padding: 60px 0;
 }
 
+@media (max-width: 600px) {
+    .drag-text h6 {
+        font-size: 0.9em;
+    }
+}
+
 .file-upload-image {
     max-height: 200px;
     max-width: 200px;
@@ -131,7 +143,7 @@
 
 /* input Title */
 .input-text {
-    width: 600px;
+    width: 100%;
     height: 40px;
     border-radius: 7px;
     background-color: #ffffff;
@@ -143,6 +155,7 @@
     align-items: center;
 }
 
+
 .title, .place, .review {
     width: 100%;
     border: none;
@@ -150,8 +163,14 @@
     font-size: 14px;
 }
 
+@media (max-width: 600px) {
+    .title, .place, .review {
+        font-size: 0.8em;
+    }
+}
+
 .input-textarea {
-    width: 600px;
+    width: 100%;
     height: 170px;
     border-radius: 7px;
     background-color: #ffffff;
@@ -164,6 +183,12 @@
     align-items: center;
 }
 
+@media (max-width: 600px) {
+    .input-textarea {
+        height: 140px;
+    }
+}
+
 input:focus {
     outline: none;
 }
@@ -173,7 +198,7 @@ textarea:focus {
 }
 
 .btn-wrapper {
-    width: 600px;
+    width: 100%;
     margin: auto;
 
     text-align: right;
