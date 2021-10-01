@@ -33,7 +33,7 @@ https://kimkj.shop/
 <img src="https://img.shields.io/badge/CodePen-000000?style=plastic&logo=CodePen&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=plastic&logo=Amazon%20AWS&logoColor=white"/></a>
 
-- 강의를 보면서 배웠던 기술들이고, 아직 무거운 앱을 만드는 것이 아니기 때문에 Flask와 MongoDB가 적합하다고 생각했습니다.
+- 강의를 보면서 배웠던 기술들이고, 아직 무거운 웹앱을 만드는 것이 아니기 때문에 Flask와 MongoDB가 적합하다고 생각했습니다.
 - css를 하나하나 조정하며 예쁘게 꾸미고 싶지만, 모두 백엔드 개발 희망자이기도 해서 UI는 부트스트랩과 CodePen을 참고했습니다. 
 
 <br>
@@ -46,7 +46,7 @@ https://kimkj.shop/
 - 내 현재 위치를 기반으로 주변의 여행지를 추천합니다.
 - 해당 여행지의 위치를 지도로 볼 수 있습니다.
 
-내가 가본 여행지 리뷰 글 작성 / 좋아요 / 수정 / 삭제
+내가 가본 여행지 리뷰 글 작성 / 수정 / 삭제 / 좋아요
 - 가본 여행지에 대한 리뷰 글을 작성, 조회, 수정, 삭제할 수 있습니다. 추후 좋아요 기능으로 투표 또한 추가 할 예정입니다.
 
 (추후) 날씨 API를 이용한 여행지 날씨 정보 제공
@@ -55,3 +55,4 @@ https://kimkj.shop/
 <br>
 
 ### 📌 문제를 이렇게 해결했어요!
+1. 한국관광공사 Open Api 데이터에 사진이 없는 경우도 있었습니다. 이러한 부분을 모르고 사진을 요청해서 <u>HTTP 404 Not Found 에러</u>(서버가 요청받은 리소스를 찾을 수 없다는 것을 의미)가 발생했습니다. 
