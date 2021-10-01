@@ -55,4 +55,4 @@ https://kimkj.shop/
 <br>
 
 ### 📌 문제를 이렇게 해결했어요!
-<a href="https://github.com/97kim/myTrip/wiki/4.-%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85">위키</a>
+<a href="https://github.com/97kim/myTrip/wiki/4.-%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85">트러블슈팅</a>
