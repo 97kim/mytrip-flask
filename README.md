@@ -55,4 +55,4 @@ https://kimkj.shop/
 <br>
 
 ### 📌 문제를 이렇게 해결했어요!
-1. 한국관광공사 Open Api 데이터에 사진이 없는 경우도 있었습니다. 이러한 부분을 모르고 사진을 요청해서 HTTP 404 Not Found 에러(서버가 요청받은 리소스를 찾을 수 없다는 것을 의미)가 발생했습니다. 
+<a href="https://github.com/97kim/myTrip/wiki/4.-%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85">위키</a>
