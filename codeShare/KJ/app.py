@@ -60,7 +60,7 @@ def near_detail():
 
 @app.route('/near/place/<contentId>', methods=['GET'])
 def get_near_detail(contentId):
-    return render_template('nearDetail.html', tempList=temp_dict[contentId])
+    return render_template('nearDetail.html', temp_list=temp_dict[contentId])
 
 
 @app.route('/trips/form', methods=['GET'])

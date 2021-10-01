@@ -43,7 +43,7 @@ function slide() {
     })
 }
 
-let nearDict = {};
+let near_dict = {};
 
 // 현재 위치 불러와 근처 여행지 조회
 function geoInfo() {
@@ -56,31 +56,31 @@ function geoInfo() {
             url: "/near",
             data: {lat_give: lat, lng_give: lng},
             success: function (response) {
-                $('#nearCard').empty();
-                nearList = response['nearList'];
-                for (let i = 0; i < nearList.length; i++) {
-                    let title = nearList[i]['title'];
-                    let address = nearList[i]['addr1'];
-                    let file = nearList[i]['firstimage'];
-                    let distance = nearList[i]['dist'];
-                    let placeLat = nearList[i]['mapy'];
-                    let placeLng = nearList[i]['mapx'];
-                    let contentId = nearList[i]['contentid'];
+                $('#near_card').empty();
+                near_list = response['near_list'];
+                for (let i = 0; i < near_list.length; i++) {
+                    let title = near_list[i]['title'];
+                    let address = near_list[i]['addr1'];
+                    let file = near_list[i]['firstimage'];
+                    let distance = near_list[i]['dist'];
+                    let place_lat = near_list[i]['mapy'];
+                    let place_lng = near_list[i]['mapx'];
+                    let content_id = near_list[i]['contentid'];
 
-                    let noImage = "../../static/img/No-Image.png";
+                    let noImage = "../../static/img/noImage.png";
 
                     if (!file) {
-                        nearDict[i] = [title, address, noImage, distance, placeLat, placeLng, contentId];
+                        near_dict[i] = [title, address, noImage, distance, place_lat, place_lng, content_id];
 
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place/${contentId}" class="card" onclick="get_detail(${i})">
-                                                <img src="../static/img/No-Image.png" class="card__image" alt="이미지 없음"/>
+                                             <a href="/near/place/${content_id}" class="card" onclick="getDetail(${i})">
+                                                <img src="../static/img/noImage.png" class="card__image" alt="이미지 없음"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
                                                         <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
                                                             <path/>
                                                         </svg>
-                                                        <img class="card__thumb" src="../static/img/No-Image.png" alt="썸네일 이미지 없음"/>
+                                                        <img class="card__thumb" src="../static/img/noImage.png" alt="썸네일 이미지 없음"/>
                                                         <div class="card__header-text">
                                                             <h3 class="card__title">${title}</h3>
                                                             <span class="card__status">${distance}m</span>
@@ -90,12 +90,12 @@ function geoInfo() {
                                                 </div>
                                             </a>
                                         </li>`;
-                        $('#nearCard').append(temp_html);
+                        $('#near_card').append(temp_html);
                     } else {
-                        nearDict[i] = [title, address, file, distance, placeLat, placeLng, contentId];
+                        near_dict[i] = [title, address, file, distance, place_lat, place_lng, content_id];
 
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place/${contentId}" class="card" onclick="get_detail(${i})">
+                                             <a href="/near/place/${content_id}" class="card" onclick="getDetail(${i})">
                                                 <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
@@ -112,7 +112,7 @@ function geoInfo() {
                                                 </div>
                                             </a>
                                         </li>`;
-                        $('#nearCard').append(temp_html);
+                        $('#near_card').append(temp_html);
                     }
                     slide();
                 }
@@ -128,8 +128,8 @@ function geoInfo() {
     navigator.geolocation.getCurrentPosition(onGeoOK, onGeoError);
 }
 
-function get_detail(i) {
-    // nearDict = {
+function getDetail(i) {
+    // near_dict = {
     //              i: [title, address, file, distance, placeLat, placeLng, contentId]
     //             }
 
@@ -137,17 +137,17 @@ function get_detail(i) {
         type: "POST",
         url: '/near/place',
         data: {
-            title_give: nearDict[i][0],
-            address_give: nearDict[i][1],
-            file_give: nearDict[i][2],
-            distance_give: nearDict[i][3],
-            placeLat_give: nearDict[i][4],
-            placeLng_give: nearDict[i][5],
-            contentId_give: nearDict[i][6]
+            title_give: near_dict[i][0],
+            address_give: near_dict[i][1],
+            file_give: near_dict[i][2],
+            distance_give: near_dict[i][3],
+            place_lat_give: near_dict[i][4],
+            place_lng_give: near_dict[i][5],
+            content_id_give: near_dict[i][6]
         },
         success: function (response) {
             if (response['result'] == 'success') {
-                window.location.href = `/near/place/${nearDict[i][6]}`;
+                window.location.href = `/near/place/${near_dict[i][6]}`;
             }
         }
     });
@@ -204,13 +204,13 @@ function showTrips() {
         url: "/trips",
         data: {},
         success: function (response) {
-            tripList = response['all_trips'];
-            for (let i = 0; i < tripList.length; i++) {
-                let trip_id = tripList[i]['id'];
-                let trip_title = tripList[i]['title'];
-                let trip_place = tripList[i]['place'];
-                let trip_file = tripList[i]['file'];
-                let trip_date = tripList[i]['date'];
+            trip_list = response['all_trips'];
+            for (let i = 0; i < trip_list.length; i++) {
+                let trip_id = trip_list[i]['id'];
+                let trip_title = trip_list[i]['title'];
+                let trip_place = trip_list[i]['place'];
+                let trip_file = trip_list[i]['file'];
+                let trip_date = trip_list[i]['date'];
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                         <a href="#" class="card">
@@ -232,7 +232,7 @@ function showTrips() {
                                             </div>
                                         </a>
                                     </li>`
-                $('#tripCard').prepend(temp_html);
+                $('#trip_card').prepend(temp_html);
                 slide2();
             }
         }
