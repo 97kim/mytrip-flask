@@ -11,12 +11,14 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 
-client = MongoClient('localhost', 27017)
-db = client.myTrip
-
 # .env 파일 만들어서 외부 노출 방지
 load_dotenv(verbose=True)
 OPEN_API_KEY = os.getenv('OPEN_API_KEY')
+REQUEST_URL = os.getenv('REQUEST_URL')
+
+client = MongoClient('localhost', 27017)
+db = client.myTrip
+
 
 @app.route('/', methods=['GET'])
 def home():
@@ -24,15 +26,17 @@ def home():
 
 
 @app.route('/near', methods=['POST'])
-def getNearPlace():
+def get_near_place():
     lat_receive = request.form['lat_give']
     lng_receive = request.form['lng_give']
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
     }
 
-    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
+    url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}' \
+          '&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
 
     r = requests.get(url, headers=headers)
 
@@ -49,7 +53,7 @@ temp_dict = {}  # /near/place POST 요청에 받은 데이터를 담아 /near/pl
 
 
 @app.route('/near/place', methods=['POST'])
-def postNearDetail():
+def post_near_detail():
     title_receive = request.form['title_give']
     address_receive = request.form['address_give']
     file_receive = request.form['file_give']
@@ -58,21 +62,21 @@ def postNearDetail():
     place_lng_receive = request.form['place_lng_give']
     content_id_receive = request.form['content_id_give']
 
-    temp_dict[content_id_receive] = [title_receive, address_receive, file_receive, distance_receive, place_lat_receive,
-                                    place_lng_receive]
+    temp_dict[content_id_receive] = [title_receive, address_receive, file_receive, distance_receive,
+                                     place_lat_receive, place_lng_receive]
 
     return jsonify({'result': 'success'})
 
 
 @app.route('/near/place/<content_id>', methods=['GET'])
-def getNearDetail(content_id):
+def get_near_detail(content_id):
     return render_template('nearDetail.html', temp_list=temp_dict[content_id])
 
 
 @app.route('/trips/form', methods=['GET'])
 def write():
-    id = request.args.get('id')
-    if id is not None:
+    review_id = request.args.get('review_id')
+    if review_id is not None:
         return render_template('update.html')
 
     return render_template('write.html')
@@ -80,41 +84,42 @@ def write():
 
 @app.route('/trips/update', methods=['GET'])
 def update():
-    id = request.args.get('id')
-    trip_list = list(db.trips.find({'id': int(id)}, {'_id': False}))
+    review_id = request.args.get('review_id')
+    review_list = list(db.trips.find({'review_id': int(review_id)}, {'_id': False}))
 
-    title = trip_list[0]['title']
-    place = trip_list[0]['place']
-    review = trip_list[0]['review']
-    file = trip_list[0]['file']
+    review_title = review_list[0]['review_title']
+    review_place = review_list[0]['review_place']
+    review_review = review_list[0]['review_content']
+    review_file = review_list[0]['review_file']
 
-    return jsonify({'title': title, 'place': place, 'review': review, 'file': file})
+    return jsonify({'review_title': review_title, 'review_place': review_place, 'review_content': review_review,
+                    'review_file': review_file})
 
 
 @app.route('/trips', methods=['POST'])
-def writeTrip():
-    title_receive = request.form['title_give']
-    place_receive = request.form['place_give']
-    review_receive = request.form['review_give']
-    file = request.files["file_give"]
+def write_trip():
+    review_title_receive = request.form['review_title_give']
+    review_place_receive = request.form['review_place_give']
+    review_content_receive = request.form['review_content_give']
+    review_file = request.files["review_file_give"]
 
     today = datetime.now()
-    mytime = today.strftime('%Y-%m-%d-%H-%M-%S')
+    time = today.strftime('%Y-%m-%d-%H-%M-%S')
     date = today.strftime('%Y.%m.%d')
 
-    filename = f'file-{mytime}'
-    extension = file.filename.split('.')[-1]
+    filename = f'file-{time}'
+    extension = review_file.filename.split('.')[-1]
 
     save_to = f'static/img/{filename}.{extension}'
-    file.save(save_to)
+    review_file.save(save_to)
 
     doc = {
-        'id': db.trips.count() + 1,
-        'title': title_receive,
-        'place': place_receive,
-        'review': review_receive,
-        'file': f'{filename}.{extension}',
-        'date': date
+        'review_id': db.trips.count() + 1,
+        'review_title': review_title_receive,
+        'review_place': review_place_receive,
+        'review_content': review_content_receive,
+        'review_file': f'{filename}.{extension}',
+        'review_date': date
     }
 
     db.trips.insert_one(doc)
@@ -122,41 +127,45 @@ def writeTrip():
 
 
 @app.route('/trips', methods=['GET'])
-def showTrips():
+def show_trips():
     all_trips = list(db.trips.find({}, {'_id': False}))
 
     return jsonify({'all_trips': all_trips})
 
 
-@app.route('/trips/<id>', methods=['POST'])
-def updateTrip(id):
-    trip_title_receive = request.form['title_give']
-    trip_place_receive = request.form['place_give']
-    trip_review_receive = request.form['review_give']
-    trip_file_receive = request.files['file_give']
+@app.route('/trips/<review_id>', methods=['POST'])
+def update_trip(review_id):
+    review_title_receive = request.form['review_title_give']
+    review_place_receive = request.form['review_place_give']
+    review_content_receive = request.form['review_content_give']
+    review_file_receive = request.files['review_file_give']
 
     today = datetime.now()
-    mytime = today.strftime('%Y-%m-%d-%H-%M-%S')
+    time = today.strftime('%Y-%m-%d-%H-%M-%S')
     date = today.strftime('%Y.%m.%d')
 
-    filename = f'file-{mytime}'
-    extension = trip_file_receive.filename.split('.')[-1]
+    filename = f'file-{time}'
+    extension = review_file_receive.filename.split('.')[-1]
 
     save_to = f'static/img/{filename}.{extension}'
-    trip_file_receive.save(save_to)
+    review_file_receive.save(save_to)
 
-    db.trips.update_one({'id': int(id)}, {
-        '$set': {'title': trip_title_receive, 'place': trip_place_receive, 'review': trip_review_receive,
-                 'file': f'{filename}.{extension}', 'date': date}})
+    db.trips.update_one({'review_id': int(review_id)}, {
+        '$set': {
+            'review_title': review_title_receive, 'review_place': review_place_receive,
+            'review_content': review_content_receive, 'review_file': f'{filename}.{extension}',
+            'review_date': date
+        }
+    })
 
     return jsonify({'msg': '수정 완료!'})
 
 
 @app.route('/trips', methods=['DELETE'])
-def deleteTrip():
-    trip_id_receive = request.form['trip_id_give']
+def delete_trip():
+    review_id_receive = request.form['review_id_give']
 
-    db.trips.delete_one({'id': int(trip_id_receive)})
+    db.trips.delete_one({'review_id': int(review_id_receive)})
     return jsonify({'msg': '삭제 완료!'})
 
 

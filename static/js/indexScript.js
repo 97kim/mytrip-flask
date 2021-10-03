@@ -130,7 +130,7 @@ function geoInfo() {
 
 function getDetail(i) {
     // near_dict = {
-    //              i: [title, address, file, distance, placeLat, placeLng, contentId]
+    //              i: [title, address, file, distance, place_lat, place_lng, content_id]
     //             }
 
     $.ajax({
@@ -206,29 +206,29 @@ function showTrips() {
         success: function (response) {
             trip_list = response['all_trips'];
             for (let i = 0; i < trip_list.length; i++) {
-                let trip_id = trip_list[i]['id'];
-                let trip_title = trip_list[i]['title'];
-                let trip_place = trip_list[i]['place'];
-                let trip_file = trip_list[i]['file'];
-                let trip_date = trip_list[i]['date'];
+                let review_id = trip_list[i]['review_id'];
+                let review_title = trip_list[i]['review_title'];
+                let review_place = trip_list[i]['review_place'];
+                let review_file = trip_list[i]['review_file'];
+                let review_date = trip_list[i]['review_date'];
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                         <a href="#" class="card">
-                                            <img src="../static/img/${trip_file}" class="card__image" alt="사용자가 올린 여행지 사진"/>
+                                            <img src="../static/img/${review_file}" class="card__image" alt="사용자가 올린 여행지 사진"/>
                                             <div class="card__overlay">
                                                 <div class="card__header">
                                                     <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
                                                         <path/>
                                                     </svg>
-                                                    <img class="card__thumb" src="../static/img/${trip_file}" alt="썸네일"/>
+                                                    <img class="card__thumb" src="../static/img/${review_file}" alt="썸네일"/>
                                                     <div class="card__header-text">
-                                                        <h3 class="card__title">${trip_title}</h3>
-                                                        <span class="card__status">${trip_date}</span>
-                                                        <span onclick="updateTrip(${trip_id})">수정</span>
-                                                        <span onclick="delTrip(${trip_id})">삭제</span>
+                                                        <h3 class="card__title">${review_title}</h3>
+                                                        <span class="card__status">${review_date}</span>
+                                                        <span onclick="updateTrip(${review_id})">수정</span>
+                                                        <span onclick="delTrip(${review_id})">삭제</span>
                                                     </div>
                                                 </div>
-                                                <p class="card__description">${trip_place}</p>
+                                                <p class="card__description">${review_place}</p>
                                             </div>
                                         </a>
                                     </li>`
@@ -239,30 +239,30 @@ function showTrips() {
     })
 }
 
-function updateTrip(trip_id) {
+function updateTrip(review_id) {
     $.ajax({
         type: "GET",
-        url: `/trips/update?id=${trip_id}`,
+        url: `/trips/update?review_id=${review_id}`,
         data: {},
         success: function (response) {
-            sessionStorage.setItem('id', trip_id);
-            sessionStorage.setItem('title', response['title']);
-            sessionStorage.setItem('place', response['place']);
-            sessionStorage.setItem('review', response['review']);
-            sessionStorage.setItem('file', response['file']);
+            sessionStorage.setItem('review_id', review_id);
+            sessionStorage.setItem('review_title', response['review_title']);
+            sessionStorage.setItem('review_place', response['review_place']);
+            sessionStorage.setItem('review_content', response['review_content']);
+            sessionStorage.setItem('review_file', response['review_file']);
 
-            window.location.href = `/trips/form?id=${trip_id}`;
+            window.location.href = `/trips/form?review_id=${review_id}`;
         }
     });
 }
 
 
 // 사용자가 올린 여행지 리뷰 삭제
-function delTrip(trip_id) {
+function delTrip(review_id) {
     $.ajax({
         type: "DELETE",
         url: "/trips",
-        data: {trip_id_give: trip_id},
+        data: {review_id_give: review_id},
         success: function (response) {
             alert(response['msg'])
             window.location.reload();
