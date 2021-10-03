@@ -2,24 +2,23 @@
 function update() {
     let get_link = window.location.search;
     let do_split = get_link.split('=');
-    let get_id = do_split[1];
+    let trip_id = do_split[1];
 
-    let review_title = $('#title').val()
-    let review_place = $('#place').val()
-    let review_content = $('#review').val()
-    let review_file = $('#file')[0].files[0]
+    let title = $('#title').val();
+    let place = $('#place').val();
+    let review = $('#review').val();
+    let file = $('#file')[0].files[0];
 
-    let form_data = new FormData()
+    let form_data = new FormData();
 
-    form_data.append("review_id_give", get_id)
-    form_data.append("review_file_give", review_file)
-    form_data.append("review_title_give", review_title)
-    form_data.append("review_place_give", review_place)
-    form_data.append("review_content_give", review_content)
+    form_data.append("file_give", file);
+    form_data.append("title_give", title);
+    form_data.append("place_give", place);
+    form_data.append("review_give", review);
 
     $.ajax({
         type: "POST",
-        url: `/trips/${get_id}`,
+        url: `/trips/${trip_id}`,
         data: form_data,
         cache: false,
         contentType: false,

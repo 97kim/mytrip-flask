@@ -77,8 +77,8 @@ def get_near_detail(content_id):
 
 @app.route('/trips/form', methods=['GET'])
 def write():
-    review_id = request.args.get('review_id')
-    if review_id is not None:
+    trip_id = request.args.get('id')
+    if trip_id is not None:
         return render_template('update.html')
 
     return render_template('write.html')
@@ -86,42 +86,41 @@ def write():
 
 @app.route('/trips/update', methods=['GET'])
 def update():
-    review_id = request.args.get('review_id')
-    review_list = list(db.trips.find({'review_id': int(review_id)}, {'_id': False}))
+    trip_id = request.args.get('id')
+    trip = db.trips.find_one({'id': int(trip_id)}, {'_id': False})
 
-    review_title = review_list[0]['review_title']
-    review_place = review_list[0]['review_place']
-    review_review = review_list[0]['review_content']
-    review_file = review_list[0]['review_file']
+    title = trip['title']
+    place = trip['place']
+    review = trip['review']
+    file = trip['file']
 
-    return jsonify({'review_title': review_title, 'review_place': review_place, 'review_content': review_review,
-                    'review_file': review_file})
+    return jsonify({'title': title, 'place': place, 'review': review, 'file': file})
 
 
 @app.route('/trips', methods=['POST'])
 def write_trip():
-    review_title_receive = request.form['review_title_give']
-    review_place_receive = request.form['review_place_give']
-    review_content_receive = request.form['review_content_give']
-    review_file = request.files["review_file_give"]
+    trip_title_receive = request.form['title_give']
+    trip_place_receive = request.form['place_give']
+    trip_review_receive = request.form['review_give']
+    trip_file = request.files["file_give"]
 
     today = datetime.now()
     time = today.strftime('%Y-%m-%d-%H-%M-%S')
     date = today.strftime('%Y.%m.%d')
 
     filename = f'file-{time}'
-    extension = review_file.filename.split('.')[-1]
+    extension = trip_file.filename.split('.')[-1]
 
     save_to = f'static/img/{filename}.{extension}'
-    review_file.save(save_to)
+    trip_file.save(save_to)
 
     doc = {
-        'review_id': db.trips.count() + 1,
-        'review_title': review_title_receive,
-        'review_place': review_place_receive,
-        'review_content': review_content_receive,
-        'review_file': f'{filename}.{extension}',
-        'review_date': date
+        'id': db.trips.count() + 1,
+        'title': trip_title_receive,
+        'place': trip_place_receive,
+        'review': trip_review_receive,
+        'file': f'{filename}.{extension}',
+        'date': date
     }
 
     db.trips.insert_one(doc)
@@ -135,28 +134,27 @@ def show_trips():
     return jsonify({'all_trips': all_trips})
 
 
-@app.route('/trips/<review_id>', methods=['POST'])
-def update_trip(review_id):
-    review_title_receive = request.form['review_title_give']
-    review_place_receive = request.form['review_place_give']
-    review_content_receive = request.form['review_content_give']
-    review_file_receive = request.files['review_file_give']
+@app.route('/trips/<trip_id>', methods=['POST'])
+def update_trip(trip_id):
+    trip_title_receive = request.form['title_give']
+    trip_place_receive = request.form['place_give']
+    trip_review_receive = request.form['review_give']
+    trip_file_receive = request.files['file_give']
 
     today = datetime.now()
     time = today.strftime('%Y-%m-%d-%H-%M-%S')
     date = today.strftime('%Y.%m.%d')
 
     filename = f'file-{time}'
-    extension = review_file_receive.filename.split('.')[-1]
+    extension = trip_file_receive.filename.split('.')[-1]
 
     save_to = f'static/img/{filename}.{extension}'
-    review_file_receive.save(save_to)
+    trip_file_receive.save(save_to)
 
-    db.trips.update_one({'review_id': int(review_id)}, {
+    db.trips.update_one({'id': int(trip_id)}, {
         '$set': {
-            'review_title': review_title_receive, 'review_place': review_place_receive,
-            'review_content': review_content_receive, 'review_file': f'{filename}.{extension}',
-            'review_date': date
+            'title': trip_title_receive, 'place': trip_place_receive, 'review': trip_review_receive,
+            'file': f'{filename}.{extension}', 'date': date
         }
     })
 
@@ -165,9 +163,9 @@ def update_trip(review_id):
 
 @app.route('/trips', methods=['DELETE'])
 def delete_trip():
-    review_id_receive = request.form['review_id_give']
+    trip_id_receive = request.form['trip_id_give']
 
-    db.trips.delete_one({'review_id': int(review_id_receive)})
+    db.trips.delete_one({'id': int(trip_id_receive)})
     return jsonify({'msg': '삭제 완료!'})
 
 
