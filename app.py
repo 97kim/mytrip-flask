@@ -14,9 +14,11 @@ app = Flask(__name__)
 # .env 파일 만들어서 외부 노출 방지
 load_dotenv(verbose=True)
 OPEN_API_KEY = os.getenv('OPEN_API_KEY')
+DB_INFO = os.getenv('DB_INFO')
+DB_PORT = os.getenv('DB_PORT')
 REQUEST_URL = os.getenv('REQUEST_URL')
 
-client = MongoClient('localhost', 27017)
+client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
 
 
