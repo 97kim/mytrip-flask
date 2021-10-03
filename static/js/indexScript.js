@@ -131,7 +131,7 @@ function geoInfo() {
 
 function getDetail(i) {
     // near_dict = {
-    //              i: [title, address, file, distance, placeLat, placeLng, contentId]
+    //              i: [title, address, file, distance, place_lat, place_lng, content_id]
     //             }
 
     $.ajax({
