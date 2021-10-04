@@ -61,4 +61,4 @@ https://kimkj.shop/
 <br>
 
 ### 📌 WIKI
-https://github.com/97kim/myTrip/wiki
+<a href="https://github.com/97kim/myTrip/wiki">WIKI로 이동</a>
