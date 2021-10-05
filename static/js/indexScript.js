@@ -43,8 +43,6 @@ function slide() {
     })
 }
 
-let near_dict = {};
-
 // 현재 위치 불러와 근처 여행지 조회
 function geoInfo() {
     function onGeoOK(position) { //위치 정보 공유 승인 시
@@ -52,29 +50,39 @@ function geoInfo() {
         const lng = position.coords.longitude; //경도
 
         $.ajax({
-            type: "POST",
-            url: "/near",
-            data: {lat_give: lat, lng_give: lng},
-            success: function (response) {
-                $('#near_card').empty();
-                let near_list = response['near_list'];
+                type: "POST",
+                url: "/near",
+                data: {lat_give: lat, lng_give: lng},
+                success: function (response) {
+                    $('#near_card').empty();
+                    let near_list = response['near_list'];
 
-                for (let i = 0; i < near_list.length; i++) {
-                    let title = near_list[i]['title'];
-                    let address = near_list[i]['addr1'];
-                    let file = near_list[i]['firstimage'];
-                    let distance = near_list[i]['dist'];
-                    let place_lat = near_list[i]['mapy'];
-                    let place_lng = near_list[i]['mapx'];
-                    let content_id = near_list[i]['contentid'];
+                    //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
+                    let obj = {};
 
-                    let no_image = "../../static/img/noImage.png";
+                    for (let i = 0; i < near_list.length; i++) {
+                        let title = near_list[i]['title'];
+                        let address = near_list[i]['addr1'];
+                        let file = near_list[i]['firstimage'];
+                        let distance = near_list[i]['dist'];
+                        let place_lat = near_list[i]['mapy'];
+                        let place_lng = near_list[i]['mapx'];
+                        let content_id = near_list[i]['contentid'];
 
-                    if (!file) {
-                        near_dict[i] = [title, address, no_image, distance, place_lat, place_lng, content_id];
 
-                        let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place/${content_id}" class="card" onclick="getDetail(${i})">
+                        if (!file) {
+
+                            obj[content_id] = {
+                                'title': title,
+                                'address': address,
+                                'file': "../../static/img/noImage.png",
+                                'distance': distance,
+                                'place_lat': place_lat,
+                                'place_lng': place_lng
+                            }
+
+                            let temp_html = `<li style="margin: 0 10px; height: 300px;">
+                                             <a href="/near/place?content=${content_id}" class="card">
                                                 <img src="../static/img/noImage.png" class="card__image" alt="이미지 없음"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
@@ -91,12 +99,20 @@ function geoInfo() {
                                                 </div>
                                             </a>
                                         </li>`;
-                        $('#near_card').append(temp_html);
-                    } else {
-                        near_dict[i] = [title, address, file, distance, place_lat, place_lng, content_id];
+                            $('#near_card').append(temp_html);
+                        } else {
 
-                        let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place/${content_id}" class="card" onclick="getDetail(${i})">
+                            obj[content_id] = {
+                                'title': title,
+                                'address': address,
+                                'file': file,
+                                'distance': distance,
+                                'place_lat': place_lat,
+                                'place_lng': place_lng
+                            }
+
+                            let temp_html = `<li style="margin: 0 10px; height: 300px;">
+                                             <a href="/near/place?content=${content_id}" class="card">
                                                 <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
@@ -113,45 +129,22 @@ function geoInfo() {
                                                 </div>
                                             </a>
                                         </li>`;
-                        $('#near_card').append(temp_html);
+                            $('#near_card').append(temp_html);
+                        }
+                        slide();
                     }
-                    slide();
+                    sessionStorage.setItem('near_object', JSON.stringify(obj));
                 }
             }
-        })
+        )
     }
 
     function onGeoError() { //위치 정보 공유 거부 시
         alert('현재 위치를 찾을 수 없습니다.')
     }
 
-    // 1번째 파라미터: 위치 공유 승인 시, 2번째 파라미터: 위치 공유 거부 시 실행
+// 1번째 파라미터: 위치 공유 승인 시, 2번째 파라미터: 위치 공유 거부 시 실행
     navigator.geolocation.getCurrentPosition(onGeoOK, onGeoError);
-}
-
-function getDetail(i) {
-    // near_dict = {
-    //              i: [title, address, file, distance, place_lat, place_lng, content_id]
-    //             }
-
-    $.ajax({
-        type: "POST",
-        url: '/near/place',
-        data: {
-            title_give: near_dict[i][0],
-            address_give: near_dict[i][1],
-            file_give: near_dict[i][2],
-            distance_give: near_dict[i][3],
-            place_lat_give: near_dict[i][4],
-            place_lng_give: near_dict[i][5],
-            content_id_give: near_dict[i][6]
-        },
-        success: function (response) {
-            if (response['result'] == 'success') {
-                window.location.href = `/near/place/${near_dict[i][6]}`;
-            }
-        }
-    });
 }
 
 
@@ -207,6 +200,9 @@ function showTrips() {
         success: function (response) {
             let trip_list = response['all_trips'];
 
+            //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
+            let obj = {};
+
             for (let i = 0; i < trip_list.length; i++) {
                 let trip_id = trip_list[i]['id'];
                 let trip_title = trip_list[i]['title'];
@@ -214,9 +210,18 @@ function showTrips() {
                 let trip_file = trip_list[i]['file'];
                 let trip_date = trip_list[i]['date'];
                 let trip_like = trip_list[i]['like'];
+                let trip_review = trip_list[i]['review'];
+
+                obj[trip_id] = {
+                    'title': trip_title,
+                    'place': trip_place,
+                    'file': `../static/img/${trip_file}`,
+                    'review': trip_review,
+                    'date': trip_date
+                }
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                        <a href="#" class="card">
+                                        <a href="/trips/place?content=${trip_id}" class="card">
                                             <img src="../static/img/${trip_file}" class="card__image" alt="사용자가 올린 여행지 사진"/>
                                             <div class="card__overlay">
                                                 <div class="card__header">
@@ -225,7 +230,7 @@ function showTrips() {
                                                     </svg>
                                                     <img class="card__thumb" src="../static/img/${trip_file}" alt="썸네일"/>
                                                     <div class="card__header-text">
-                                                        <h3 class="card__title">${trip_title} </h3>
+                                                        <h3 class="card__title">${trip_title}</h3>
                                                         <i onclick="like_place(${trip_id})" class="far fa-thumbs-up">${trip_like}</i>
                                                         <span class="card__status">${trip_date}</span>
                                                         <span onclick="updateTrip(${trip_id})">수정</span>
@@ -239,6 +244,7 @@ function showTrips() {
                 $('#trip_card').append(temp_html);
                 slide2();
             }
+            sessionStorage.setItem('trips_object', JSON.stringify(obj));
         }
     })
 }
@@ -255,7 +261,6 @@ function like_place(trip_id) {
         }
     });
 }
-
 
 function updateTrip(trip_id) {
     $.ajax({

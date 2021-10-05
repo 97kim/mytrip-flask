@@ -51,28 +51,14 @@ def get_near_place():
     return jsonify({'near_list': near_list})
 
 
-temp_dict = {}  # /near/place POST 요청에 받은 데이터를 담아 /near/place/<contentId> GET 요청에 보내주기 위한 용도
+@app.route('/near/place', methods=['GET'])
+def get_near_detail():
+    return render_template('nearDetail.html')
 
 
-@app.route('/near/place', methods=['POST'])
-def post_near_detail():
-    title_receive = request.form['title_give']
-    address_receive = request.form['address_give']
-    file_receive = request.form['file_give']
-    distance_receive = request.form['distance_give']
-    place_lat_receive = request.form['place_lat_give']
-    place_lng_receive = request.form['place_lng_give']
-    content_id_receive = request.form['content_id_give']
-
-    temp_dict[content_id_receive] = [title_receive, address_receive, file_receive, distance_receive,
-                                     place_lat_receive, place_lng_receive]
-
-    return jsonify({'result': 'success'})
-
-
-@app.route('/near/place/<content_id>', methods=['GET'])
-def get_near_detail(content_id):
-    return render_template('nearDetail.html', temp_list=temp_dict[content_id])
+@app.route('/trips/place', methods=['GET'])
+def get_trips_detail():
+    return render_template('tripsDetail.html')
 
 
 @app.route('/trips/form', methods=['GET'])
@@ -147,6 +133,7 @@ def like_place():
     db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': new_like}})
 
     return jsonify({'msg': '좋아요 완료!'})
+
 
 @app.route('/trips/<trip_id>', methods=['POST'])
 def update_trip(trip_id):
