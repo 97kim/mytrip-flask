@@ -120,7 +120,8 @@ def write_trip():
         'place': trip_place_receive,
         'review': trip_review_receive,
         'file': f'{filename}.{extension}',
-        'date': date
+        'date': date,
+        'like': 0
     }
 
     db.trips.insert_one(doc)
@@ -129,10 +130,23 @@ def write_trip():
 
 @app.route('/trips', methods=['GET'])
 def show_trips():
-    all_trips = list(db.trips.find({}, {'_id': False}))
+    all_trips = list(db.trips.find({}, {'_id': False}).sort("like", -1))
 
     return jsonify({'all_trips': all_trips})
 
+
+@app.route('/trips/like', methods=['POST'])
+def like_place():
+    trip_id_receive = request.form['trip_id_give']
+
+    target_id = db.trips.find_one({'id': int(trip_id_receive)})
+
+    current_like = target_id['like']
+    new_like = current_like + 1
+
+    db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': new_like}})
+
+    return jsonify({'msg': '좋아요 완료!'})
 
 @app.route('/trips/<trip_id>', methods=['POST'])
 def update_trip(trip_id):
