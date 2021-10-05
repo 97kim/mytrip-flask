@@ -21,7 +21,7 @@ function save() {
         processData: false,
         success: function (response) {
             alert(response["msg"])
-            window.location.href = '/';
+            window.location.href = '/main';
         }
     });
 }
