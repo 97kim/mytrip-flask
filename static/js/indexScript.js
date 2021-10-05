@@ -1,293 +1,170 @@
-// slick 슬라이드
-function slide() {
-    $(function () {
-        // Uncaught TypeError: Cannot read property 'add' of null” 오류 -> slick을 여러번 불러와서 발생
-        // .not('.slick-initialized')로 하면 오류가 안 난다.
-
-        // $('.slider-li').slick({
-        $('.slider-li').not('.slick-initialized').slick({
-            slide: 'li',		//슬라이드 되어야 할 태그 ex) div, li
-            infinite: true, 	//무한 반복 옵션
-            slidesToShow: 3,		// 한 화면에 보여질 컨텐츠 개수
-            slidesToScroll: 1,		//스크롤 한번에 움직일 컨텐츠 개수
-            speed: 100,	 // 다음 버튼 누르고 다음 화면 뜨는데까지 걸리는 시간(ms)
-            dots: true, 		// 스크롤바 아래 점으로 페이지네이션 여부
-            autoplay: true,			// 자동 스크롤 사용 여부
-            autoplaySpeed: 5000, 		// 자동 스크롤 시 다음으로 넘어가는데 걸리는 시간 (ms)
-            pauseOnHover: true,		// 슬라이드 이동 시 마우스 호버하면 슬라이더 멈추게 설정
-            vertical: false,		// 세로 방향 슬라이드 옵션
-            arrows: true, 		// 옆으로 이동하는 화살표 표시 여부
-            prevArrow: $('#btn_prev'),		// 이전 화살표 모양 설정
-            nextArrow: $('#btn_next'),		// 다음 화살표 모양 설정
-            dotsClass: "slick-dots", 	//아래 나오는 페이지네이션(점) css class 지정
-            draggable: true, 	//드래그 가능 여부
-
-            responsive: [ // 반응형 웹 구현 옵션
-                {
-                    breakpoint: 1500, //화면 사이즈 1500px 보다 작을 시
-                    settings: {
-                        //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
-                        slidesToShow: 2
-                    }
-                },
-                {
-                    breakpoint: 800, //화면 사이즈 800px 보다 작을 시
-                    settings: {
-                        //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
-                        slidesToShow: 1
-                    }
-                }
-            ]
-
-        });
-    })
-}
-
-// 현재 위치 불러와 근처 여행지 조회
-function geoInfo() {
-    function onGeoOK(position) { //위치 정보 공유 승인 시
-        const lat = position.coords.latitude; //위도
-        const lng = position.coords.longitude; //경도
-
-        $.ajax({
-                type: "POST",
-                url: "/near",
-                data: {lat_give: lat, lng_give: lng},
-                success: function (response) {
-                    $('#near_card').empty();
-                    let near_list = response['near_list'];
-
-                    //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
-                    let obj = {};
-
-                    for (let i = 0; i < near_list.length; i++) {
-                        let title = near_list[i]['title'];
-                        let address = near_list[i]['addr1'];
-                        let file = near_list[i]['firstimage'];
-                        let distance = near_list[i]['dist'];
-                        let place_lat = near_list[i]['mapy'];
-                        let place_lng = near_list[i]['mapx'];
-                        let content_id = near_list[i]['contentid'];
-
-
-                        if (!file) {
-
-                            obj[content_id] = {
-                                'title': title,
-                                'address': address,
-                                'file': "../../static/img/noImage.png",
-                                'distance': distance,
-                                'place_lat': place_lat,
-                                'place_lng': place_lng
-                            }
-
-                            let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place?content=${content_id}" class="card">
-                                                <img src="../static/img/noImage.png" class="card__image" alt="이미지 없음"/>
-                                                <div class="card__overlay">
-                                                    <div class="card__header">
-                                                        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-                                                            <path/>
-                                                        </svg>
-                                                        <img class="card__thumb" src="../static/img/noImage.png" alt="썸네일 이미지 없음"/>
-                                                        <div class="card__header-text">
-                                                            <h3 class="card__title">${title}</h3>
-                                                            <span class="card__status">${distance}m</span>
-                                                        </div>
-                                                    </div>
-                                                    <p class="card__description">${address}</p>
-                                                </div>
-                                            </a>
-                                        </li>`;
-                            $('#near_card').append(temp_html);
-                        } else {
-
-                            obj[content_id] = {
-                                'title': title,
-                                'address': address,
-                                'file': file,
-                                'distance': distance,
-                                'place_lat': place_lat,
-                                'place_lng': place_lng
-                            }
-
-                            let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place?content=${content_id}" class="card">
-                                                <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
-                                                <div class="card__overlay">
-                                                    <div class="card__header">
-                                                        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-                                                            <path/>
-                                                        </svg>
-                                                        <img class="card__thumb" src="${file}" alt="썸네일"/>
-                                                        <div class="card__header-text">
-                                                            <h3 class="card__title">${title}</h3>
-                                                            <span class="card__status">${distance}m</span>
-                                                        </div>
-                                                    </div>
-                                                    <p class="card__description">${address}</p>
-                                                </div>
-                                            </a>
-                                        </li>`;
-                            $('#near_card').append(temp_html);
-                        }
-                        slide();
-                    }
-                    sessionStorage.setItem('near_object', JSON.stringify(obj));
-                }
-            }
-        )
-    }
-
-    function onGeoError() { //위치 정보 공유 거부 시
-        alert('현재 위치를 찾을 수 없습니다.')
-    }
-
-// 1번째 파라미터: 위치 공유 승인 시, 2번째 파라미터: 위치 공유 거부 시 실행
-    navigator.geolocation.getCurrentPosition(onGeoOK, onGeoError);
-}
-
-
-function slide2() {
-    $(function () {
-        // Uncaught TypeError: Cannot read property 'add' of null” 오류 -> slick을 여러번 불러와서 발생
-        // .not('.slick-initialized')로 하면 오류가 안 난다.
-
-        // $('.slider-li2').slick({
-        $('.slider-li2').not('.slick-initialized').slick({
-            slide: 'li',		//슬라이드 되어야 할 태그 ex) div, li
-            infinite: true, 	//무한 반복 옵션
-            slidesToShow: 3,		// 한 화면에 보여질 컨텐츠 개수
-            slidesToScroll: 1,		//스크롤 한번에 움직일 컨텐츠 개수
-            speed: 100,	 // 다음 버튼 누르고 다음 화면 뜨는데까지 걸리는 시간(ms)
-            dots: true, 		// 스크롤바 아래 점으로 페이지네이션 여부
-            // autoplay: true,			// 자동 스크롤 사용 여부
-            autoplaySpeed: 5000, 		// 자동 스크롤 시 다음으로 넘어가는데 걸리는 시간 (ms)
-            pauseOnHover: true,		// 슬라이드 이동 시 마우스 호버하면 슬라이더 멈추게 설정
-            vertical: false,		// 세로 방향 슬라이드 옵션
-            arrows: true, 		// 옆으로 이동하는 화살표 표시 여부
-            prevArrow: $('#btn_prev2'),		// 이전 화살표 모양 설정
-            nextArrow: $('#btn_next2'),		// 다음 화살표 모양 설정
-            dotsClass: "slick-dots", 	//아래 나오는 페이지네이션(점) css class 지정
-            draggable: true, 	//드래그 가능 여부
-
-            responsive: [ // 반응형 웹 구현 옵션
-                {
-                    breakpoint: 1500, //화면 사이즈 1500px 보다 작을 시
-                    settings: {
-                        //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
-                        slidesToShow: 2
-                    }
-                },
-                {
-                    breakpoint: 800, //화면 사이즈 800px 보다 작을 시
-                    settings: {
-                        //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
-                        slidesToShow: 1
-                    }
-                }
-            ]
-
-        });
-    })
-}
-
-function showTrips() {
+function sign_in() {
+    let id = $("#input-username").val()
+    let pw = $("#input-password").val()
     $.ajax({
-        type: "GET",
-        url: "/trips",
-        data: {},
+        type: "POST",
+        url: "/sign_in",
+        data: {
+            username_give: id,
+            password_give: pw
+        },
         success: function (response) {
-            let trip_list = response['all_trips'];
+            if (response['result'] == 'success') {
+                $.cookie('mytoken', response['token'], {path: '/'});
 
-            //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
-            let obj = {};
-
-            for (let i = 0; i < trip_list.length; i++) {
-                let trip_id = trip_list[i]['id'];
-                let trip_title = trip_list[i]['title'];
-                let trip_place = trip_list[i]['place'];
-                let trip_file = trip_list[i]['file'];
-                let trip_date = trip_list[i]['date'];
-                let trip_like = trip_list[i]['like'];
-                let trip_review = trip_list[i]['review'];
-
-                obj[trip_id] = {
-                    'title': trip_title,
-                    'place': trip_place,
-                    'file': `../static/img/${trip_file}`,
-                    'review': trip_review,
-                    'date': trip_date
-                }
-
-                let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                        <a href="/trips/place?content=${trip_id}" class="card">
-                                            <img src="../static/img/${trip_file}" class="card__image" alt="사용자가 올린 여행지 사진"/>
-                                            <div class="card__overlay">
-                                                <div class="card__header">
-                                                    <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-                                                        <path/>
-                                                    </svg>
-                                                    <img class="card__thumb" src="../static/img/${trip_file}" alt="썸네일"/>
-                                                    <div class="card__header-text">
-                                                        <h3 class="card__title">${trip_title}</h3>
-                                                        <i onclick="like_place(${trip_id})" class="far fa-thumbs-up">${trip_like}</i>
-                                                        <span class="card__status">${trip_date}</span>
-                                                        <span onclick="updateTrip(${trip_id})">수정</span>
-                                                        <span onclick="delTrip(${trip_id})">삭제</span>
-                                                    </div>
-                                                </div>
-                                                <p class="card__description">${trip_place}</p>
-                                            </div>
-                                        </a>
-                                    </li>`
-                $('#trip_card').append(temp_html);
-                slide2();
+                alert('로그인 완료!')
+                window.location.href = '/main'
+            } else {
+                // 로그인이 안되면 에러메시지를 띄웁니다.
+                alert(response['msg'])
             }
-            sessionStorage.setItem('trips_object', JSON.stringify(obj));
         }
     })
 }
 
-// 좋아요 기능
-function like_place(trip_id) {
+function sign_up() {
+    let username = $("#input-username").val()
+    let password = $("#input-password").val()
+    let password2 = $("#input-password2").val()
+    console.log(username, password, password2)
+
+
+    if ($("#help-id").hasClass("is-danger")) {
+        alert("아이디를 다시 확인해주세요.")
+        return;
+    } else if (!$("#help-id").hasClass("is-success")) {
+        alert("아이디 중복확인을 해주세요.")
+        return;
+    }
+
+    if (password == "") {
+        $("#help-password").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
+        $("#input-password").focus()
+        return;
+    } else if (!is_password(password)) {
+        $("#help-password").text("비밀번호의 형식을 확인해주세요. 영문과 숫자 필수 포함, 특수문자(!@#$%^&*) 사용가능 8-20자").removeClass("is-safe").addClass("is-danger")
+        $("#input-password").focus()
+        return
+    } else {
+        $("#help-password").text("사용할 수 있는 비밀번호입니다.").removeClass("is-danger").addClass("is-success")
+    }
+    if (password2 == "") {
+        $("#help-password2").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
+        $("#input-password2").focus()
+        return;
+    } else if (password2 != password) {
+        $("#help-password2").text("비밀번호가 일치하지 않습니다.").removeClass("is-safe").addClass("is-danger")
+        $("#input-password2").focus()
+        return;
+    } else {
+        $("#help-password2").text("비밀번호가 일치합니다.").removeClass("is-danger").addClass("is-success")
+    }
     $.ajax({
-        type: 'POST',
-        url: '/trips/like',
-        data: {trip_id_give:trip_id},
+        type: "POST",
+        url: "/sign_up/save",
+        data: {
+            username_give: username,
+            password_give: password
+        },
         success: function (response) {
-            alert(response['msg']);
-            window.location.reload()
+            alert("회원가입을 축하드립니다!")
+            window.location.replace("/")
         }
     });
 }
 
-function updateTrip(trip_id) {
-    $.ajax({
-        type: "GET",
-        url: `/trips/update?id=${trip_id}`,
-        data: {},
-        success: function (response) {
-            sessionStorage.setItem('title', response['title']);
-            sessionStorage.setItem('place', response['place']);
-            sessionStorage.setItem('review', response['review']);
-            sessionStorage.setItem('file', response['file']);
+function is_nickname(asValue) {
+    var regExp = /^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{2,10}$/;
+    return regExp.test(asValue);
+}
 
-            window.location.href = `/trips/form?id=${trip_id}`;
+function is_password(asValue) {
+    var regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,20}$/;
+    return regExp.test(asValue);
+}
+
+function check_dup() {
+    let username = $("#input-username").val()
+    console.log(username)
+    if (username == "") {
+        $("#help-id").text("아이디를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
+        $("#input-username").focus()
+        return;
+    }
+    if (!is_nickname(username)) {
+        $("#help-id").text("아이디의 형식을 확인해주세요. 영문과 숫자, 일부 특수문자(._-) 사용 가능. 2-10자 길이").removeClass("is-safe").addClass("is-danger")
+        $("#input-username").focus()
+        return;
+    }
+    $("#help-id").addClass("is-loading")
+    $.ajax({
+        type: "POST",
+        url: "/sign_up/check_dup",
+        data: {
+            username_give: username
+        },
+        success: function (response) {
+
+            if (response["exists"]) {
+                $("#help-id").text("이미 존재하는 아이디입니다.").removeClass("is-safe").addClass("is-danger")
+                $("#input-username").focus()
+            } else {
+                $("#help-id").text("사용할 수 있는 아이디입니다.").removeClass("is-danger").addClass("is-success")
+            }
+            $("#help-id").removeClass("is-loading")
+
         }
     });
 }
 
+function toggle_sign_up() {
+    $("#sign-up-box").toggleClass("is-hidden")
+    $("#div-sign-in-or-up").toggleClass("is-hidden")
+    $("#btn-check-dup").toggleClass("is-hidden")
+    $("#help-id").toggleClass("is-hidden")
+    $("#help-password").toggleClass("is-hidden")
+    $("#help-password2").toggleClass("is-hidden")
+}
 
-// 사용자가 올린 여행지 리뷰 삭제
-function delTrip(trip_id) {
+function is_nickname(asValue) {
+    var regExp = /^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{8,14}$/;
+    return regExp.test(asValue);
+}
+
+function is_password(asValue) {
+    var regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,20}$/;
+    return regExp.test(asValue);
+}
+
+function check_dup() {
+    let username = $("#input-username").val()
+    console.log(username)
+    if (username == "") {
+        $("#help-id").text("아이디를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
+        $("#input-username").focus()
+        return;
+    }
+    if (!is_nickname(username)) {
+        $("#help-id").text("아이디의 형식을 확인해주세요. 영문과 숫자, 일부 특수문자(._-) 사용 가능. 2-10자 길이").removeClass("is-safe").addClass("is-danger")
+        $("#input-username").focus()
+        return;
+    }
+    $("#help-id").addClass("is-loading")
     $.ajax({
-        type: "DELETE",
-        url: "/trips",
-        data: {trip_id_give: trip_id},
+        type: "POST",
+        url: "/sign_up/check_dup",
+        data: {
+            username_give: username
+        },
         success: function (response) {
-            alert(response['msg'])
-            window.location.reload();
+
+            if (response["exists"]) {
+                $("#help-id").text("이미 존재하는 아이디입니다.").removeClass("is-safe").addClass("is-danger")
+                $("#input-username").focus()
+            } else {
+                $("#help-id").text("사용할 수 있는 아이디입니다.").removeClass("is-danger").addClass("is-success")
+            }
+            $("#help-id").removeClass("is-loading")
         }
     });
 }
