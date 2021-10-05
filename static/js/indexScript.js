@@ -213,6 +213,7 @@ function showTrips() {
                 let trip_place = trip_list[i]['place'];
                 let trip_file = trip_list[i]['file'];
                 let trip_date = trip_list[i]['date'];
+                let trip_like = trip_list[i]['like'];
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                         <a href="#" class="card">
@@ -224,7 +225,8 @@ function showTrips() {
                                                     </svg>
                                                     <img class="card__thumb" src="../static/img/${trip_file}" alt="썸네일"/>
                                                     <div class="card__header-text">
-                                                        <h3 class="card__title">${trip_title}</h3>
+                                                        <h3 class="card__title">${trip_title} </h3>
+                                                        <i onclick="like_place(${trip_id})" class="far fa-thumbs-up">${trip_like}</i>
                                                         <span class="card__status">${trip_date}</span>
                                                         <span onclick="updateTrip(${trip_id})">수정</span>
                                                         <span onclick="delTrip(${trip_id})">삭제</span>
@@ -234,12 +236,26 @@ function showTrips() {
                                             </div>
                                         </a>
                                     </li>`
-                $('#trip_card').prepend(temp_html);
+                $('#trip_card').append(temp_html);
                 slide2();
             }
         }
     })
 }
+
+// 좋아요 기능
+function like_place(trip_id) {
+    $.ajax({
+        type: 'POST',
+        url: '/trips/like',
+        data: {trip_id_give:trip_id},
+        success: function (response) {
+            alert(response['msg']);
+            window.location.reload()
+        }
+    });
+}
+
 
 function updateTrip(trip_id) {
     $.ajax({
