@@ -217,7 +217,8 @@ function showTrips() {
                     'place': trip_place,
                     'file': `../static/img/${trip_file}`,
                     'review': trip_review,
-                    'date': trip_date
+                    'date': trip_date,
+                    'like': trip_like
                 }
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
@@ -231,10 +232,8 @@ function showTrips() {
                                                     <img class="card__thumb" src="../static/img/${trip_file}" alt="썸네일"/>
                                                     <div class="card__header-text">
                                                         <h3 class="card__title">${trip_title}</h3>
-                                                        <i onclick="like_place(${trip_id})" class="far fa-thumbs-up">${trip_like}</i>
+                                                        <i class="far fa-thumbs-up">${trip_like}</i>
                                                         <span class="card__status">${trip_date}</span>
-                                                        <span onclick="updateTrip(${trip_id})">수정</span>
-                                                        <span onclick="delTrip(${trip_id})">삭제</span>
                                                     </div>
                                                 </div>
                                                 <p class="card__description">${trip_place}</p>
@@ -247,47 +246,4 @@ function showTrips() {
             sessionStorage.setItem('trips_object', JSON.stringify(obj));
         }
     })
-}
-
-// 좋아요 기능
-function like_place(trip_id) {
-    $.ajax({
-        type: 'POST',
-        url: '/trips/like',
-        data: {trip_id_give:trip_id},
-        success: function (response) {
-            alert(response['msg']);
-            window.location.reload()
-        }
-    });
-}
-
-function updateTrip(trip_id) {
-    $.ajax({
-        type: "GET",
-        url: `/trips/update?id=${trip_id}`,
-        data: {},
-        success: function (response) {
-            sessionStorage.setItem('title', response['title']);
-            sessionStorage.setItem('place', response['place']);
-            sessionStorage.setItem('review', response['review']);
-            sessionStorage.setItem('file', response['file']);
-
-            window.location.href = `/trips/form?id=${trip_id}`;
-        }
-    });
-}
-
-
-// 사용자가 올린 여행지 리뷰 삭제
-function delTrip(trip_id) {
-    $.ajax({
-        type: "DELETE",
-        url: "/trips",
-        data: {trip_id_give: trip_id},
-        success: function (response) {
-            alert(response['msg'])
-            window.location.reload();
-        }
-    });
 }
