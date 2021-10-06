@@ -177,7 +177,7 @@ p, ul, ol, dl, table {
 
 /* Container */
 
-.container {
+.custom-container {
     margin: 0 auto;
     max-width: 100%;
     width: 70em;
@@ -185,7 +185,7 @@ p, ul, ol, dl, table {
 
 @media screen and (max-width: 1680px) {
 
-    .container {
+    .custom-container {
         width: 70em;
     }
 
@@ -193,7 +193,7 @@ p, ul, ol, dl, table {
 
 @media screen and (max-width: 1280px) {
 
-    .container {
+    .custom-container {
         width: calc(100% - 60px);
     }
 
@@ -201,7 +201,7 @@ p, ul, ol, dl, table {
 
 @media screen and (max-width: 980px) {
 
-    .container {
+    .custom-container {
         width: calc(100% - 80px);
     }
 
@@ -209,7 +209,7 @@ p, ul, ol, dl, table {
 
 @media screen and (max-width: 736px) {
 
-    .container {
+    .custom-container {
         width: calc(100% - 40px);
     }
 
