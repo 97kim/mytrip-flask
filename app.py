@@ -197,7 +197,7 @@ def show_trips():
 def like_place():
     trip_id_receive = request.form['trip_id_give']
 
-    target_id = db.trips.find_one({'id': int(trip_id_receive)})
+    target_id = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
 
     current_like = target_id['like']
     new_like = current_like + 1
@@ -211,9 +211,9 @@ def like_place():
 def get_like():
     trip_id_receive = request.args.get('id')
 
-    like = db.trips.find_one({'id': int(trip_id_receive)})['like']
+    like = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
 
-    return jsonify({'like': like})
+    return jsonify({'like': like['like']})
 
 
 @app.route('/trips/<trip_id>', methods=['POST'])

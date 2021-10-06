@@ -81,11 +81,11 @@
                     <article class="box post">
                         <a href="#" class="image featured"><img id="file" alt=""/></a>
                         <header>
-                            <a href="" onclick="delTrip(getId())" style="float: right;">삭제</a>
-                            <span style="float: right;">&nbsp; | &nbsp; </span>
-                            <a href="" id="update" onclick="updateTrip(getId());" style="float: right;">수정</a>
-                            <span style="float: right;">&nbsp; | &nbsp; </span>
-                            <a href="" style="float: right;">목록</a>
+                            <button class="btn btn-danger btn-sm" onclick="delTrip(getId())" style="float: right;">삭제</button>
+                            <span style="float: right;">&nbsp;</span>
+                            <button class="btn btn-danger btn-sm" id="update" onclick="updateTrip(getId());" style="float: right;">수정</button>
+                            <span style="float: right;">&nbsp;</span>
+                            <button class="btn btn-danger btn-sm" style="float: right;">목록</button>
                             <h2 id="title"></h2>
                             <p id="date"></p>
                         </header>
@@ -95,7 +95,7 @@
                             <h3>내용</h3>
                             <p id="review"></p>
                         </section>
-                        <a href="" class="button alt" onclick="like_place(getId())">좋아요</a>
+                        <button class="btn btn-primary" onclick="like_place(getId())">좋아요</button>
                         <i class="far fa-thumbs-up" style="margin-left: 10px;"></i> &nbsp;<span id="like"></span>
                     </article>
 
@@ -110,7 +110,7 @@
                         <textarea style="width: 100%;"></textarea>
 
                         <footer>
-                            <a href="#" class="button alt">댓글 달기</a>
+                            <button class="btn btn-primary">댓글 달기</button>
                         </footer>
                     </section>
 
