@@ -133,6 +133,16 @@ def get_trips_detail():
     return render_template('tripsDetail.html')
 
 
+@app.route('/trips/place', methods=['POST'])
+def trips_detail():
+    trip_id_receive = request.form['trip_id_give']
+
+    trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+
+    return jsonify({'title': trip['title'], 'place': trip['place'], 'review': trip['review'], 'file': trip['file'],
+                    'date': trip['date'], 'like': trip['like']})
+
+
 @app.route('/trips/form', methods=['GET'])
 def write():
     trip_id = request.args.get('id')

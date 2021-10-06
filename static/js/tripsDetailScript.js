@@ -7,11 +7,19 @@ function getId() {
 }
 
 function getItem() {
-    $('#title').text(JSON.parse(sessionStorage.getItem('trips_object'))[getId()]['title']);
-    $('#file').attr('src', JSON.parse(sessionStorage.getItem('trips_object'))[getId()]['file']);
-    $('#place').text(JSON.parse(sessionStorage.getItem('trips_object'))[getId()]['place']);
-    $('#review').text(JSON.parse(sessionStorage.getItem('trips_object'))[getId()]['review']);
-    $('#date').text(JSON.parse(sessionStorage.getItem('trips_object'))[getId()]['date']);
+    $.ajax({
+        type: "POST",
+        url: `/trips/place`,
+        data: {trip_id_give: getId()},
+        success: function (response) {
+            $('#title').text(response['title']);
+            $('#file').attr('src', `../static/img/${response['file']}`);
+            $('#place').text(response['place']);
+            $('#review').text(response['review']);
+            $('#date').text(response['date']);
+            $('#like').text(response['like']);
+        }
+    });
 }
 
 function updateTrip(trip_id) {
@@ -52,17 +60,6 @@ function like_place(trip_id) {
         success: function (response) {
             alert(response['msg']);
             window.location.reload();
-        }
-    });
-}
-
-function getLike() {
-    $.ajax({
-        type: 'GET',
-        url: `/trips/like?id=${getId()}`,
-        data: {},
-        success: function (response) {
-            $('#like').text(response['like']);
         }
     });
 }
