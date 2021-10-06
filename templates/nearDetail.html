@@ -7,10 +7,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <!--https 사이트에서 http 사이트 요청 시 발생하는 보안 문제 해결-->
-        <!--우리 사이트는 https 이고 요청을 보내는 한국관광공사 api 사이트는 http 라서 발생했던 문제 해결-->
-        <!-- localhost 에서는 아래 meta 태그 활성화하면 지도가 안 보임-->
-        <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
+    <!--https 사이트에서 http 사이트 요청 시 발생하는 보안 문제 해결-->
+    <!--우리 사이트는 https 이고 요청을 보내는 한국관광공사 api 사이트는 http 라서 발생했던 문제 해결-->
+    <!-- localhost 에서는 아래 meta 태그 활성화하면 지도가 안 보임-->
+    <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
 
     <!--메타태그 설정-->
     <meta property="og:title" content="여행어때"/>
@@ -73,8 +73,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link" href="#">Trips</a>
-                <a class="nav-link" href="#">Example</a>
+                <a class="nav-link" href="/near/list">Near</a>
+                <a class="nav-link" href="/trips/list">Trips</a>
             </div>
         </div>
     </div>
@@ -82,7 +82,7 @@
 
 <div id="page-wrapper">
     <section id="main">
-        <div class="container">
+        <div class="custom-container">
             <div class="row">
                 <div class="col-8 col-12-medium">
 
@@ -93,43 +93,10 @@
                             <h2 id="title"></h2>
                             <p id="address"></p>
                         </header>
-                        <p>
-                            Praesent a dolor leo. Duis in felis in tortor lobortis volutpat et pretium tellus.
-                            Vestibulum ac ante nisl,
-                            a elementum odio. Duis semper risus et lectus commodo fringilla. Maecenas sagittis
-                            convallis
-                            justo vel mattis.
-                            placerat, nunc diam iaculis massa, et aliquet nibh leo non nisl vitae porta
-                            lobortis,
-                            enim
-                            neque fringilla nunc,
-                            eget faucibus lacus sem quis nunc suspendisse nec lectus sit amet augue rutrum
-                            vulputate
-                            ut
-                            ut mi. Aenean
-                            elementum, mi sit amet porttitor lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit.
-                            Lorem ipsum dolor
-                            sit amet nullam consequat feugiat dolore tempus.
-                        </p>
                         <section>
                             <header>
                                 <h3 id="distance"></h3>
                             </header>
-                            <p>
-                                Elementum odio duis semper risus et lectus commodo fringilla. Maecenas sagittis
-                                convallis justo vel mattis.
-                                placerat, nunc diam iaculis massa, et aliquet nibh leo non nisl vitae porta
-                                lobortis,
-                                enim neque fringilla nunc,
-                                eget faucibus lacus sem quis nunc suspendisse nec lectus sit amet augue rutrum
-                                vulputate
-                                ut ut mi. Aenean
-                                elementum, mi sit amet porttitor lorem ipsum dolor sit amet, consectetur
-                                adipiscing
-                                elit. Lorem ipsum dolor
-                                sit amet nullam consequat feugiat dolore tempus.
-                            </p>
                         </section>
                     </article>
 
@@ -172,7 +139,7 @@
 
 <!-- Site footer -->
 <footer class="site-footer">
-    <div class="container">
+    <div class="custom-container">
         <div class="row">
             <div class="col-sm-12 col-md-6">
                 <h6>About</h6>
@@ -220,7 +187,7 @@
         </div>
         <hr>
     </div>
-    <div class="container">
+    <div class="custom-container">
         <div class="row">
             <div class="col-md-8 col-sm-6 col-xs-12">
                 <p class="copyright-text">Copyright &copy; 2021 All Rights Reserved by

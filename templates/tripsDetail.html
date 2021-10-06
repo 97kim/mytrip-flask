@@ -63,8 +63,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link" href="#">Trips</a>
-                <a class="nav-link" href="#">Example</a>
+                <a class="nav-link" href="/near/list">Near</a>
+                <a class="nav-link" href="/trips/list">Trips</a>
             </div>
         </div>
     </div>
@@ -72,7 +72,7 @@
 
 <div id="page-wrapper">
     <section id="main">
-        <div class="container">
+        <div class="custom-container">
             <div class="row">
                 <div class="col-8 col-12-medium">
 
@@ -84,7 +84,7 @@
                             <span style="float: right;">&nbsp;</span>
                             <button class="btn btn-danger btn-sm" id="update" onclick="updateTrip(getId());" style="float: right;">수정</button>
                             <span style="float: right;">&nbsp;</span>
-                            <button class="btn btn-danger btn-sm" style="float: right;">목록</button>
+                            <button class="btn btn-danger btn-sm" onclick="window.location.href='/trips/list'" style="float: right;">목록</button>
                             <h2 id="title"></h2>
                             <p id="date"></p>
                         </header>
@@ -121,7 +121,7 @@
 
 <!-- Site footer -->
 <footer class="site-footer">
-    <div class="container">
+    <div class="custom-container">
         <div class="row">
             <div class="col-sm-12 col-md-6">
                 <h6>About</h6>
@@ -169,7 +169,7 @@
         </div>
         <hr>
     </div>
-    <div class="container">
+    <div class="custom-container">
         <div class="row">
             <div class="col-md-8 col-sm-6 col-xs-12">
                 <p class="copyright-text">Copyright &copy; 2021 All Rights Reserved by
