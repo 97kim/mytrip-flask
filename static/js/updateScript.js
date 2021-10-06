@@ -9,8 +9,6 @@ function update() {
     let review = $('#review').val();
     let file = $('#file')[0].files[0];
 
-    let obj = {};
-
     let form_data = new FormData();
 
     form_data.append("file_give", file);
@@ -27,7 +25,7 @@ function update() {
         processData: false,
         success: function (response) {
             alert(response["msg"])
-            window.location.href = `/trips/place?content=${trip_id}`;
+            window.location.href = '/main';
         }
     });
 }

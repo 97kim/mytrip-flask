@@ -51,6 +51,7 @@ function like_place(trip_id) {
         data: {trip_id_give: trip_id},
         success: function (response) {
             alert(response['msg']);
+            window.location.reload();
         }
     });
 }
