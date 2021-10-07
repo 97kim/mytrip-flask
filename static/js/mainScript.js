@@ -11,7 +11,7 @@ function slide() {
             slidesToShow: 3,		// 한 화면에 보여질 컨텐츠 개수
             slidesToScroll: 1,		//스크롤 한번에 움직일 컨텐츠 개수
             speed: 100,	 // 다음 버튼 누르고 다음 화면 뜨는데까지 걸리는 시간(ms)
-            dots: true, 		// 스크롤바 아래 점으로 페이지네이션 여부
+            dots: false, 		// 스크롤바 아래 점으로 페이지네이션 여부
             autoplay: true,			// 자동 스크롤 사용 여부
             autoplaySpeed: 5000, 		// 자동 스크롤 시 다음으로 넘어가는데 걸리는 시간 (ms)
             pauseOnHover: true,		// 슬라이드 이동 시 마우스 호버하면 슬라이더 멈추게 설정
@@ -19,7 +19,6 @@ function slide() {
             arrows: true, 		// 옆으로 이동하는 화살표 표시 여부
             prevArrow: $('#btn_prev'),		// 이전 화살표 모양 설정
             nextArrow: $('#btn_next'),		// 다음 화살표 모양 설정
-            dotsClass: "slick-dots", 	//아래 나오는 페이지네이션(점) css class 지정
             draggable: true, 	//드래그 가능 여부
 
             responsive: [ // 반응형 웹 구현 옵션
@@ -160,7 +159,7 @@ function slide2() {
             slidesToShow: 3,		// 한 화면에 보여질 컨텐츠 개수
             slidesToScroll: 1,		//스크롤 한번에 움직일 컨텐츠 개수
             speed: 100,	 // 다음 버튼 누르고 다음 화면 뜨는데까지 걸리는 시간(ms)
-            dots: true, 		// 스크롤바 아래 점으로 페이지네이션 여부
+            dots: false, 		// 스크롤바 아래 점으로 페이지네이션 여부
             // autoplay: true,			// 자동 스크롤 사용 여부
             autoplaySpeed: 5000, 		// 자동 스크롤 시 다음으로 넘어가는데 걸리는 시간 (ms)
             pauseOnHover: true,		// 슬라이드 이동 시 마우스 호버하면 슬라이더 멈추게 설정
@@ -168,7 +167,6 @@ function slide2() {
             arrows: true, 		// 옆으로 이동하는 화살표 표시 여부
             prevArrow: $('#btn_prev2'),		// 이전 화살표 모양 설정
             nextArrow: $('#btn_next2'),		// 다음 화살표 모양 설정
-            dotsClass: "slick-dots", 	//아래 나오는 페이지네이션(점) css class 지정
             draggable: true, 	//드래그 가능 여부
 
             responsive: [ // 반응형 웹 구현 옵션
@@ -200,9 +198,6 @@ function showTrips() {
         success: function (response) {
             let trip_list = response['all_trips'];
 
-            //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
-            let obj = {};
-
             for (let i = 0; i < trip_list.length; i++) {
                 let trip_id = trip_list[i]['id'];
                 let trip_title = trip_list[i]['title'];
@@ -210,16 +205,6 @@ function showTrips() {
                 let trip_file = trip_list[i]['file'];
                 let trip_date = trip_list[i]['date'];
                 let trip_like = trip_list[i]['like'];
-                let trip_review = trip_list[i]['review'];
-
-                obj[trip_id] = {
-                    'title': trip_title,
-                    'place': trip_place,
-                    'file': `../static/img/${trip_file}`,
-                    'review': trip_review,
-                    'date': trip_date,
-                    'like': trip_like
-                }
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                         <a href="/trips/place?content=${trip_id}" class="card">
@@ -229,7 +214,7 @@ function showTrips() {
                                                     <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
                                                         <path/>
                                                     </svg>
-                                                    <img class="card__thumb" src="../static/img/${trip_file}" alt="썸네일"/>
+                                                    <img class="card__thumb" src="https://i.imgur.com/sjLMNDM.png" alt="프로필 사진"/>
                                                     <div class="card__header-text">
                                                         <h3 class="card__title">${trip_title}</h3>
                                                         <i class="far fa-thumbs-up">${trip_like}</i>
@@ -243,7 +228,6 @@ function showTrips() {
                 $('#trip_card').append(temp_html);
                 slide2();
             }
-            sessionStorage.setItem('trips_object', JSON.stringify(obj));
         }
     })
 }

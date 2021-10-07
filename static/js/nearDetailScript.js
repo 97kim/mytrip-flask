@@ -22,11 +22,11 @@ function getMap() {
             Number(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lng'])
         ),
         map: map,
-        icon: "{{ url_for('static', filename='img/marker.png') }}"
+        icon: "../static/img/marker.png"
     });
 
     let infowindow = new naver.maps.InfoWindow({
-        content: `<div style="width: 50px;height: 20px;text-align: center"><h5>안녕!</h5></div>`,
+        content: `<div style="width: 50px;height: 20px;text-align: center"><h5>here!</h5></div>`,
     });
 
     naver.maps.Event.addListener(marker, "click", function () {

@@ -43,13 +43,12 @@
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/nearDetail.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/detail.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/tripsDetailScript.js') }}"></script>
 
     <script>
         $(document).ready(function () {
             getItem(); // 제목, 장소, 사진, 리뷰내용, 날짜 출력
-            getLike(); // 좋아요 수 출력
         });
     </script>
 </head>
@@ -57,15 +56,15 @@
 <body style="background-color: #fef8f8;">
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/" style="color: #073A96">여행어때</a>
+        <a class="navbar-brand" href="/main" style="color: #073A96">여행어때</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link" href="#">Trips</a>
-                <a class="nav-link" href="#">Example</a>
+                <a class="nav-link" href="/near/list">Near</a>
+                <a class="nav-link" href="/trips/list">Trips</a>
             </div>
         </div>
     </div>
@@ -73,29 +72,30 @@
 
 <div id="page-wrapper">
     <section id="main">
-        <div class="container">
+        <div class="custom-container">
             <div class="row">
                 <div class="col-8 col-12-medium">
 
                     <!-- Content -->
                     <article class="box post">
                         <a href="#" class="image featured"><img id="file" alt=""/></a>
-                        <header>
-                            <button class="btn btn-danger btn-sm" onclick="delTrip(getId())" style="float: right;">삭제</button>
-                            <span style="float: right;">&nbsp;</span>
-                            <button class="btn btn-danger btn-sm" id="update" onclick="updateTrip(getId());" style="float: right;">수정</button>
-                            <span style="float: right;">&nbsp;</span>
-                            <button class="btn btn-danger btn-sm" style="float: right;">목록</button>
-                            <h2 id="title"></h2>
-                            <p id="date"></p>
+                        <header class="d-flex align-items-center mb-4">
+                            <h2 id="title" class="me-auto"></h2>
+                            <button class="btn btn-dark btn-sm m-1 " onclick="window.location.href='/trips/list'">목록
+                            </button>
+                            <button class="btn btn-dark btn-sm m-1" id="update" onclick="updateTrip(getId());">수정
+                            </button>
+                            <button class="btn btn-dark btn-sm m-1" onclick="delTrip(getId())">삭제
+                            </button>
                         </header>
+                        <p id="date"></p>
                         <h3>장소</h3>
                         <p id="place"></p>
                         <section>
                             <h3>내용</h3>
                             <p id="review"></p>
                         </section>
-                        <button class="btn btn-primary" onclick="like_place(getId())">좋아요</button>
+                        <a href="javascript:like_place(getId())" class="button alt">좋아요</a>
                         <i class="far fa-thumbs-up" style="margin-left: 10px;"></i> &nbsp;<span id="like"></span>
                     </article>
 
@@ -110,7 +110,7 @@
                         <textarea style="width: 100%;"></textarea>
 
                         <footer>
-                            <button class="btn btn-primary">댓글 달기</button>
+                            <a href="#" class="button alt">댓글달기</a>
                         </footer>
                     </section>
 
@@ -122,7 +122,7 @@
 
 <!-- Site footer -->
 <footer class="site-footer">
-    <div class="container">
+    <div class="custom-container">
         <div class="row">
             <div class="col-sm-12 col-md-6">
                 <h6>About</h6>
@@ -170,7 +170,7 @@
         </div>
         <hr>
     </div>
-    <div class="container">
+    <div class="custom-container">
         <div class="row">
             <div class="col-md-8 col-sm-6 col-xs-12">
                 <p class="copyright-text">Copyright &copy; 2021 All Rights Reserved by
