@@ -123,14 +123,70 @@ def get_near_place():
     return jsonify({'near_list': near_list})
 
 
+@app.route('/near/list', methods=['POST'])
+def get_near_type():
+    lat_receive = request.form['lat_give']
+    lng_receive = request.form['lng_give']
+    type_receive = request.form['type_give']
+
+    if type_receive == 'trip':
+        type_code = 12
+    elif type_receive == 'food':
+        type_code = 39
+    elif type_receive == 'accommodation':
+        type_code = 32
+    else:
+        type_code = 15
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+
+    url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId={type_code}&mapX={lng_receive}&mapY={lat_receive}' \
+          '&radius=5000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=40&pageNo=1'
+
+    r = requests.get(url, headers=headers)
+
+    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    near_list = json_body['response']['body']['items']['item']
+
+    return jsonify({'near_list': near_list})
+
+
 @app.route('/near/place', methods=['GET'])
 def get_near_detail():
     return render_template('nearDetail.html')
 
 
+@app.route('/near/list', methods=['GET'])
+def get_near_list():
+    return render_template('nearList.html')
+
+
 @app.route('/trips/place', methods=['GET'])
 def get_trips_detail():
     return render_template('tripsDetail.html')
+
+
+@app.route('/trips/place', methods=['POST'])
+def trips_detail():
+    trip_id_receive = request.form['trip_id_give']
+
+    trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+
+    trip['date'] = trip['date'].strftime('%Y.%m.%d')
+
+    return jsonify({'title': trip['title'], 'place': trip['place'], 'review': trip['review'], 'file': trip['file'],
+                    'date': trip['date'], 'like': trip['like']})
+
+
+@app.route('/trips/list', methods=['GET'])
+def get_trips_list():
+    return render_template('tripsList.html')
 
 
 @app.route('/trips/form', methods=['GET'])
@@ -164,7 +220,6 @@ def write_trip():
 
     today = datetime.now()
     time = today.strftime('%Y-%m-%d-%H-%M-%S')
-    date = today.strftime('%Y.%m.%d')
 
     filename = f'file-{time}'
     extension = trip_file.filename.split('.')[-1]
@@ -178,7 +233,7 @@ def write_trip():
         'place': trip_place_receive,
         'review': trip_review_receive,
         'file': f'{filename}.{extension}',
-        'date': date,
+        'date': today,
         'like': 0
     }
 
@@ -186,9 +241,18 @@ def write_trip():
     return jsonify({'msg': '작성 완료!'})
 
 
+# 정렬
 @app.route('/trips', methods=['GET'])
 def show_trips():
-    all_trips = list(db.trips.find({}, {'_id': False}).sort("like", -1))
+    sort_type = request.args.get('sort')
+
+    if sort_type == 'date':
+        all_trips = list(db.trips.find({}, {'_id': False}).sort("date", -1))
+    else:
+        all_trips = list(db.trips.find({}, {'_id': False}).sort("like", -1))
+
+    for trips in all_trips:
+        trips['date'] = trips['date'].strftime('%Y.%m.%d')
 
     return jsonify({'all_trips': all_trips})
 
@@ -225,7 +289,6 @@ def update_trip(trip_id):
 
     today = datetime.now()
     time = today.strftime('%Y-%m-%d-%H-%M-%S')
-    date = today.strftime('%Y.%m.%d')
 
     filename = f'file-{time}'
     extension = trip_file_receive.filename.split('.')[-1]
@@ -236,7 +299,7 @@ def update_trip(trip_id):
     db.trips.update_one({'id': int(trip_id)}, {
         '$set': {
             'title': trip_title_receive, 'place': trip_place_receive, 'review': trip_review_receive,
-            'file': f'{filename}.{extension}', 'date': date
+            'file': f'{filename}.{extension}', 'date': today
         }
     })
 
