@@ -79,15 +79,16 @@
                     <!-- Content -->
                     <article class="box post">
                         <a href="#" class="image featured"><img id="file" alt=""/></a>
-                        <header>
-                            <button class="btn btn-danger btn-sm" onclick="delTrip(getId())" style="float: right;">삭제</button>
-                            <span style="float: right;">&nbsp;</span>
-                            <button class="btn btn-danger btn-sm" id="update" onclick="updateTrip(getId());" style="float: right;">수정</button>
-                            <span style="float: right;">&nbsp;</span>
-                            <button class="btn btn-danger btn-sm" onclick="window.location.href='/trips/list'" style="float: right;">목록</button>
-                            <h2 id="title"></h2>
-                            <p id="date"></p>
+                        <header class="d-flex align-items-center mb-4">
+                            <h2 id="title" class="me-auto"></h2>
+                            <button class="btn btn-dark btn-sm m-1 " onclick="window.location.href='/trips/list'">목록
+                            </button>
+                            <button class="btn btn-dark btn-sm m-1" id="update" onclick="updateTrip(getId());">수정
+                            </button>
+                            <button class="btn btn-dark btn-sm m-1" onclick="delTrip(getId())">삭제
+                            </button>
                         </header>
+                        <p id="date"></p>
                         <h3>장소</h3>
                         <p id="place"></p>
                         <section>
