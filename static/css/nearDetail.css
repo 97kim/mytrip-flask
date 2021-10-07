@@ -175,6 +175,10 @@ p, ul, ol, dl, table {
     margin-bottom: 2em;
 }
 
+.is-sparta {
+    color: #e8344e !important;
+}
+
 /* Container */
 
 .container {

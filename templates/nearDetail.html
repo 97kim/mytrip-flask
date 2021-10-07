@@ -7,10 +7,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <!--https 사이트에서 http 사이트 요청 시 발생하는 보안 문제 해결-->
-        <!--우리 사이트는 https 이고 요청을 보내는 한국관광공사 api 사이트는 http 라서 발생했던 문제 해결-->
-        <!-- localhost 에서는 아래 meta 태그 활성화하면 지도가 안 보임-->
-        <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
+    <!--https 사이트에서 http 사이트 요청 시 발생하는 보안 문제 해결-->
+    <!--우리 사이트는 https 이고 요청을 보내는 한국관광공사 api 사이트는 http 라서 발생했던 문제 해결-->
+    <!-- localhost 에서는 아래 meta 태그 활성화하면 지도가 안 보임-->
+    <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
 
     <!--메타태그 설정-->
     <meta property="og:title" content="여행어때"/>
@@ -40,6 +40,11 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
           integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
           crossorigin="anonymous">
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
+    <link href="{{ url_for('static', filename='nearDetail.css') }}" rel="stylesheet">
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
@@ -111,13 +116,54 @@
             $('#address').text(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['address']);
             $('#distance').text(`여기에서 ${JSON.parse(sessionStorage.getItem('near_object'))[content_id]['distance']}m 거리`);
         }
+
+        function toggle_bookmark() {
+
+            let get_link = window.location.search;
+            let do_split = get_link.split('=');
+            let content_id = do_split[1];
+
+            console.log(content_id)
+            let $a_like = $(`#${content_id} a[aria-label='heart']`)
+            let $i_like = $a_like.find("i")
+            if ($i_like.hasClass("fa-heart")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/update_like",
+                    data: {
+                        content_id_give: content_id,
+                        action_give: "unlike"
+                    },
+                    success: function (response) {
+                        console.log("unlike")
+                        $i_like.addClass("fa-heart-o").removeClass("fa-heart")
+                        $a_like.find("span.like-num").text(response["count"]) // 이부분 즐겨찾기 db에 넣는걸로 바꿔야 할거 같은데..
+                    }
+                })
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/update_like",
+                    data: {
+                        content_id_give: content_id,
+                        action_give: "like"
+                    },
+                    success: function (response) {
+                        console.log("like")
+                        $i_like.addClass("fa-heart").removeClass("fa-heart-o")
+                        $a_like.find("span.like-num").text(response["count"])
+                    }
+                })
+
+            }
+        }
     </script>
 </head>
 
 <body style="background-color: #fef8f8;">
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/" style="color: #073A96">여행어때</a>
+        <a class="navbar-brand" href="/main" style="color: #073A96">여행어때</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -193,9 +239,21 @@
                             <h3>지도</h3>
                         </header>
                         <div id="map"></div>
-                        <footer>
-                            <a href="#" class="button alt">공유하기</a>
-                        </footer>
+
+                        <div>
+                            <footer class="d-flex align-items-center justify-content-between">
+                                <a href="#" class="button alt">공유하기</a>
+                                <div style="float: right;">
+                                    <a class="level-item is-sparta" aria-label="heart"
+                                       onclick="toggle_bookmark('${content_id}', 'heart')">
+                                    <span class="icon is-small"><i class="fa fa-heart"
+                                                                   aria-hidden="true"></i></span>&nbsp;<span>즐겨찾기</span>
+                                    </a>
+                                </div>
+                            </footer>
+                        </div>
+
+
                     </section>
                     <section class="box">
                         <header>
