@@ -25,7 +25,7 @@ function update() {
         processData: false,
         success: function (response) {
             alert(response["msg"])
-            window.location.href = '/main';
+            window.location.href = `/trips/place?content=${trip_id}`;
         }
     });
 }

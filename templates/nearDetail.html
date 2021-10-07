@@ -48,7 +48,8 @@
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/nearDetail.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/detail.css') }}"/>
+    <script type="text/javascript" src="{{ url_for('static',filename='js/nearDetailScript.js') }}"></script>
     <script type="text/javascript"
             src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=00r1clbpdg"></script>
 
@@ -170,8 +171,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link" href="#">Trips</a>
-                <a class="nav-link" href="#">Example</a>
+                <a class="nav-link" href="/near/list">Near</a>
+                <a class="nav-link" href="/trips/list">Trips</a>
             </div>
         </div>
     </div>
@@ -179,7 +180,7 @@
 
 <div id="page-wrapper">
     <section id="main">
-        <div class="container">
+        <div class="custom-container">
             <div class="row">
                 <div class="col-8 col-12-medium">
 
@@ -190,43 +191,10 @@
                             <h2 id="title"></h2>
                             <p id="address"></p>
                         </header>
-                        <p>
-                            Praesent a dolor leo. Duis in felis in tortor lobortis volutpat et pretium tellus.
-                            Vestibulum ac ante nisl,
-                            a elementum odio. Duis semper risus et lectus commodo fringilla. Maecenas sagittis
-                            convallis
-                            justo vel mattis.
-                            placerat, nunc diam iaculis massa, et aliquet nibh leo non nisl vitae porta
-                            lobortis,
-                            enim
-                            neque fringilla nunc,
-                            eget faucibus lacus sem quis nunc suspendisse nec lectus sit amet augue rutrum
-                            vulputate
-                            ut
-                            ut mi. Aenean
-                            elementum, mi sit amet porttitor lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit.
-                            Lorem ipsum dolor
-                            sit amet nullam consequat feugiat dolore tempus.
-                        </p>
                         <section>
                             <header>
                                 <h3 id="distance"></h3>
                             </header>
-                            <p>
-                                Elementum odio duis semper risus et lectus commodo fringilla. Maecenas sagittis
-                                convallis justo vel mattis.
-                                placerat, nunc diam iaculis massa, et aliquet nibh leo non nisl vitae porta
-                                lobortis,
-                                enim neque fringilla nunc,
-                                eget faucibus lacus sem quis nunc suspendisse nec lectus sit amet augue rutrum
-                                vulputate
-                                ut ut mi. Aenean
-                                elementum, mi sit amet porttitor lorem ipsum dolor sit amet, consectetur
-                                adipiscing
-                                elit. Lorem ipsum dolor
-                                sit amet nullam consequat feugiat dolore tempus.
-                            </p>
                         </section>
                     </article>
 
@@ -281,7 +249,7 @@
 
 <!-- Site footer -->
 <footer class="site-footer">
-    <div class="container">
+    <div class="custom-container">
         <div class="row">
             <div class="col-sm-12 col-md-6">
                 <h6>About</h6>
@@ -304,7 +272,6 @@
                 <ul class="footer-links">
                     <li><a href="https://github.com/97kim">김경중</a></li>
                     <li><a href="https://github.com/Woogys">서태욱</a></li>
-                    <li><a href="https://github.com/shinsiwoo2108">신시우</a></li>
                     <li><a href="https://github.com/hyojin-dev">장효진</a></li>
                 </ul>
                 <br>
@@ -330,7 +297,7 @@
         </div>
         <hr>
     </div>
-    <div class="container">
+    <div class="custom-container">
         <div class="row">
             <div class="col-md-8 col-sm-6 col-xs-12">
                 <p class="copyright-text">Copyright &copy; 2021 All Rights Reserved by

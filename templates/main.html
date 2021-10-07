@@ -64,8 +64,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link" href="#">Trips</a>
-                <a class="nav-link" href="#">Example</a>
+                <a class="nav-link" href="/near/list">Near</a>
+                <a class="nav-link" href="/trips/list">Trips</a>
             </div>
         </div>
     </div>
@@ -74,7 +74,10 @@
 <div class="near-cards">
     <div class="wrap">
         <div class="slide-title">
-            <h6>내 주변 여행지</h6>
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 style="margin-bottom: 0">내 주변 여행지</h6>
+                <a href='/near/list'>더보기</a>
+            </div>
         </div>
         <button type="button" id="btn_prev"><i class="fas fa-chevron-left"></i></button>
         <button type="button" id="btn_next"><i class="fas fa-chevron-right"></i></button>
@@ -94,7 +97,11 @@
 <div class="trip-cards">
     <div class="wrap">
         <div class="slide-title">
-            <h6>여행지 리뷰 <a href='/trips/form'>작성하기</a></h6>
+            <div class="d-flex align-items-center mb-3">
+                <h6 style="margin-bottom: 0">여행지 리뷰</h6>
+                <a class="p-2" href='/trips/form'>작성하기</a>
+                <a class="ms-auto" href='/trips/list'>더보기</a>
+            </div>
         </div>
 
         <button type="button" id="btn_prev2"><i class="fas fa-chevron-left"></i></button>
@@ -128,7 +135,6 @@
                 <ul class="footer-links">
                     <li><a href="https://github.com/97kim">김경중</a></li>
                     <li><a href="https://github.com/Woogys">서태욱</a></li>
-                    <li><a href="https://github.com/shinsiwoo2108">신시우</a></li>
                     <li><a href="https://github.com/hyojin-dev">장효진</a></li>
                 </ul>
                 <br>

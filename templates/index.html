@@ -9,6 +9,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <!--메타태그 설정-->
+    <meta property="og:title" content="여행어때"/>
+    <meta property="og:description" content="위치 기반 서비스로 근처의 여행지를 확인해보세요!"/>
+    <meta property="og:image" content="{{ url_for('static', filename='ogImage.png') }}"/>
+
+    <!--파비콘(주소창 아이콘) 적용-->
+    <link rel="shortcut icon" href="{{ url_for('static',filename='favicon.ico') }}"/>
+
     <!-- Bulma CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
 
@@ -24,7 +32,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <!--외부 static 파일 불러오기-->
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/indexStyle.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/indexScript.js') }}"></script>
 
