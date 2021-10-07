@@ -178,6 +178,8 @@ def trips_detail():
 
     trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
 
+    trip['date'] = trip['date'].strftime('%Y.%m.%d')
+
     return jsonify({'title': trip['title'], 'place': trip['place'], 'review': trip['review'], 'file': trip['file'],
                     'date': trip['date'], 'like': trip['like']})
 
@@ -253,17 +255,6 @@ def show_trips():
         trips['date'] = trips['date'].strftime('%Y.%m.%d')
 
     return jsonify({'all_trips': all_trips})
-
-
-# # 날짜순 정렬
-# @app.route('/trips/sort/date', methods=['GET'])
-# def show_sorted_trips():
-#     all_trips = list(db.trips.find({}, {'_id': False}).sort("date", -1))
-#
-#     for trips in all_trips:
-#         trips['date'] = trips['date'].strftime('%Y.%m.%d')
-#
-#     return jsonify({'all_trips': all_trips})
 
 
 @app.route('/trips/like', methods=['POST'])

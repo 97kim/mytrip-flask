@@ -43,7 +43,7 @@
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/nearDetail.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/detail.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/nearDetailScript.js') }}"></script>
     <script type="text/javascript"
             src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=00r1clbpdg"></script>
@@ -110,7 +110,7 @@
                         </header>
                         <div id="map"></div>
                         <footer>
-                            <button class="btn btn-primary">공유하기</button>
+                            <a href="#" class="button alt">공유하기</a>
                         </footer>
                     </section>
                     <section class="box">
@@ -127,7 +127,7 @@
                             <li><a href="#">Aptent taciti sociosqu ad litora</a></li>
                         </ul>
                         <footer>
-                            <button class="btn btn-primary">Ipsum consequat</button>
+                            <a href="#" class="button alt">Ipsum consequat</a>
                         </footer>
                     </section>
 

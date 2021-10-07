@@ -1618,8 +1618,8 @@ button,
     color: #fff !important;
     font-weight: 700;
     outline: 0;
-    font-size: 1.1em;
-    padding: 0.65em 1.5em 0.65em 1.5em;
+    font-size: 0.9em;
+    padding: 0.3em 1.2em 0.3em 1.2em;
     text-align: center;
     -moz-transition: background-color .25s ease-in-out;
     -webkit-transition: background-color .25s ease-in-out;

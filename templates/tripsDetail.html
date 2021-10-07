@@ -43,7 +43,7 @@
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/nearDetail.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/detail.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/tripsDetailScript.js') }}"></script>
 
     <script>
@@ -94,7 +94,7 @@
                             <h3>내용</h3>
                             <p id="review"></p>
                         </section>
-                        <button class="btn btn-primary" onclick="like_place(getId())">좋아요</button>
+                        <a href="javascript:like_place(getId())" class="button alt">좋아요</a>
                         <i class="far fa-thumbs-up" style="margin-left: 10px;"></i> &nbsp;<span id="like"></span>
                     </article>
 
@@ -109,7 +109,7 @@
                         <textarea style="width: 100%;"></textarea>
 
                         <footer>
-                            <button class="btn btn-primary">댓글 달기</button>
+                            <a href="#" class="button alt">댓글달기</a>
                         </footer>
                     </section>
 
