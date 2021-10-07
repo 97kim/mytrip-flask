@@ -7,7 +7,7 @@ import requests
 import xmltodict
 import json
 from datetime import datetime, timedelta
-# python-dotenv 라이브러리 설치
+# python-dotenv 라이브러리 설치eddk dk dfd
 from dotenv import load_dotenv
 
 app = Flask(__name__)
@@ -160,6 +160,29 @@ def get_near_type():
 @app.route('/near/place', methods=['GET'])
 def get_near_detail():
     return render_template('nearDetail.html')
+
+
+@app.route('/near/bookmark', methods=['POST'])
+def bookmark():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+        user_info = db.users.find_one({"username": payload["id"]})
+        content_id_receive = request.form["content_id_give"]
+        action_receive = request.form["action_give"]
+        doc = {
+            "content_id": content_id_receive,
+            "username": user_info["username"],
+        }
+        if action_receive == "like":
+            db.bookmark.insert_one(doc)
+        else:
+            db.bookmark.delete_one(doc)
+
+        return jsonify({"result": "success", 'msg': 'updated'})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("main"))
 
 
 @app.route('/near/list', methods=['GET'])
