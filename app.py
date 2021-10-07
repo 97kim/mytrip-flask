@@ -31,19 +31,18 @@ def login():
     return render_template('index.html', msg=msg)
 
 
-@app.route('/user/<username>')
-def user(username):
-    # 각 사용자의 프로필과 글을 모아볼 수 있는 공간
-    token_receive = request.cookies.get('mytoken')
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        status = (username == payload["id"])  # 내 프로필이면 True, 다른 사람 프로필 페이지면 False
-
-        user_info = db.users.find_one({"username": username}, {"_id": False})
-        return render_template('user.html', user_info=user_info, status=status)
-    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("home"))
-
+# @app.route('/user/<username>')
+# def user(username):
+#     # 각 사용자의 프로필과 글을 모아볼 수 있는 공간
+#     token_receive = request.cookies.get('mytoken')
+#     try:
+#         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+#         status = (username == payload["id"])  # 내 프로필이면 True, 다른 사람 프로필 페이지면 False
+#
+#         user_info = db.users.find_one({"username": username}, {"_id": False})
+#         return render_template('user.html', user_info=user_info, status=status)
+#     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+#         return redirect(url_for("home"))
 
 @app.route('/sign_in', methods=['POST'])
 def sign_in():
@@ -59,7 +58,7 @@ def sign_in():
             'id': username_receive,
             'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
         }
-        # token 관련 오류 시 .decode('utf-8') 활성화
+        # 로그인 성공 시 token 발급, 해당 부분 오류 발생 시 .decode('utf-8') 활성화
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')  # .decode('utf-8')
 
         return jsonify({'result': 'success', 'token': token})
@@ -94,9 +93,31 @@ def check_dup():
     return jsonify({'result': 'success', 'exists': exists})
 
 
+# def test():
+#     token_receive = request.cookies.get('mytoken')
+#     print(token_receive)
+#     try:
+#         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+#         user_info = db.users.find_one({"username": payload["id"]})
+#         return render_template('main.html', user_info=user_info)
+#     except jwt.ExpiredSignatureError:
+#         return redirect(url_for("login", msg="Your_login_time_has_expired."))
+#     except jwt.exceptions.DecodeError:
+#         return redirect(url_for("login", msg="login_error."))
+
+
 @app.route('/main', methods=['GET'])
 def main():
-    return render_template('main.html')
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('main.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
 
 
 @app.route('/near', methods=['POST'])
@@ -123,23 +144,60 @@ def get_near_place():
     return jsonify({'near_list': near_list})
 
 
+# token check 함수화 예정(10.07hj)
 @app.route('/near/place', methods=['GET'])
 def get_near_detail():
-    return render_template('nearDetail.html')
+    # return render_template('nearDetail.html')
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('nearDetail.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
 
 
+# token check 함수화 예정(10.07hj)
 @app.route('/trips/place', methods=['GET'])
 def get_trips_detail():
-    return render_template('tripsDetail.html')
+    # return render_template('tripsDetail.html')
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('tripsDetail.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
 
 
+# token check 함수화 예정(10.07hj)
 @app.route('/trips/form', methods=['GET'])
 def write():
-    trip_id = request.args.get('id')
-    if trip_id is not None:
-        return render_template('update.html')
+    token_receive = request.cookies.get('mytoken')
 
-    return render_template('write.html')
+    try:
+        trip_id = request.args.get('id')
+        if trip_id is not None:
+            return render_template('update.html')
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('tripsDetail.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
+
+    # trip_id = request.args.get('id')
+    # if trip_id is not None:
+    #     return render_template('update.html')
+    #
+    # return render_template('write.html')
 
 
 @app.route('/trips/update', methods=['GET'])
