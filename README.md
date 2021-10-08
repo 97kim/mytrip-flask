@@ -42,7 +42,7 @@ https://kimkj.shop/
 - <a href="https://openweathermap.org">날씨 API</a>
 - <a href="https://www.ncloud.com/product/applicationService/maps">네이버 지도 API</a>
 - <a href="https://developers.kakao.com/docs/latest/ko/message/js-link#default-template-msg">카카오톡 공유하기 API</a>
-- 
+
 <br>
 
 ### 📌 주요 기능
