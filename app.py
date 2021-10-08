@@ -18,8 +18,8 @@ OPEN_API_KEY = os.getenv('OPEN_API_KEY')
 DB_INFO = os.getenv('DB_INFO')
 DB_PORT = os.getenv('DB_PORT')
 REQUEST_URL = os.getenv('REQUEST_URL')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-SECRET_KEY = 'SPARTA'
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
@@ -30,6 +30,12 @@ def login():
     msg = request.args.get("msg")
     return render_template('index.html', msg=msg)
 
+@app.route('/logout')
+def logout():
+
+
+    return render_template('index.html')
+
 
 @app.route('/sign_in', methods=['POST'])
 def sign_in():
@@ -39,15 +45,16 @@ def sign_in():
 
     pw_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
     result = db.users.find_one({'username': username_receive, 'password': pw_hash})
-
+    print("암호화 : " + pw_hash)
     if result is not None:
         payload = {
             'id': username_receive,
             'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
         }
+        print(payload['exp'])
         # 로그인 성공 시 token 발급, 해당 부분 오류 발생 시 .decode('utf-8') 활성화
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')  # .decode('utf-8')
-
+        print('token' + token)
         return jsonify({'result': 'success', 'token': token})
     # 찾지 못하면
     else:
@@ -59,6 +66,7 @@ def sign_up():
     username_receive = request.form['username_give']
     password_receive = request.form['password_give']
     password_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
+    print("복호화 : " + password_hash)
     doc = {
         "username": username_receive,  # 아이디
         "password": password_hash,  # 비밀번호

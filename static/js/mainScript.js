@@ -1,3 +1,7 @@
+function logout() {
+
+}
+
 // slick 슬라이드
 function slide() {
     $(function () {
