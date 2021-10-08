@@ -71,15 +71,16 @@ function weather() {
             let temp = response['weather_info']['main']['temp'];
             temp = Number(temp).toFixed(1); //소수점 둘째자리에서 반올림해 첫째자리까지 표현
             let location = response['weather_info']['name'];
-            let rain = response['weather_info']['rain']['1h'];
+            if (weather == 'Rain') {
+                let rain = response['weather_info']['rain']['1h'];
+                $('#rain').text(rain + 'mm/h');
+            }
             let wind = response['weather_info']['wind']['speed'];
-
 
             $('#icon').attr('src', `https://openweathermap.org/img/w/${icon}.png`);
             $('#location').text(location);
             $('#weather').text(weather);
             $('#temp').text(temp + '°C');
-            $('#rain').text(rain + 'mm/h');
             $('#wind').text(wind + 'm/s');
         }
     });
