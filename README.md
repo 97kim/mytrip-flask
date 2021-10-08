@@ -30,11 +30,20 @@ https://kimkj.shop/
 <img src="https://img.shields.io/badge/MongoDB-47A248?style=plastic&logo=MongoDB&logoColor=white"/>
 <img src="https://img.shields.io/badge/Bootstrap-7952B3?style=plastic&logo=Bootstrap&logoColor=white"/>
 <img src="https://img.shields.io/badge/CodePen-000000?style=plastic&logo=CodePen&logoColor=white"/>
+<img src="https://img.shields.io/badge/Bulma-00D1B2?style=plastic&logo=CodePen&logoColor=white"/>
 <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=plastic&logo=Amazon%20AWS&logoColor=white"/>
 </p>
   
 - 강의를 보면서 배웠던 기술들이고, 아직 무거운 웹앱을 만드는 것이 아니기 때문에 Flask와 MongoDB가 적합하다고 생각했습니다.
-- css를 하나하나 조정하며 예쁘게 꾸미고 싶지만, 모두 백엔드 개발 희망자이기도 해서 UI는 부트스트랩과 CodePen을 참고했습니다. 
+- css를 하나하나 조정하며 예쁘게 꾸미고 싶지만, 모두 백엔드 개발 희망자이기도 해서 UI는 부트스트랩, CodePen, Bulma를 참고했습니다.
+
+<br>
+
+#### Open API 사용
+- <a href="https://www.data.go.kr/iim/api/selectAPIAcountView.do">한국관광공사 API</a> 
+- <a href="https://openweathermap.org">날씨 API</a>
+- <a href="https://www.ncloud.com/product/applicationService/maps">네이버 지도 API</a>
+- <a href="https://developers.kakao.com/docs/latest/ko/message/js-link#default-template-msg">카카오톡 공유하기 API</a>
 
 <br>
 
@@ -46,11 +55,14 @@ https://kimkj.shop/
 - 내 현재 위치를 기반으로 주변의 여행지를 추천합니다.
 - 해당 여행지의 위치를 지도로 볼 수 있습니다.
 
-내가 가본 여행지 리뷰 글 작성 / 수정 / 삭제 / 좋아요
-- 가본 여행지에 대한 리뷰 글을 작성, 조회, 수정, 삭제할 수 있습니다. 추후 좋아요 기능으로 투표 또한 추가 할 예정입니다.
-
-(추후) 날씨 API를 이용한 여행지 날씨 정보 제공
+날씨 API를 이용한 여행지 날씨 정보 제공
 - 여행을 떠나려는 곳의 날씨 정보를 제공합니다.
+
+내가 가본 여행지 리뷰 글 작성 / 수정 / 삭제
+- 가본 여행지에 대한 리뷰 글을 작성, 조회, 수정, 삭제할 수 있습니다.
+
+좋아요 / 즐겨찾기
+- 좋아요 기능으로 리뷰 글을 추천할 수 있고, 내 주변 여행지를 즐겨찾기로 모아볼 수 있습니다.
 
 <br>
 
@@ -61,3 +73,10 @@ https://kimkj.shop/
 
 ### 📌 WIKI
 <a href="https://github.com/97kim/myTrip/wiki">WIKI로 이동</a>
+
+<br>
+
+### 📌 기타
+한국관광공사 API: 일일 트래픽 1000까지
+<br>
+날씨 API: 분당 트래픽 60까지
