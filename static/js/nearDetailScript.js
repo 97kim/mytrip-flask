@@ -49,3 +49,38 @@ function getItem() {
     $('#address').text(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['address']);
     $('#distance').text(`여기에서 ${JSON.parse(sessionStorage.getItem('near_object'))[content_id]['distance']}m 거리`);
 }
+
+function weather() {
+    let get_link = window.location.search;
+    let do_split = get_link.split('=');
+    let content_id = do_split[1];
+
+    let place_lat = JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lat']
+    let place_lng = JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lng']
+
+    $.ajax({
+        type: "POST",
+        url: '/near/place/weather',
+        data: {
+            place_lat:place_lat,
+            place_lng:place_lng
+        },
+        success: function (response) {
+            let icon = response['weather_info']['weather'][0]['icon'];
+            let weather = response['weather_info']['weather'][0]['main'];
+            let temp = response['weather_info']['main']['temp'];
+            temp = Number(temp).toFixed(1); //소수점 둘째자리에서 반올림해 첫째자리까지 표현
+            let location = response['weather_info']['name'];
+            let rain = response['weather_info']['rain']['1h'];
+            let wind = response['weather_info']['wind']['speed'];
+
+
+            $('#icon').attr('src', `https://openweathermap.org/img/w/${icon}.png`);
+            $('#location').text(location);
+            $('#weather').text(weather);
+            $('#temp').text(temp + '°C');
+            $('#rain').text(rain + 'mm/h');
+            $('#wind').text(wind + 'm/s');
+        }
+    });
+}

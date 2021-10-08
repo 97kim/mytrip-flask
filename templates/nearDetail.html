@@ -47,6 +47,7 @@
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/detail.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/weather.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/nearDetailScript.js') }}"></script>
     <script type="text/javascript"
             src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=00r1clbpdg"></script>
@@ -62,6 +63,7 @@
         $(document).ready(function () {
             getMap();
             getItem();
+            weather();
         });
     </script>
 </head>
@@ -120,15 +122,37 @@
                         <header>
                             <h3>날씨</h3>
                         </header>
-                        <p>Veroeros sed amet blandit consequat veroeros lorem blandit adipiscing et feugiat sed
-                            lorem
-                            consequat feugiat lorem dolore.</p>
-                        <ul class="divided">
-                            <li><a href="#">Sed et blandit consequat sed</a></li>
-                            <li><a href="#">Hendrerit tortor vitae sapien dolore</a></li>
-                            <li><a href="#">Sapien id suscipit magna sed felis</a></li>
-                            <li><a href="#">Aptent taciti sociosqu ad litora</a></li>
-                        </ul>
+                        <div id="weather_wrapper">
+                            <div class="weatherCard row">
+                                <div class="currentTemp col">
+                                    <span id="temp" class="temp"></span>
+                                    <span id="location" class="location">
+                                        <!-- 로딩 css -->
+                                        <div class="pswp__preloader__icn">
+                                            <div class="pswp__preloader__cut">
+                                                <div class="pswp__preloader__donut"></div>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class="currentWeather">
+                                    <div class="part1">
+                                        <img id="icon" class="conditions">
+                                        <span id="weather" class="weather"></span>
+                                    </div>
+                                    <div class="part2">
+                                        <div class="rain">
+                                            <i class="fas fa-tint"></i>
+                                            <div id="rain"></div>
+                                        </div>
+                                        <div class="wind">
+                                            <i class="fas fa-wind"></i>
+                                            <div id="wind"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <footer>
                             <a href="#" class="button alt">Ipsum consequat</a>
                         </footer>
