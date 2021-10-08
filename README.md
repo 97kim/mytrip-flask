@@ -37,6 +37,8 @@ https://kimkj.shop/
 - 강의를 보면서 배웠던 기술들이고, 아직 무거운 웹앱을 만드는 것이 아니기 때문에 Flask와 MongoDB가 적합하다고 생각했습니다.
 - css를 하나하나 조정하며 예쁘게 꾸미고 싶지만, 모두 백엔드 개발 희망자이기도 해서 UI는 부트스트랩, CodePen, Bulma를 참고했습니다.
 
+<br>
+
 #### Open API 사용
 - <a href="https://www.data.go.kr/iim/api/selectAPIAcountView.do">한국관광공사 API</a> 
 - <a href="https://openweathermap.org">날씨 API</a>
