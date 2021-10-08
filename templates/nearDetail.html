@@ -63,47 +63,6 @@
             getMap();
             getItem();
         });
-
-        function toggle_bookmark() {
-
-            let get_link = window.location.search;
-            let do_split = get_link.split('=');
-            let content_id = do_split[1];
-
-            console.log(content_id)
-            let $a_like = $(`#${content_id} a[aria-label='heart']`)
-            let $i_like = $a_like.find("i")
-            if ($i_like.hasClass("fa-heart")) {
-                $.ajax({
-                    type: "POST",
-                    url: "/update_like",
-                    data: {
-                        content_id_give: content_id,
-                        action_give: "unlike"
-                    },
-                    success: function (response) {
-                        console.log("unlike")
-                        $i_like.addClass("fa-heart-o").removeClass("fa-heart")
-                        $a_like.find("span.like-num").text(response["count"]) // 이부분 즐겨찾기 db에 넣는걸로 바꿔야 할거 같은데..
-                    }
-                })
-            } else {
-                $.ajax({
-                    type: "POST",
-                    url: "/update_like",
-                    data: {
-                        content_id_give: content_id,
-                        action_give: "like"
-                    },
-                    success: function (response) {
-                        console.log("like")
-                        $i_like.addClass("fa-heart").removeClass("fa-heart-o")
-                        $a_like.find("span.like-num").text(response["count"])
-                    }
-                })
-
-            }
-        }
     </script>
 </head>
 
