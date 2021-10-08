@@ -42,7 +42,7 @@
           crossorigin="anonymous">
 
     <!-- Bulma CSS -->
-    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">-->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"> -->
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
@@ -62,8 +62,76 @@
         $(document).ready(function () {
             getMap();
             getItem();
+            getPosts();
         });
 
+        function toggle_bookmark(post_id, type) {
+            console.log(post_id, type)
+            let $a_like = $(`#${post_id} a[aria-label='heart']`)
+            let $i_like = $a_like.find("i")
+            if ($i_like.hasClass("fa-heart")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/update_like",
+                    data: {
+                        post_id_give: post_id,
+                        type_give: type,
+                        action_give: "unlike"
+                    },
+                    success: function (response) {
+                        console.log("unlike")
+                        $i_like.addClass("fa-heart-o").removeClass("fa-heart")
+                        $a_like.find("span.like-num").text(response["count"])
+                    }
+                })
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/update_like",
+                    data: {
+                        post_id_give: post_id,
+                        type_give: type,
+                        action_give: "like"
+                    },
+                    success: function (response) {
+                        console.log("like")
+                        $i_like.addClass("fa-heart").removeClass("fa-heart-o")
+                        $a_like.find("span.like-num").text(response["count"])
+                    }
+                })
+
+            }
+        }
+
+        function getPosts() {
+            $("#box post").empty()
+            $.ajax({
+                type: "GET",
+                url: "/get_posts",
+                data: {},
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        let posts = response["posts"]
+                        for (let i = 0; i < posts.length; i++) {
+                            let post = posts[i]
+                            let html_temp = `<article class="box post">
+                                             <a href="#" class="image featured"><img id="file" alt=""/></a>
+                                               <header>
+                                                  <h2 id="title"></h2>
+                                                  <p id="address"></p>
+                                               </header>
+                                               <section>
+                                                 <header>
+                                                 <h3 id="distance"></h3>
+                                                 </header>
+                                               </section>
+                                             </article>`
+                            $("#box post").append(html_temp)
+                        }
+                    }
+                }
+            })
+        }
     </script>
 </head>
 
@@ -117,8 +185,15 @@
                         <div>
                             <footer class="d-flex align-items-center justify-content-between">
                                 <a href="#" class="button alt">공유하기</a>
+                                <div style="float: right;">
+                                    <a class="level-item is-sparta" aria-label="heart" onclick="toggle_bookmark('${post_id]}', 'heart')">
+                                    <span class="icon is-small"><i class="fa fa-heart" aria-hidden="true"></i></span>
+                                        &nbsp;<span class="">즐겨찾기</span>
+                                    </a>
+                                </div>
                             </footer>
                         </div>
+
                     </section>
                     <section class="box">
                         <header>

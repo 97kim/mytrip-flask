@@ -174,12 +174,11 @@ def bookmark():
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-
-        user_info = db.users.find_one({"username": payload["id"]})
-        content_id_receive = request.form["content_id_give"]
+        user_info = db.users.find_one({"username": payload("id")})
+        post_id_receive = request.form["post_id_give"]
         action_receive = request.form["action_give"]
         doc = {
-            "content_id": content_id_receive,
+            "post_id": post_id_receive,
             "username": user_info["username"],
         }
         if action_receive == "like":
