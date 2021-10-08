@@ -19,7 +19,6 @@ DB_INFO = os.getenv('DB_INFO')
 DB_PORT = os.getenv('DB_PORT')
 REQUEST_URL = os.getenv('REQUEST_URL')
 
-SECRET_KEY = 'SPARTA'
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
