@@ -74,6 +74,9 @@ https://kimkj.shop/
 ### 📌 WIKI
 <a href="https://github.com/97kim/myTrip/wiki">WIKI로 이동</a>
 
+<br>
+
 ### 📌 기타
 한국관광공사 API: 일일 트래픽 1000까지
+<br>
 날씨 API: 분당 트래픽 60까지
