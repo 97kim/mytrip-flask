@@ -345,23 +345,28 @@ def update_trip(trip_id):
     trip_title_receive = request.form['title_give']
     trip_place_receive = request.form['place_give']
     trip_review_receive = request.form['review_give']
-    trip_file_receive = request.files['file_give']
 
-    today = datetime.now()
-    time = today.strftime('%Y-%m-%d-%H-%M-%S')
+    new_doc = {
+        'title': trip_title_receive,
+        'place': trip_place_receive,
+        'review': trip_review_receive
+    }
 
-    filename = f'file-{time}'
-    extension = trip_file_receive.filename.split('.')[-1]
+    if 'file_give' in request.files:
+        trip_file_receive = request.files['file_give']
 
-    save_to = f'static/img/{filename}.{extension}'
-    trip_file_receive.save(save_to)
+        today = datetime.now()
+        time = today.strftime('%Y-%m-%d-%H-%M-%S')
 
-    db.trips.update_one({'id': int(trip_id)}, {
-        '$set': {
-            'title': trip_title_receive, 'place': trip_place_receive, 'review': trip_review_receive,
-            'file': f'{filename}.{extension}', 'date': today
-        }
-    })
+        filename = f'file-{time}'
+        extension = trip_file_receive.filename.split('.')[-1]
+
+        save_to = f'static/img/{filename}.{extension}'
+        trip_file_receive.save(save_to)
+
+        new_doc['file'] = f'{filename}.{extension}'
+
+    db.trips.update_one({'id': int(trip_id)}, {'$set': new_doc})
 
     return jsonify({'msg': '수정 완료!'})
 
