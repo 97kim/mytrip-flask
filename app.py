@@ -340,15 +340,6 @@ def like_place():
     return jsonify({'msg': '좋아요 완료!'})
 
 
-@app.route('/trips/like', methods=['GET'])
-def get_like():
-    trip_id_receive = request.args.get('id')
-
-    like = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
-
-    return jsonify({'like': like['like']})
-
-
 @app.route('/trips/<trip_id>', methods=['POST'])
 def update_trip(trip_id):
     trip_title_receive = request.form['title_give']
