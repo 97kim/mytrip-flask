@@ -1,25 +1,38 @@
 function sign_in() {
-    let id = $("#input-username").val()
-    let pw = $("#input-password").val()
+    let username = $("#input-username").val()
+    let password = $("#input-password").val()
+
+    if (username == "") {
+        $("#help-id-login").text("아이디를 입력해주세요.")
+        $("#input-username").focus()
+        return;
+    } else {
+        $("#help-id-login").text("")
+    }
+
+    if (password == "") {
+        $("#help-password-login").text("비밀번호를 입력해주세요.")
+        $("#input-password").focus()
+        return;
+    } else {
+        $("#help-password-login").text("")
+    }
     $.ajax({
         type: "POST",
         url: "/sign_in",
         data: {
-            username_give: id,
-            password_give: pw
+            username_give: username,
+            password_give: password
         },
         success: function (response) {
             if (response['result'] == 'success') {
                 $.cookie('mytoken', response['token'], {path: '/'});
-
-                alert('로그인 완료!')
                 window.location.href = '/main'
             } else {
-                // 로그인이 안되면 에러메시지를 띄웁니다.
                 alert(response['msg'])
             }
         }
-    })
+    });
 }
 
 function sign_up() {
