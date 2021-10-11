@@ -1,3 +1,7 @@
+function logout() {
+
+}
+
 // slick 슬라이드
 function slide() {
     $(function () {
@@ -231,3 +235,10 @@ function showTrips() {
         }
     })
 }
+
+function logout() {
+    $.removeCookie('mytoken', {path: '/'});
+    alert('로그아웃을 완료했습니다.')
+    window.location.href = `/`;
+}
+
