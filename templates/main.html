@@ -29,6 +29,7 @@
 
     <!--jquery cdn-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <!--slick cdn-->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
@@ -51,6 +52,7 @@
             geoInfo(); // 위치 좌표 서버로 보내서 api 데이터 얻어온 뒤 화면에 출력
             showTrips(); // 사용자가 올린 데이터 가져오기
         });
+
     </script>
 </head>
 
@@ -62,13 +64,13 @@
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="p-2" href='/logout'>로그아웃</a>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-link" href="/near/list">Near</a>
                 <a class="nav-link" href="/trips/list">Trips</a>
             </div>
         </div>
+        <button type="button" class="btn btn-primary" onclick=logout()>로그아웃</button>
     </div>
 </nav>
 

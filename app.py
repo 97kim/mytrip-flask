@@ -1,13 +1,13 @@
 import os
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 import jwt, hashlib
 from pymongo import MongoClient
 import requests
 import xmltodict
 import json
 from datetime import datetime, timedelta
-# python-dotenv 라이브러리 설치eddk dk dfd
+# python-dotenv 라이브러리 설치
 from dotenv import load_dotenv
 
 app = Flask(__name__)
@@ -18,8 +18,10 @@ OPEN_API_KEY = os.getenv('OPEN_API_KEY')
 DB_INFO = os.getenv('DB_INFO')
 DB_PORT = os.getenv('DB_PORT')
 REQUEST_URL = os.getenv('REQUEST_URL')
-SECRET_KEY = os.getenv('SECRET_KEY')
 
+WEATHER_URL = os.getenv('WEATHER_URL')
+WEATHER_KEY = os.getenv('WEATHER_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
@@ -30,12 +32,6 @@ def login():
     msg = request.args.get("msg")
     return render_template('index.html', msg=msg)
 
-@app.route('/logout')
-def logout():
-
-
-    return render_template('index.html')
-
 
 @app.route('/sign_in', methods=['POST'])
 def sign_in():
@@ -45,18 +41,18 @@ def sign_in():
 
     pw_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
     result = db.users.find_one({'username': username_receive, 'password': pw_hash})
-    print("암호화 : " + pw_hash)
+
+    # 로그인 활성화 시간
     if result is not None:
         payload = {
             'id': username_receive,
-            'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
+            'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)
         }
         print(payload['exp'])
         # 로그인 성공 시 token 발급, 해당 부분 오류 발생 시 .decode('utf-8') 활성화
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')  # .decode('utf-8')
         print('token' + token)
         return jsonify({'result': 'success', 'token': token})
-    # 찾지 못하면
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
@@ -70,10 +66,6 @@ def sign_up():
     doc = {
         "username": username_receive,  # 아이디
         "password": password_hash,  # 비밀번호
-        "profile_name": username_receive,  # 프로필 이름 기본값은 아이디
-        "profile_pic": "",  # 프로필 사진 파일 이름
-        "profile_pic_real": "profile_pics/profile_placeholder.png",  # 프로필 사진 기본 이미지
-        "profile_info": ""  # 프로필 한 마디
     }
     print(password_receive)
     print(password_hash)
@@ -126,7 +118,6 @@ def get_near_place():
     return jsonify({'near_list': near_list})
 
 
-# token check 함수화 예정(10.07hj)
 @app.route('/near/list', methods=['POST'])
 def get_near_type():
     lat_receive = request.form['lat_give']
@@ -161,7 +152,6 @@ def get_near_type():
     return jsonify({'near_list': near_list})
 
 
-# token check 함수화 예정(10.07hj)
 @app.route('/near/place', methods=['GET'])
 def get_near_detail():
     token_receive = request.cookies.get('mytoken')
@@ -176,28 +166,23 @@ def get_near_detail():
         return redirect(url_for("login", msg="login_error."))
 
 
-# token check 함수화 예정(10.07hj)
-@app.route('/near/bookmark', methods=['POST'])
-def bookmark():
-    token_receive = request.cookies.get('mytoken')
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+@app.route('/near/place/weather', methods=['POST'])
+def get_weather():
+    place_lat = request.form['place_lat']
+    place_lng = request.form['place_lng']
 
-        user_info = db.users.find_one({"username": payload["id"]})
-        content_id_receive = request.form["content_id_give"]
-        action_receive = request.form["action_give"]
-        doc = {
-            "content_id": content_id_receive,
-            "username": user_info["username"],
-        }
-        if action_receive == "like":
-            db.bookmark.insert_one(doc)
-        else:
-            db.bookmark.delete_one(doc)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
 
-        return jsonify({"result": "success", 'msg': 'updated'})
-    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("main"))
+    url = f'{WEATHER_URL}?lat={place_lat}&lon={place_lng}&appid={WEATHER_KEY}&units=metric'
+
+    r = requests.get(url, headers=headers)
+
+    weather_info = json.loads(r.text)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    return jsonify({'weather_info': weather_info})
 
 
 @app.route('/near/list', methods=['GET'])
@@ -240,7 +225,6 @@ def trips_detail():
                     'date': trip['date'], 'like': trip['like']})
 
 
-# token check 함수화 예정(10.07hj)
 @app.route('/trips/list', methods=['GET'])
 def get_trips_list():
     token_receive = request.cookies.get('mytoken')
@@ -353,37 +337,33 @@ def like_place():
     return jsonify({'msg': '좋아요 완료!'})
 
 
-@app.route('/trips/like', methods=['GET'])
-def get_like():
-    trip_id_receive = request.args.get('id')
-
-    like = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
-
-    return jsonify({'like': like['like']})
-
-
 @app.route('/trips/<trip_id>', methods=['POST'])
 def update_trip(trip_id):
     trip_title_receive = request.form['title_give']
     trip_place_receive = request.form['place_give']
     trip_review_receive = request.form['review_give']
-    trip_file_receive = request.files['file_give']
 
-    today = datetime.now()
-    time = today.strftime('%Y-%m-%d-%H-%M-%S')
+    new_doc = {
+        'title': trip_title_receive,
+        'place': trip_place_receive,
+        'review': trip_review_receive
+    }
 
-    filename = f'file-{time}'
-    extension = trip_file_receive.filename.split('.')[-1]
+    if 'file_give' in request.files:
+        trip_file_receive = request.files['file_give']
 
-    save_to = f'static/img/{filename}.{extension}'
-    trip_file_receive.save(save_to)
+        today = datetime.now()
+        time = today.strftime('%Y-%m-%d-%H-%M-%S')
 
-    db.trips.update_one({'id': int(trip_id)}, {
-        '$set': {
-            'title': trip_title_receive, 'place': trip_place_receive, 'review': trip_review_receive,
-            'file': f'{filename}.{extension}', 'date': today
-        }
-    })
+        filename = f'file-{time}'
+        extension = trip_file_receive.filename.split('.')[-1]
+
+        save_to = f'static/img/{filename}.{extension}'
+        trip_file_receive.save(save_to)
+
+        new_doc['file'] = f'{filename}.{extension}'
+
+    db.trips.update_one({'id': int(trip_id)}, {'$set': new_doc})
 
     return jsonify({'msg': '수정 완료!'})
 
