@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 import jwt, hashlib
 from pymongo import MongoClient
 import requests
@@ -41,16 +41,16 @@ def sign_in():
     pw_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
     result = db.users.find_one({'username': username_receive, 'password': pw_hash})
 
+    # 로그인 활성화 시간
     if result is not None:
         payload = {
             'id': username_receive,
-            'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
+            'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)
         }
         # 로그인 성공 시 token 발급, 해당 부분 오류 발생 시 .decode('utf-8') 활성화
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')  # .decode('utf-8')
 
         return jsonify({'result': 'success', 'token': token})
-    # 찾지 못하면
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
@@ -63,10 +63,6 @@ def sign_up():
     doc = {
         "username": username_receive,  # 아이디
         "password": password_hash,  # 비밀번호
-        "profile_name": username_receive,  # 프로필 이름 기본값은 아이디
-        "profile_pic": "",  # 프로필 사진 파일 이름
-        "profile_pic_real": "profile_pics/profile_placeholder.png",  # 프로필 사진 기본 이미지
-        "profile_info": ""  # 프로필 한 마디
     }
     print(password_receive)
     print(password_hash)
@@ -178,8 +174,6 @@ def get_weather():
     }
 
     url = f'{WEATHER_URL}?lat={place_lat}&lon={place_lng}&appid={WEATHER_KEY}&units=metric'
-
-    print(url)
 
     r = requests.get(url, headers=headers)
 
@@ -340,37 +334,33 @@ def like_place():
     return jsonify({'msg': '좋아요 완료!'})
 
 
-@app.route('/trips/like', methods=['GET'])
-def get_like():
-    trip_id_receive = request.args.get('id')
-
-    like = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
-
-    return jsonify({'like': like['like']})
-
-
 @app.route('/trips/<trip_id>', methods=['POST'])
 def update_trip(trip_id):
     trip_title_receive = request.form['title_give']
     trip_place_receive = request.form['place_give']
     trip_review_receive = request.form['review_give']
-    trip_file_receive = request.files['file_give']
 
-    today = datetime.now()
-    time = today.strftime('%Y-%m-%d-%H-%M-%S')
+    new_doc = {
+        'title': trip_title_receive,
+        'place': trip_place_receive,
+        'review': trip_review_receive
+    }
 
-    filename = f'file-{time}'
-    extension = trip_file_receive.filename.split('.')[-1]
+    if 'file_give' in request.files:
+        trip_file_receive = request.files['file_give']
 
-    save_to = f'static/img/{filename}.{extension}'
-    trip_file_receive.save(save_to)
+        today = datetime.now()
+        time = today.strftime('%Y-%m-%d-%H-%M-%S')
 
-    db.trips.update_one({'id': int(trip_id)}, {
-        '$set': {
-            'title': trip_title_receive, 'place': trip_place_receive, 'review': trip_review_receive,
-            'file': f'{filename}.{extension}', 'date': today
-        }
-    })
+        filename = f'file-{time}'
+        extension = trip_file_receive.filename.split('.')[-1]
+
+        save_to = f'static/img/{filename}.{extension}'
+        trip_file_receive.save(save_to)
+
+        new_doc['file'] = f'{filename}.{extension}'
+
+    db.trips.update_one({'id': int(trip_id)}, {'$set': new_doc})
 
     return jsonify({'msg': '수정 완료!'})
 
