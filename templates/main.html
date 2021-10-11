@@ -46,31 +46,46 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/mainStyle.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/loading.css') }}">
     <script type="text/javascript" src="{{ url_for('static',filename='js/mainScript.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='js/logout.js') }}"></script>
 
     <script>
         $(document).ready(function () {
             geoInfo(); // 위치 좌표 서버로 보내서 api 데이터 얻어온 뒤 화면에 출력
             showTrips(); // 사용자가 올린 데이터 가져오기
         });
-
     </script>
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="/main" style="color: #073A96">여행어때</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-link" href="/near/list">Near</a>
-                <a class="nav-link" href="/trips/list">Trips</a>
-            </div>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/near/list">Near</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/trips/list">Trips</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav d-flex">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        Profile
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="#">즐겨찾기</a></li>
+                        <li><a class="dropdown-item" href="javascript:logout()">로그아웃</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-        <button type="button" class="btn btn-primary" onclick=logout()>로그아웃</button>
     </div>
 </nav>
 
