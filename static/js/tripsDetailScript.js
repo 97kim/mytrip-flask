@@ -12,12 +12,14 @@ function getItem() {
         url: `/trips/place`,
         data: {trip_id_give: getId()},
         success: function (response) {
-            $('#title').text(response['title']);
-            $('#file').attr('src', `../static/img/${response['file']}`);
-            $('#place').text(response['place']);
-            $('#review').text(response['review']);
-            $('#date').text(response['date']);
-            $('#like').text(response['like']);
+            $('#profile_img').attr('src', `../static/img/profile/${response['trip']['profile_img']}`);
+            $('#nickname').text(response['trip']['nickname']);
+            $('#title').text(response['trip']['title']);
+            $('#file').attr('src', `../static/img/${response['trip']['file']}`);
+            $('#place').text(response['trip']['place']);
+            $('#review').text(response['trip']['review']);
+            $('#date').text(response['trip']['date']);
+            $('#like').text(response['trip']['like']);
         }
     });
 }
