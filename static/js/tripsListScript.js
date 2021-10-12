@@ -18,7 +18,7 @@ function showListSort(type) {
                 let trip_nickname = trip_list[i]['nickname'];
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                        <a href="/trips/place?content=${trip_id}" class="card">
+                                        <a href="/trips/place/${trip_id}" class="card">
                                             <img src="../static/img/${trip_file}" class="card__image" alt="사용자가 올린 여행지 사진"/>
                                             <div class="card__overlay">
                                                 <div class="card__header">
