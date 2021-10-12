@@ -62,8 +62,8 @@ function weather() {
         type: "POST",
         url: '/near/place/weather',
         data: {
-            place_lat:place_lat,
-            place_lng:place_lng
+            place_lat: place_lat,
+            place_lng: place_lng
         },
         success: function (response) {
             let icon = response['weather_info']['weather'][0]['icon'];
@@ -82,6 +82,64 @@ function weather() {
             $('#weather').text(weather);
             $('#temp').text(temp + '°C');
             $('#wind').text(wind + 'm/s');
+        }
+    });
+}
+
+function getContentId() {
+    let get_link = window.location.search;
+    let do_split = get_link.split('=');
+    let content_id = do_split[1];
+
+    return content_id;
+}
+
+function toggle_bookmark(content_id) {
+
+    if ($('#bookmark').hasClass("fa-heart")) {
+        $.ajax({
+            type: "POST",
+            url: "/bookmark",
+            data: {
+                content_id_give: content_id,
+                action_give: "uncheck"
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    $('#bookmark').removeClass("fa-heart").addClass("fa-heart-o")
+                }
+            }
+        })
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "/bookmark",
+            data: {
+                content_id_give: content_id,
+                action_give: "check"
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    $('#bookmark').removeClass("fa-heart-o").addClass("fa-heart")
+                }
+            }
+        });
+
+    }
+}
+
+function getBookmark() {
+    $.ajax({
+        type: "GET",
+        url: `/near/place/bookmark?content=${getContentId()}`,
+        data: {},
+        success: function (response) {
+            console.log(response['bookmark_status']);
+            if (response['bookmark_status'] == "True") {
+                $('#bookmark').removeClass("fa-heart-o").addClass("fa-heart");
+            } else {
+                $('#bookmark').removeClass("fa-heart").addClass("fa-heart-o")
+            }
         }
     });
 }
