@@ -96,10 +96,12 @@
                             <h2 id="title" class="me-auto"></h2>
                             <button class="btn btn-dark btn-sm m-1 " onclick="window.location.href='/trips/list'">목록
                             </button>
-                            <button class="btn btn-dark btn-sm m-1" id="update" onclick="updateTrip(getId());">수정
-                            </button>
-                            <button class="btn btn-dark btn-sm m-1" onclick="delTrip(getId())">삭제
-                            </button>
+                            {% if status %}
+                                <button class="btn btn-dark btn-sm m-1" id="update" onclick="updateTrip(getId());">수정
+                                </button>
+                                <button class="btn btn-dark btn-sm m-1" onclick="delTrip(getId())">삭제
+                                </button>
+                            {% endif %}
                         </header>
                         <p id="date"></p>
                         <h3>장소</h3>
