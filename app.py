@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for, session
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 import jwt, hashlib
 from pymongo import MongoClient
 import requests
@@ -48,10 +48,8 @@ def sign_in():
             'id': username_receive,
             'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)
         }
-        print(payload['exp'])
         # 로그인 성공 시 token 발급, 해당 부분 오류 발생 시 .decode('utf-8') 활성화
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')  # .decode('utf-8')
-        print('token' + token)
         return jsonify({'result': 'success', 'token': token})
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
@@ -62,13 +60,10 @@ def sign_up():
     username_receive = request.form['username_give']
     password_receive = request.form['password_give']
     password_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
-    print("복호화 : " + password_hash)
     doc = {
         "username": username_receive,  # 아이디
         "password": password_hash,  # 비밀번호
     }
-    print(password_receive)
-    print(password_hash)
     db.users.insert_one(doc)
     return jsonify({'result': 'success'})
 
@@ -94,6 +89,28 @@ def main():
         return redirect(url_for("login", msg="login_error."))
 
 
+#                   <<<<<효진 API TEST>>>>>
+@app.route('/test/', methods=['POST'])
+def test():
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+
+    url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=&mapX=&mapY=' \
+          '&radius=5000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=40&pageNo=1'
+
+    r = requests.get(url, headers=headers)
+
+    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    near_list = json_body['response']['body']
+
+    return jsonify({'near_list': near_list})
+#                    <<<<<효진 API TEST>>>>>
 @app.route('/near', methods=['POST'])
 def get_near_place():
     lat_receive = request.form['lat_give']

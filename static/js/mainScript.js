@@ -46,6 +46,18 @@ function slide() {
     })
 }
 
+function TEST() {
+    console.log('TEST method 실행됨')
+    $.ajax({
+        type: 'POST',
+        url: '/test/',
+        data: {},
+        success: function (response) {
+            alert(response['msg']);
+        }
+    });
+}
+
 // 현재 위치 불러와 근처 여행지 조회
 function geoInfo() {
     function onGeoOK(position) { //위치 정보 공유 승인 시
@@ -142,14 +154,13 @@ function geoInfo() {
         )
     }
 
-    function onGeoError() { //위치 정보 공유 거부 시
-        alert('현재 위치를 찾을 수 없습니다.')
-    }
-
 // 1번째 파라미터: 위치 공유 승인 시, 2번째 파라미터: 위치 공유 거부 시 실행
     navigator.geolocation.getCurrentPosition(onGeoOK, onGeoError);
 }
 
+function onGeoError() { //위치 정보 공유 거부 시
+    alert('현재 위치를 찾을 수 없습니다.')
+}
 
 function slide2() {
     $(function () {
