@@ -33,9 +33,7 @@
           href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
 
     <!--fontawesome cdn-->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
-          integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
-          crossorigin="anonymous">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
     <!-- Bulma CSS -->
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"> -->
@@ -61,6 +59,7 @@
             getMap();
             getItem();
             weather();
+            getBookmark();
         });
     </script>
 </head>
@@ -115,6 +114,14 @@
                             <header>
                                 <h3 id="distance"></h3>
                             </header>
+                            <div>
+                                <button type="button" class="level-item is-sparta" aria-label="heart"
+                                        onclick="toggle_bookmark(getContentId())">
+                                        <span class="icon is-small"><i id="bookmark" class="fa fa-heart-o"
+                                                                       aria-hidden="true"></i></span>
+                                    &nbsp;<span>즐겨찾기</span>
+                                </button>
+                            </div>
                         </section>
                     </article>
 
@@ -131,14 +138,6 @@
                         <div>
                             <footer class="d-flex align-items-center justify-content-between">
                                 <a href="#" class="button alt">공유하기</a>
-                                <div style="float: right;">
-                                    <a class="level-item is-sparta" aria-label="heart"
-                                       onclick="toggle_bookmark('${post_id]}', 'heart')">
-                                        <span class="icon is-small"><i class="fa fa-heart"
-                                                                       aria-hidden="true"></i></span>
-                                        &nbsp;<span class="">즐겨찾기</span>
-                                    </a>
-                                </div>
                             </footer>
                         </div>
 

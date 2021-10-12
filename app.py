@@ -166,6 +166,49 @@ def get_near_detail():
         return redirect(url_for("login", msg="login_error."))
 
 
+@app.route('/near/place/bookmark', methods=['GET'])
+def get_bookmark():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        content_id = request.args.get('content')
+
+        bookmark_status = bool(db.bookmark.find_one({"content_id": content_id, "username": user_info["username"]}))
+
+        return jsonify({"bookmark_status": str(bookmark_status)})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+# 즐겨찾기 기능 시도 - 누가 즐겨찾기 했는지 / 하트를 누른건지 여부
+@app.route("/bookmark", methods=['POST'])
+def bookmark():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        content_id_receive = request.form['content_id_give']
+        action_receive = request.form['action_give']
+
+        doc = {
+            'content_id': content_id_receive,
+            'username': user_info['username'],
+        }
+
+        if action_receive == "uncheck":
+            db.bookmark.delete_one(doc)
+        else:
+            db.bookmark.insert_one(doc)
+
+        return jsonify({"result": "success"})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
 @app.route('/near/place/weather', methods=['POST'])
 def get_weather():
     place_lat = request.form['place_lat']
