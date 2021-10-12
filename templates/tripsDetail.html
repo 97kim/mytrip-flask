@@ -93,7 +93,10 @@
                     <article class="box post">
                         <a href="#" class="image featured"><img id="file" alt=""/></a>
                         <header class="d-flex align-items-center mb-4">
-                            <h2 id="title" class="me-auto"></h2>
+                            <div class="card__thumb">
+                                <img id="profile_img" src="" alt="프로필 사진"/>
+                            </div>
+                            <h4 id="nickname" class="me-auto">nickname</h4>
                             <button class="btn btn-dark btn-sm m-1 " onclick="window.location.href='/trips/list'">목록
                             </button>
                             {% if status %}
@@ -103,6 +106,7 @@
                                 </button>
                             {% endif %}
                         </header>
+                        <h2 id="title" style="margin: 40px 0 20px 0;"></h2>
                         <p id="date"></p>
                         <h3>장소</h3>
                         <p id="place"></p>
