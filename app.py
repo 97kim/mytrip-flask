@@ -66,10 +66,13 @@ def sign_up():
     doc = {
         "username": username_receive,  # 아이디
         "password": password_hash,  # 비밀번호
+        "nickname": username_receive,  # 처음에는 아이디로 닉네임 설정하고 프로필 설정에서 변경 가능
+        "profile_img": 'default_img.png'  # 처음에는 기본 이미지로 설정하고 프로필 설정에서 변경 가능
     }
     print(password_receive)
     print(password_hash)
     db.users.insert_one(doc)
+
     return jsonify({'result': 'success'})
 
 
@@ -96,26 +99,36 @@ def main():
 
 @app.route('/near', methods=['POST'])
 def get_near_place():
-    lat_receive = request.form['lat_give']
-    lng_receive = request.form['lng_give']
+    token_receive = request.cookies.get('mytoken')
 
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
-                      'Chrome/73.0.3683.86 Safari/537.36'
-    }
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
 
-    url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}' \
-          '&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
+        if payload:
 
-    r = requests.get(url, headers=headers)
+            lat_receive = request.form['lat_give']
+            lng_receive = request.form['lng_give']
 
-    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
-    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
-    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                              'Chrome/73.0.3683.86 Safari/537.36'
+            }
 
-    near_list = json_body['response']['body']['items']['item']
+            url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}' \
+                  '&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
 
-    return jsonify({'near_list': near_list})
+            r = requests.get(url, headers=headers)
+
+            dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+            json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+            json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+            near_list = json_body['response']['body']['items']['item']
+
+            return jsonify({'near_list': near_list})
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
 
 
 @app.route('/near/list', methods=['POST'])
@@ -245,11 +258,16 @@ def get_near_list():
 @app.route('/trips/place', methods=['GET'])
 def get_trips_detail():
     token_receive = request.cookies.get('mytoken')
+    content_id = request.args.get('content')
 
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
-        return render_template('tripsDetail.html', user_info=user_info)
+
+        trip = db.trips.find_one({"id": int(content_id)})
+
+        status = (trip["username"] == payload["id"])
+        return render_template('tripsDetail.html', user_info=user_info, status=status)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
@@ -264,8 +282,7 @@ def trips_detail():
 
     trip['date'] = trip['date'].strftime('%Y.%m.%d')
 
-    return jsonify({'title': trip['title'], 'place': trip['place'], 'review': trip['review'], 'file': trip['file'],
-                    'date': trip['date'], 'like': trip['like']})
+    return jsonify({'trip': trip})
 
 
 @app.route('/trips/list', methods=['GET'])
@@ -322,32 +339,43 @@ def update():
 
 @app.route('/trips', methods=['POST'])
 def write_trip():
-    trip_title_receive = request.form['title_give']
-    trip_place_receive = request.form['place_give']
-    trip_review_receive = request.form['review_give']
-    trip_file = request.files["file_give"]
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
 
-    today = datetime.now()
-    time = today.strftime('%Y-%m-%d-%H-%M-%S')
+        trip_title_receive = request.form['title_give']
+        trip_place_receive = request.form['place_give']
+        trip_review_receive = request.form['review_give']
+        trip_file = request.files["file_give"]
 
-    filename = f'file-{time}'
-    extension = trip_file.filename.split('.')[-1]
+        today = datetime.now()
+        time = today.strftime('%Y-%m-%d-%H-%M-%S')
 
-    save_to = f'static/img/{filename}.{extension}'
-    trip_file.save(save_to)
+        filename = f'file-{time}'
+        extension = trip_file.filename.split('.')[-1]
 
-    doc = {
-        'id': db.trips.count() + 1,
-        'title': trip_title_receive,
-        'place': trip_place_receive,
-        'review': trip_review_receive,
-        'file': f'{filename}.{extension}',
-        'date': today,
-        'like': 0
-    }
+        save_to = f'static/img/{filename}.{extension}'
+        trip_file.save(save_to)
 
-    db.trips.insert_one(doc)
-    return jsonify({'msg': '작성 완료!'})
+        doc = {
+            'id': db.trips.count() + 1,
+            'title': trip_title_receive,
+            'place': trip_place_receive,
+            'review': trip_review_receive,
+            'file': f'{filename}.{extension}',
+            'date': today,
+            'username': user_info['username'],
+            'nickname': user_info['nickname'],
+            'profile_img': user_info['profile_img'],
+            'like': 0
+        }
+
+        db.trips.insert_one(doc)
+        return jsonify({'msg': '작성 완료!'})
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
 
 
 # 정렬
