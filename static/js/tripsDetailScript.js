@@ -44,8 +44,8 @@ function updateTrip(trip_id) {
 function delTrip(trip_id) {
     $.ajax({
         type: "DELETE",
-        url: "/trips",
-        data: {trip_id_give: trip_id},
+        url: `/trips/${trip_id}`,
+        data: {},
         success: function (response) {
             alert(response['msg'])
             window.location.href = "/main";

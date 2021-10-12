@@ -396,11 +396,10 @@ def update_trip(trip_id):
     return jsonify({'msg': '수정 완료!'})
 
 
-@app.route('/trips', methods=['DELETE'])
-def delete_trip():
-    trip_id_receive = request.form['trip_id_give']
+@app.route('/trips/<trip_id>', methods=['DELETE'])
+def delete_trip(trip_id):
 
-    db.trips.delete_one({'id': int(trip_id_receive)})
+    db.trips.delete_one({'id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
 
 
