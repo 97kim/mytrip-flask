@@ -17,7 +17,7 @@ function update() {
     form_data.append("review_give", review);
 
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: `/trips/${trip_id}`,
         data: form_data,
         cache: false,
