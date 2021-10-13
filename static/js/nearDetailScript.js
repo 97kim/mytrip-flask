@@ -96,7 +96,7 @@ function getContentId() {
 
 function toggle_bookmark(content_id) {
 
-    if ($('#bookmark').hasClass("fa-heart")) {
+    if ($('#bookmark').hasClass("fas fa-heart")) {
         $.ajax({
             type: "POST",
             url: "/bookmark",
@@ -106,7 +106,7 @@ function toggle_bookmark(content_id) {
             },
             success: function (response) {
                 if (response['result'] == 'success') {
-                    $('#bookmark').removeClass("fa-heart").addClass("fa-heart-o")
+                    $('#bookmark').removeClass("fas fa-heart").addClass("far fa-heart")
                 }
             }
         })
@@ -120,7 +120,7 @@ function toggle_bookmark(content_id) {
             },
             success: function (response) {
                 if (response['result'] == 'success') {
-                    $('#bookmark').removeClass("fa-heart-o").addClass("fa-heart")
+                    $('#bookmark').removeClass("far fa-heart").addClass("fas fa-heart")
                 }
             }
         });
@@ -136,9 +136,9 @@ function getBookmark() {
         success: function (response) {
             console.log(response['bookmark_status']);
             if (response['bookmark_status'] == "True") {
-                $('#bookmark').removeClass("fa-heart-o").addClass("fa-heart");
+                $('#bookmark').removeClass("far fa-heart").addClass("fas fa-heart");
             } else {
-                $('#bookmark').removeClass("fa-heart").addClass("fa-heart-o")
+                $('#bookmark').removeClass("fas fa-heart").addClass("far fa-heart")
             }
         }
     });
