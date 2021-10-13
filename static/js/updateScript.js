@@ -17,15 +17,15 @@ function update() {
     form_data.append("review_give", review);
 
     $.ajax({
-        type: "POST",
-        url: `/trips/${trip_id}`,
+        type: "PUT",
+        url: `/trips/place/${trip_id}`,
         data: form_data,
         cache: false,
         contentType: false,
         processData: false,
         success: function (response) {
             alert(response["msg"])
-            window.location.href = `/trips/place?content=${trip_id}`;
+            window.location.href = `/trips/place/${trip_id}`;
         }
     });
 }

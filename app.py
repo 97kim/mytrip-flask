@@ -1,11 +1,17 @@
 import os
 
 from flask import Flask, render_template, jsonify, request, redirect, url_for
+
 import jwt, hashlib
+
+import jwt
+import hashlib
+
 from pymongo import MongoClient
 import requests
 import xmltodict
 import json
+import random
 from datetime import datetime, timedelta
 # python-dotenv 라이브러리 설치
 from dotenv import load_dotenv
@@ -22,11 +28,13 @@ REQUEST_URL = os.getenv('REQUEST_URL')
 WEATHER_URL = os.getenv('WEATHER_URL')
 WEATHER_KEY = os.getenv('WEATHER_KEY')
 SECRET_KEY = os.getenv('SECRET_KEY')
+POPULAR_PLACE = os.getenv('POPULAR_PLACE')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
 
 
+# 로그인 페이지
 @app.route('/')
 def login():
     msg = request.args.get("msg")
@@ -63,8 +71,11 @@ def sign_up():
     doc = {
         "username": username_receive,  # 아이디
         "password": password_hash,  # 비밀번호
+        "nickname": username_receive,  # 처음에는 아이디로 닉네임 설정하고 프로필 설정에서 변경 가능
+        "profile_img": 'default_img.png'  # 처음에는 기본 이미지로 설정하고 프로필 설정에서 변경 가능
     }
     db.users.insert_one(doc)
+
     return jsonify({'result': 'success'})
 
 
@@ -75,6 +86,7 @@ def check_dup():
     return jsonify({'result': 'success', 'exists': exists})
 
 
+# main.html 렌더링
 @app.route('/main', methods=['GET'])
 def main():
     token_receive = request.cookies.get('mytoken')
@@ -89,40 +101,77 @@ def main():
         return redirect(url_for("login", msg="login_error."))
 
 
-#                   <<<<<효진 API TEST>>>>>
-@app.route('/test/', methods=['POST'])
-def test():
-
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
-                      'Chrome/73.0.3683.86 Safari/537.36'
-    }
-
-    url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=&mapX=&mapY=' \
-          '&radius=5000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=40&pageNo=1'
-
-    r = requests.get(url, headers=headers)
-
-    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
-    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
-    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
-
-    near_list = json_body['response']['body']
-
-    return jsonify({'near_list': near_list})
-#                    <<<<<효진 API TEST>>>>>
 @app.route('/near', methods=['POST'])
 def get_near_place():
-    lat_receive = request.form['lat_give']
-    lng_receive = request.form['lng_give']
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+        if payload:
+            lat_receive = request.form['lat_give']
+            lng_receive = request.form['lng_give']
+
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                              'Chrome/73.0.3683.86 Safari/537.36'
+            }
+
+            url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}' \
+                  '&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
+
+            r = requests.get(url, headers=headers)
+
+            dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+            json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+            json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+            near_list = json_body['response']['body']['items']['item']
+
+            return jsonify({'near_list': near_list})
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+# 랜덤으로 7가지 추천 테마 여행 띄어주기
+@app.route('/popular/list', methods=['POST'])
+def get_popular_trips():
+    info = random.randrange(1, 7)
+    cat1 = 'C01'
+    content_quantity = 13
+    if (info == 1):
+        cat2 = 'C0112'
+        cat3 = 'C01120001'
+        trip_theme = '가족 '
+    elif (info == 2):
+        cat2 = 'C0113'
+        cat3 = 'C01130001'
+        trip_theme = '나홀로 '
+    elif (info == 3):
+        cat2 = 'C0114'
+        cat3 = 'C01140001'
+        trip_theme = '힐링 '
+    elif (info == 4):
+        cat2 = 'C0115'
+        cat3 = 'C01150001'
+        trip_theme = '걷기 좋은 '
+    elif (info == 5):
+        cat2 = 'C0116'
+        cat3 = 'C01160001'
+        trip_theme = '캠핑 '
+    elif (info == 6):
+        cat2 = 'C0117'
+        cat3 = 'C01170001'
+        trip_theme = '맛집 '
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
                       'Chrome/73.0.3683.86 Safari/537.36'
     }
-
-    url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}' \
-          '&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
+          f'&numOfRows={content_quantity}&MobileApp=trips&MobileOS=ETC&arrange=P&cat1={cat1}' \
+          f'&contentTypeId=25&cat2={cat2}&cat3={cat3}&listYN=Y'
 
     r = requests.get(url, headers=headers)
 
@@ -130,11 +179,27 @@ def get_near_place():
     json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
-    near_list = json_body['response']['body']['items']['item']
+    popular_list = json_body['response']['body']['items']['item']
+    print(popular_list)
+    return jsonify({'popular_list': popular_list, 'trip_theme': trip_theme})
 
-    return jsonify({'near_list': near_list})
+
+# nearList.html 렌더링
+@app.route('/near/list', methods=['GET'])
+def get_near_list():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('nearList.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
 
 
+# nearList.html에 리스트 출력
 @app.route('/near/list', methods=['POST'])
 def get_near_type():
     lat_receive = request.form['lat_give']
@@ -169,8 +234,9 @@ def get_near_type():
     return jsonify({'near_list': near_list})
 
 
-@app.route('/near/place', methods=['GET'])
-def get_near_detail():
+# nearDetail.html 렌더링
+@app.route('/near/place/<content_id>', methods=['GET'])
+def get_near_detail(content_id):
     token_receive = request.cookies.get('mytoken')
 
     try:
@@ -183,6 +249,49 @@ def get_near_detail():
         return redirect(url_for("login", msg="login_error."))
 
 
+# 즐겨찾기 기능 - 누가 어떤 여행지를 즐겨찾기 했는지 db에 저장
+@app.route("/near/place/bookmark", methods=['POST'])
+def bookmark():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        content_id_receive = request.form['content_id_give']
+        action_receive = request.form['action_give']
+
+        doc = {
+            'content_id': content_id_receive,
+            'username': user_info['username'],
+        }
+
+        if action_receive == "uncheck":
+            db.bookmark.delete_one(doc)
+        else:
+            db.bookmark.insert_one(doc)
+
+        return jsonify({"result": "success"})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+# 즐겨찾기한 게시글은 나갔다 들어와도 즐겨찾기로 표시
+@app.route('/near/place/bookmark/<content_id>', methods=['GET'])
+def get_bookmark(content_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        bookmark_status = bool(db.bookmark.find_one({"content_id": content_id, "username": user_info["username"]}))
+
+        return jsonify({"bookmark_status": str(bookmark_status)})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+# 근처 여행지 날씨 불러오기
 @app.route('/near/place/weather', methods=['POST'])
 def get_weather():
     place_lat = request.form['place_lat']
@@ -202,129 +311,7 @@ def get_weather():
     return jsonify({'weather_info': weather_info})
 
 
-@app.route('/near/list', methods=['GET'])
-def get_near_list():
-    token_receive = request.cookies.get('mytoken')
-
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.users.find_one({"username": payload["id"]})
-        return render_template('nearList.html', user_info=user_info)
-    except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="Your_login_time_has_expired."))
-    except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="login_error."))
-
-
-@app.route('/trips/place', methods=['GET'])
-def get_trips_detail():
-    token_receive = request.cookies.get('mytoken')
-
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.users.find_one({"username": payload["id"]})
-        return render_template('tripsDetail.html', user_info=user_info)
-    except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="Your_login_time_has_expired."))
-    except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="login_error."))
-
-
-@app.route('/trips/place', methods=['POST'])
-def trips_detail():
-    trip_id_receive = request.form['trip_id_give']
-
-    trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
-
-    trip['date'] = trip['date'].strftime('%Y.%m.%d')
-
-    return jsonify({'title': trip['title'], 'place': trip['place'], 'review': trip['review'], 'file': trip['file'],
-                    'date': trip['date'], 'like': trip['like']})
-
-
-@app.route('/trips/list', methods=['GET'])
-def get_trips_list():
-    token_receive = request.cookies.get('mytoken')
-
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.users.find_one({"username": payload["id"]})
-        return render_template('tripsList.html', user_info=user_info)
-    except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
-    except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
-
-
-@app.route('/trips/form', methods=['GET'])
-def write():
-    token_receive = request.cookies.get('mytoken')
-    trip_id = request.args.get('id')
-
-    if trip_id is not None:
-        try:
-            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-            user_info = db.users.find_one({"username": payload["id"]})
-            return render_template('update.html', user_info=user_info)
-        except jwt.ExpiredSignatureError:
-            return redirect(url_for("login", msg="Your_login_time_has_expired."))
-        except jwt.exceptions.DecodeError:
-            return redirect(url_for("login", msg="login_error."))
-    else:
-        try:
-            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-            user_info = db.users.find_one({"username": payload["id"]})
-            return render_template('write.html', user_info=user_info)
-        except jwt.ExpiredSignatureError:
-            return redirect(url_for("login", msg="Your_login_time_has_expired."))
-        except jwt.exceptions.DecodeError:
-            return redirect(url_for("login", msg="login_error."))
-
-
-@app.route('/trips/update', methods=['GET'])
-def update():
-    trip_id = request.args.get('id')
-    trip = db.trips.find_one({'id': int(trip_id)}, {'_id': False})
-
-    title = trip['title']
-    place = trip['place']
-    review = trip['review']
-    file = trip['file']
-
-    return jsonify({'title': title, 'place': place, 'review': review, 'file': file})
-
-
-@app.route('/trips', methods=['POST'])
-def write_trip():
-    trip_title_receive = request.form['title_give']
-    trip_place_receive = request.form['place_give']
-    trip_review_receive = request.form['review_give']
-    trip_file = request.files["file_give"]
-
-    today = datetime.now()
-    time = today.strftime('%Y-%m-%d-%H-%M-%S')
-
-    filename = f'file-{time}'
-    extension = trip_file.filename.split('.')[-1]
-
-    save_to = f'static/img/{filename}.{extension}'
-    trip_file.save(save_to)
-
-    doc = {
-        'id': db.trips.count() + 1,
-        'title': trip_title_receive,
-        'place': trip_place_receive,
-        'review': trip_review_receive,
-        'file': f'{filename}.{extension}',
-        'date': today,
-        'like': 0
-    }
-
-    db.trips.insert_one(doc)
-    return jsonify({'msg': '작성 완료!'})
-
-
-# 정렬
+# 리뷰 정렬
 @app.route('/trips', methods=['GET'])
 def show_trips():
     sort_type = request.args.get('sort')
@@ -340,21 +327,136 @@ def show_trips():
     return jsonify({'all_trips': all_trips})
 
 
-@app.route('/trips/like', methods=['POST'])
-def like_place():
+# tripsList.html 렌더링
+@app.route('/trips/list', methods=['GET'])
+def get_trips_list():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('tripsList.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+
+
+# tripsDetail.html 렌더링
+@app.route('/trips/place/<trip_id>', methods=['GET'])
+def get_trips_detail(trip_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        trip = db.trips.find_one({"id": int(trip_id)})
+
+        status = (trip["username"] == payload["id"])
+        return render_template('tripsDetail.html', user_info=user_info, status=status)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
+
+
+@app.route('/trips/place/render', methods=['POST'])
+def trips_detail():
     trip_id_receive = request.form['trip_id_give']
 
-    target_id = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+    trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
 
-    current_like = target_id['like']
-    new_like = current_like + 1
+    trip['date'] = trip['date'].strftime('%Y.%m.%d')
 
-    db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': new_like}})
-
-    return jsonify({'msg': '좋아요 완료!'})
+    return jsonify({'trip': trip})
 
 
-@app.route('/trips/<trip_id>', methods=['POST'])
+# 상황에 따라 write.html(작성폼), update.html(수정폼) 렌더링
+@app.route('/trips/form', methods=['GET'])
+def write():
+    token_receive = request.cookies.get('mytoken')
+    trip_id = request.args.get('id')
+
+    if trip_id is not None:
+        try:
+            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+            user_info = db.users.find_one({"username": payload["id"]})
+            return render_template('tripsUpdate.html', user_info=user_info)
+        except jwt.ExpiredSignatureError:
+            return redirect(url_for("login", msg="Your_login_time_has_expired."))
+        except jwt.exceptions.DecodeError:
+            return redirect(url_for("login", msg="login_error."))
+    else:
+        try:
+            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+            user_info = db.users.find_one({"username": payload["id"]})
+            return render_template('write.html', user_info=user_info)
+        except jwt.ExpiredSignatureError:
+            return redirect(url_for("login", msg="Your_login_time_has_expired."))
+        except jwt.exceptions.DecodeError:
+            return redirect(url_for("login", msg="login_error."))
+
+
+# 클라이언트에서 세션 스토리지에 저장하기 위함
+@app.route('/trips/session', methods=['POST'])
+def update():
+    trip_id_receive = request.form['trip_id_give']
+
+    trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+
+    title = trip['title']
+    place = trip['place']
+    review = trip['review']
+    file = trip['file']
+
+    return jsonify({'title': title, 'place': place, 'review': review, 'file': file})
+
+
+# 리뷰 db에 저장
+@app.route('/trips/place', methods=['POST'])
+def write_trip():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        trip_title_receive = request.form['title_give']
+        trip_place_receive = request.form['place_give']
+        trip_review_receive = request.form['review_give']
+        trip_file = request.files["file_give"]
+
+        today = datetime.now()
+        time = today.strftime('%Y-%m-%d-%H-%M-%S')
+
+        filename = f'file-{time}'
+        extension = trip_file.filename.split('.')[-1]
+
+        save_to = f'static/img/{filename}.{extension}'
+        trip_file.save(save_to)
+
+        doc = {
+            'id': db.trips.count() + 1,
+            'title': trip_title_receive,
+            'place': trip_place_receive,
+            'review': trip_review_receive,
+            'file': f'{filename}.{extension}',
+            'date': today,
+            'username': user_info['username'],
+            'nickname': user_info['nickname'],
+            'profile_img': user_info['profile_img'],
+            'like': 0
+        }
+
+        db.trips.insert_one(doc)
+        return jsonify({'msg': '작성 완료!'})
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+# 리뷰 수정
+@app.route('/trips/place/<trip_id>', methods=['PUT'])
 def update_trip(trip_id):
     trip_title_receive = request.form['title_give']
     trip_place_receive = request.form['place_give']
@@ -385,12 +487,25 @@ def update_trip(trip_id):
     return jsonify({'msg': '수정 완료!'})
 
 
-@app.route('/trips', methods=['DELETE'])
-def delete_trip():
+# 리뷰 삭제
+@app.route('/trips/place/<trip_id>', methods=['DELETE'])
+def delete_trip(trip_id):
+    db.trips.delete_one({'id': int(trip_id)})
+    return jsonify({'msg': '삭제 완료!'})
+
+
+@app.route('/trips/place/like', methods=['POST'])
+def like_place():
     trip_id_receive = request.form['trip_id_give']
 
-    db.trips.delete_one({'id': int(trip_id_receive)})
-    return jsonify({'msg': '삭제 완료!'})
+    target_id = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+
+    current_like = target_id['like']
+    new_like = current_like + 1
+
+    db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': new_like}})
+
+    return jsonify({'msg': '좋아요 완료!'})
 
 
 if __name__ == '__main__':

@@ -1,5 +1,43 @@
-function logout() {
+function slide3() {
+    $(function () {
+        // Uncaught TypeError: Cannot read property 'add' of null” 오류 -> slick을 여러번 불러와서 발생
+        // .not('.slick-initialized')로 하면 오류가 안 난다.
 
+        $('.slider-li3').not('.slick-initialized').slick({
+            slide: 'li',		//슬라이드 되어야 할 태그 ex) div, li
+            infinite: true, 	//무한 반복 옵션
+            slidesToShow: 3,		// 한 화면에 보여질 컨텐츠 개수
+            slidesToScroll: 1,		//스크롤 한번에 움직일 컨텐츠 개수
+            speed: 100,	 // 다음 버튼 누르고 다음 화면 뜨는데까지 걸리는 시간(ms)
+            dots: false, 		// 스크롤바 아래 점으로 페이지네이션 여부
+            autoplay: true,			// 자동 스크롤 사용 여부
+            autoplaySpeed: 5000, 		// 자동 스크롤 시 다음으로 넘어가는데 걸리는 시간 (ms)
+            pauseOnHover: true,		// 슬라이드 이동 시 마우스 호버하면 슬라이더 멈추게 설정
+            vertical: false,		// 세로 방향 슬라이드 옵션
+            arrows: true, 		// 옆으로 이동하는 화살표 표시 여부
+            prevArrow: $('#btn_prev3'),		// 이전 화살표 모양 설정
+            nextArrow: $('#btn_next3'),		// 다음 화살표 모양 설정
+            draggable: true, 	//드래그 가능 여부
+
+            responsive: [ // 반응형 웹 구현 옵션
+                {
+                    breakpoint: 1500, //화면 사이즈 1500px 보다 작을 시
+                    settings: {
+                        //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
+                        slidesToShow: 2
+                    }
+                },
+                {
+                    breakpoint: 800, //화면 사이즈 800px 보다 작을 시
+                    settings: {
+                        //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
+                        slidesToShow: 1
+                    }
+                }
+            ]
+
+        });
+    })
 }
 
 // slick 슬라이드
@@ -46,24 +84,11 @@ function slide() {
     })
 }
 
-function TEST() {
-    console.log('TEST method 실행됨')
-    $.ajax({
-        type: 'POST',
-        url: '/test/',
-        data: {},
-        success: function (response) {
-            alert(response['msg']);
-        }
-    });
-}
-
 // 현재 위치 불러와 근처 여행지 조회
 function geoInfo() {
     function onGeoOK(position) { //위치 정보 공유 승인 시
         const lat = position.coords.latitude; //위도
         const lng = position.coords.longitude; //경도
-
         $.ajax({
                 type: "POST",
                 url: "/near",
@@ -97,14 +122,14 @@ function geoInfo() {
                             }
 
                             let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place?content=${content_id}" class="card">
-                                                <img src="../static/img/noImage.png" class="card__image" alt="이미지 없음"/>
+                                             <a href="/near/place/${content_id}" class="card">
+                                                <img src="../../static/img/noImage.png" class="card__image" alt="이미지 없음"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
                                                         <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
                                                             <path/>
                                                         </svg>
-                                                        <img class="card__thumb" src="../static/img/noImage.png" alt="썸네일 이미지 없음"/>
+                                                        <img class="card__thumb" src="../../static/img/noImage.png" alt="썸네일 이미지 없음"/>
                                                         <div class="card__header-text">
                                                             <h3 class="card__title">${title}</h3>
                                                             <span class="card__status">${distance}m</span>
@@ -127,7 +152,7 @@ function geoInfo() {
                             }
 
                             let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place?content=${content_id}" class="card">
+                                             <a href="/near/place/${content_id}" class="card">
                                                 <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
@@ -220,16 +245,20 @@ function showTrips() {
                 let trip_file = trip_list[i]['file'];
                 let trip_date = trip_list[i]['date'];
                 let trip_like = trip_list[i]['like'];
+                let trip_profile_img = trip_list[i]['profile_img'];
+                let trip_nickname = trip_list[i]['nickname'];
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                        <a href="/trips/place?content=${trip_id}" class="card">
-                                            <img src="../static/img/${trip_file}" class="card__image" alt="사용자가 올린 여행지 사진"/>
+                                        <a href="/trips/place/${trip_id}" class="card">
+                                            <img src="../../static/img/${trip_file}" class="card__image" alt="사용자가 올린 여행지 사진"/>
                                             <div class="card__overlay">
                                                 <div class="card__header">
                                                     <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
                                                         <path/>
                                                     </svg>
-                                                    <img class="card__thumb" src="https://i.imgur.com/sjLMNDM.png" alt="프로필 사진"/>
+                                                    <div class="card__thumb2">
+                                                        <img src="../../static/img/profile/${trip_profile_img}" alt="프로필 사진"/>
+                                                    </div>
                                                     <div class="card__header-text">
                                                         <h3 class="card__title">${trip_title}</h3>
                                                         <i class="far fa-thumbs-up">${trip_like}</i>
@@ -237,6 +266,7 @@ function showTrips() {
                                                     </div>
                                                 </div>
                                                 <p class="card__description">${trip_place}</p>
+                                                <p class="card__description">by <b>@${trip_nickname}</b></p>
                                             </div>
                                         </a>
                                     </li>`
@@ -247,9 +277,93 @@ function showTrips() {
     })
 }
 
-function logout() {
-    $.removeCookie('mytoken', {path: '/'});
-    alert('로그아웃을 완료했습니다.')
-    window.location.href = `/`;
+function showPopularTrips() {
+    $.ajax({
+        type: 'POST',
+        url: '/popular/list',
+        data: {},
+        success: function (response) {
+            $('#popular_card').empty();
+            let popular_list = response['popular_list'];
+            let trip_theme = response['trip_theme'];
+
+            for (let i = 0; i < popular_list.length; i++) {
+                let title = popular_list[i]['title'];
+                let content_id = popular_list[i]['contentid'];
+                let file = popular_list[i]['firstimage'];
+                if (!file) {
+                    let file = popular_list[i]['firstimage2'];
+                } // file의 약한 예외 처리 기준은 처음부터 사진 있는 정보들만 가져왔기 때문입니다.
+                let areacode = popular_list[i]['areacode'];
+                let address = check_address(areacode)
+
+                let temp_html = `<li style="margin: 0 10px; height: 300px;">
+                                 <a href="/near/place?content=${content_id}" class="card">
+                                    <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
+                                    <div class="card__overlay">
+                                        <div class="card__header">
+                                            <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                                                <path/>
+                                            </svg>
+                                            <img class="card__thumb" src="${file}" alt="썸네일"/>
+                                            <div class="card__header-text">
+                                                <h3 class="card__title">${title}</h3>
+                                                <span class="card__status">${address}</span>
+                                            </div>
+                                        </div>
+                                        <p class="card__description" >추가예정(hj)</p>
+                                    </div>
+                                </a>
+                            </li>`;
+                $('#popular_card').append(temp_html);
+            }
+            $('#popular_thema').prepend(trip_theme)
+            slide3();
+        }
+    });
 }
 
+function check_address(code) {
+    if (code == 1) {
+        code = '서울특별시'
+    } else if (code == 21) {
+        code = '부산광역시'
+    } else if (code == 22) {
+        code = '대구광역시'
+    } else if (code == 23) {
+        code = '인천광역시'
+    } else if (code == 24) {
+        code = '광주광역시'
+    } else if (code == 25) {
+        code = '대전광역시'
+    } else if (code == 26) {
+        code = '울산광역시'
+    } else if (code == 29) {
+        code = '세종특별자치시'
+    } else if (code == 31) {
+        code = '경기도'
+    } else if (code == 32) {
+        code = '강원도'
+    } else if (code == 33) {
+        code = '충청북도'
+    } else if (code == 34) {
+        code = '충청남도'
+    } else if (code == 35) {
+        code = '전라북도'
+    } else if (code == 36) {
+        code = '전라남도'
+    } else if (code == 37) {
+        code = '경상북도'
+    } else if (code == 38) {
+        code = '경상남도'
+    } else if (code == 39) {
+        code = '제주도'
+    }else if (code == 2) {
+        code = '인천'
+    }else if (code == 4) {
+        code = '대구'
+    }else if (code == 6) {
+        code = '부산'
+    }
+    return code
+}

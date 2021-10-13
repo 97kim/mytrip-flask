@@ -25,6 +25,7 @@
 
     <!--jquery cdn-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <!--slick cdn-->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
@@ -37,13 +38,14 @@
           crossorigin="anonymous">
 
     <!-- Bulma CSS -->
-    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">-->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"> -->
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/detail.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/weather.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/nearDetailScript.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='js/logout.js') }}"></script>
     <script type="text/javascript"
             src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=00r1clbpdg"></script>
 
@@ -59,23 +61,40 @@
             getMap();
             getItem();
             weather();
+            getBookmark();
         });
     </script>
 </head>
 
 <body style="background-color: #fef8f8;">
-<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="/main" style="color: #073A96">여행어때</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-link" href="/near/list">Near</a>
-                <a class="nav-link" href="/trips/list">Trips</a>
-            </div>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/near/list">Near</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/trips/list">Trips</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav d-flex">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        Profile
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="#">즐겨찾기</a></li>
+                        <li><a class="dropdown-item" href="javascript:logout()">로그아웃</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
@@ -97,6 +116,14 @@
                             <header>
                                 <h3 id="distance"></h3>
                             </header>
+                            <div>
+                                <button type="button" class="level-item is-sparta" aria-label="heart"
+                                        onclick="toggle_bookmark(getId())">
+                                        <span class="icon is-small"><i id="bookmark" class="far fa-heart"
+                                                                       aria-hidden="true"></i></span>
+                                    &nbsp;<span>즐겨찾기</span>
+                                </button>
+                            </div>
                         </section>
                     </article>
 
@@ -109,9 +136,13 @@
                             <h3>지도</h3>
                         </header>
                         <div id="map"></div>
-                        <footer>
-                            <a href="#" class="button alt">공유하기</a>
-                        </footer>
+
+                        <div>
+                            <footer class="d-flex align-items-center justify-content-between">
+                                <a href="#" class="button alt">공유하기</a>
+                            </footer>
+                        </div>
+
                     </section>
                     <section class="box">
                         <header>

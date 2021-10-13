@@ -204,3 +204,46 @@
     -webkit-line-clamp: 3;
     overflow: hidden;
 }
+
+#btn_prev3 {
+    position: absolute;
+    top: 50%;
+    left: 4%;
+    background-color: transparent;
+    color: #A69F99;
+    font-size: 30px;
+    border: none;
+}
+
+#btn_next3 {
+    position: absolute;
+    top: 50%;
+    right: 4%;
+    background-color: transparent;
+    color: #A69F99;
+    font-size: 30px;
+    border: none;
+}
+
+#btn_prev3:hover {
+    color: #073A96;
+}
+
+#btn_next3:hover {
+    color: #073A96;
+}
+
+.card__thumb2 {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.card__thumb2 img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
