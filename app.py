@@ -139,34 +139,34 @@ def get_near_place():
 def get_popular_trips():
     info = random.randrange(1, 7)
     cat1 = 'C01'
-    content_quantity = 13
-    if (info == 1):
+    content_quantity = 13  # 나타날 추천 여행지 정보의 수
+    if info == 1:
         cat2 = 'C0112'
         cat3 = 'C01120001'
         trip_theme = '가족 '
-    elif (info == 2):
+    elif info == 2:
         cat2 = 'C0113'
         cat3 = 'C01130001'
         trip_theme = '나홀로 '
-    elif (info == 3):
+    elif info == 3:
         cat2 = 'C0114'
         cat3 = 'C01140001'
         trip_theme = '힐링 '
-    elif (info == 4):
+    elif info == 4:
         cat2 = 'C0115'
         cat3 = 'C01150001'
         trip_theme = '걷기 좋은 '
-    elif (info == 5):
+    elif info == 5:
         cat2 = 'C0116'
         cat3 = 'C01160001'
         trip_theme = '캠핑 '
-    elif (info == 6):
+    elif info == 6:
         cat2 = 'C0117'
         cat3 = 'C01170001'
         trip_theme = '맛집 '
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(HTML, like Gecko) '
                       'Chrome/73.0.3683.86 Safari/537.36'
     }
     url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
@@ -216,7 +216,7 @@ def get_near_type():
         type_code = 15
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(HTML, like Gecko) '
                       'Chrome/73.0.3683.86 Safari/537.36'
     }
 

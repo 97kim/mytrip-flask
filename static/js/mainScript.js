@@ -292,13 +292,13 @@ function showPopularTrips() {
                 let content_id = popular_list[i]['contentid'];
                 let file = popular_list[i]['firstimage'];
                 if (!file) {
-                    let file = popular_list[i]['firstimage2'];
-                } // file의 약한 예외 처리 기준은 처음부터 사진 있는 정보들만 가져왔기 때문입니다.
+                    file = popular_list[i]['firstimage2'];
+                }
                 let areacode = popular_list[i]['areacode'];
-                let address = check_address(areacode)
+                let area = check_area(areacode)
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                 <a href="/near/place?content=${content_id}" class="card">
+                                 <a href="/near/place/${content_id}" class="card">
                                     <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                     <div class="card__overlay">
                                         <div class="card__header">
@@ -308,10 +308,10 @@ function showPopularTrips() {
                                             <img class="card__thumb" src="${file}" alt="썸네일"/>
                                             <div class="card__header-text">
                                                 <h3 class="card__title">${title}</h3>
-                                                <span class="card__status">${address}</span>
+                                                <span class="card__status">${area}</span>
                                             </div>
                                         </div>
-                                        <p class="card__description" >추가예정(hj)</p>
+                                        <p class="card__description" >${area}로 떠나보기</p>
                                     </div>
                                 </a>
                             </li>`;
@@ -323,7 +323,7 @@ function showPopularTrips() {
     });
 }
 
-function check_address(code) {
+function check_area(code) {
     if (code == 1) {
         code = '서울특별시'
     } else if (code == 21) {
@@ -358,12 +358,12 @@ function check_address(code) {
         code = '경상남도'
     } else if (code == 39) {
         code = '제주도'
-    }else if (code == 2) {
+    } else if (code == 2) {
         code = '인천'
-    }else if (code == 4) {
-        code = '대구'
-    }else if (code == 6) {
-        code = '부산'
+    } else if (code == 4) {
+        code = '대구광역시'
+    } else if (code == 6) {
+        code = '부산시'
     }
     return code
 }
