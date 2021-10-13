@@ -8,6 +8,7 @@ import json
 import jwt
 import hashlib
 import random
+import boto3
 from datetime import datetime, timedelta
 # python-dotenv 라이브러리 설치
 from dotenv import load_dotenv
@@ -25,6 +26,11 @@ WEATHER_URL = os.getenv('WEATHER_URL')
 WEATHER_KEY = os.getenv('WEATHER_KEY')
 SECRET_KEY = os.getenv('SECRET_KEY')
 POPULAR_PLACE = os.getenv('POPULAR_PLACE')
+
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_REGION = os.getenv('AWS_REGION')
+BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
@@ -455,23 +461,36 @@ def write_trip():
         trip_title_receive = request.form['title_give']
         trip_place_receive = request.form['place_give']
         trip_review_receive = request.form['review_give']
-        trip_file = request.files["file_give"]
+        trip_file_receive = request.files["file_give"]
 
         today = datetime.now()
         time = today.strftime('%Y-%m-%d-%H-%M-%S')
 
         filename = f'file-{time}'
-        extension = trip_file.filename.split('.')[-1]
+        extension = trip_file_receive.filename.split('.')[-1]
 
-        save_to = f'static/img/{filename}.{extension}'
-        trip_file.save(save_to)
+        full_file_name = f'{filename}.{extension}'
+
+        # boto3(aws s3에 올리기)
+        s3 = boto3.client('s3',
+                          aws_access_key_id=AWS_ACCESS_KEY_ID,
+                          aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                          region_name=AWS_REGION
+                          )
+        s3.put_object(
+            ACL="public-read",
+            Bucket=BUCKET_NAME,
+            Body=trip_file_receive,
+            Key='trips/' + full_file_name,  # 버킷 내 trips 폴더에 저장
+            ContentType=trip_file_receive.content_type
+        )
 
         doc = {
             'id': db.trips.count() + 1,
             'title': trip_title_receive,
             'place': trip_place_receive,
             'review': trip_review_receive,
-            'file': f'{filename}.{extension}',
+            'file': full_file_name,
             'date': today,
             'username': user_info['username'],
             'nickname': user_info['nickname'],
@@ -508,10 +527,23 @@ def update_trip(trip_id):
         filename = f'file-{time}'
         extension = trip_file_receive.filename.split('.')[-1]
 
-        save_to = f'static/img/{filename}.{extension}'
-        trip_file_receive.save(save_to)
+        full_file_name = f'{filename}.{extension}'
 
-        new_doc['file'] = f'{filename}.{extension}'
+        # boto3(aws s3에 올리기)
+        s3 = boto3.client('s3',
+                          aws_access_key_id=AWS_ACCESS_KEY_ID,
+                          aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                          region_name=AWS_REGION
+                          )
+        s3.put_object(
+            ACL="public-read",
+            Bucket=BUCKET_NAME,
+            Body=trip_file_receive,
+            Key='trips/' + full_file_name,  # 버킷 내 trips 폴더에 저장
+            ContentType=trip_file_receive.content_type
+        )
+
+        new_doc['file'] = full_file_name
 
     db.trips.update_one({'id': int(trip_id)}, {'$set': new_doc})
 
@@ -561,10 +593,23 @@ def save_profile():
             filename = f"{user_info['username']}-{time}"
             extension = img_receive.filename.split('.')[-1]
 
-            save_to = f'static/img/profile/{filename}.{extension}'
-            img_receive.save(save_to)
+            full_file_name = f'{filename}.{extension}'
 
-            new_doc['profile_img'] = f'{filename}.{extension}'
+            # boto3(aws s3에 올리기)
+            s3 = boto3.client('s3',
+                              aws_access_key_id=AWS_ACCESS_KEY_ID,
+                              aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                              region_name=AWS_REGION
+                              )
+            s3.put_object(
+                ACL="public-read",
+                Bucket=BUCKET_NAME,
+                Body=img_receive,
+                Key='profile/' + full_file_name,  # 버킷 내 profile 폴더에 저장
+                ContentType=img_receive.content_type
+            )
+
+            new_doc['profile_img'] = full_file_name
 
         db.users.update_one({'username': user_info['username']}, {'$set': new_doc})
         db.trips.update_one({'username': user_info['username']}, {'$set': new_doc})
