@@ -8,6 +8,7 @@ import json
 import jwt
 import hashlib
 import random
+import boto3
 from datetime import datetime, timedelta
 # python-dotenv 라이브러리 설치
 from dotenv import load_dotenv
@@ -445,15 +446,27 @@ def write_trip():
         filename = f'file-{time}'
         extension = trip_file.filename.split('.')[-1]
 
-        save_to = f'static/img/{filename}.{extension}'
-        trip_file.save(save_to)
+        # save_to = f'static/img/{filename}.{extension}'
+        # trip_file.save(save_to)
+
+        file_name = f'{filename}.{extension}'
+
+        # boto3(aws s3에 올리기)
+        s3 = boto3.client('s3')
+        s3.put_object(
+            ACL="public-read",
+            Bucket="kimaws",
+            Body=trip_file,
+            Key=file_name,
+            ContentType=trip_file.content_type
+        )
 
         doc = {
             'id': db.trips.count() + 1,
             'title': trip_title_receive,
             'place': trip_place_receive,
             'review': trip_review_receive,
-            'file': f'{filename}.{extension}',
+            'file': file_name,
             'date': today,
             'username': user_info['username'],
             'nickname': user_info['nickname'],
