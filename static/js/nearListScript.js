@@ -33,7 +33,7 @@ function geoInfoList(type) {
                             obj[content_id] = {
                                 'title': title,
                                 'address': address,
-                                'file': "../../static/img/noImage.png",
+                                'file': "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png",
                                 'distance': distance,
                                 'place_lat': place_lat,
                                 'place_lng': place_lng
@@ -41,13 +41,13 @@ function geoInfoList(type) {
 
                             let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                              <a href="/near/place/${content_id}" class="card">
-                                                <img src="../../static/img/noImage.png" class="card__image" alt="이미지 없음"/>
+                                                <img src="https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png" class="card__image" alt="이미지 없음"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
                                                         <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
                                                             <path/>
                                                         </svg>
-                                                        <img class="card__thumb" src="../../static/img/noImage.png" alt="썸네일 이미지 없음"/>
+                                                        <img class="card__thumb" src="https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png" alt="썸네일 이미지 없음"/>
                                                         <div class="card__header-text">
                                                             <h3 class="card__title">${title}</h3>
                                                             <span class="card__status">${distance}m</span>

@@ -22,7 +22,7 @@ function getMap() {
             Number(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lng'])
         ),
         map: map,
-        icon: "../../static/img/marker.png"
+        icon: "https://dk9q1cr2zzfmc.cloudfront.net/img/marker.png"
     });
 
     let infowindow = new naver.maps.InfoWindow({

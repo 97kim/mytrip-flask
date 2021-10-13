@@ -70,7 +70,7 @@ function showBookmarks() {
                                                             <img class="card__thumb" src="${file}" alt="썸네일"/>
                                                             <div class="card__header-text">
                                                                 <h3 class="card__title">${title}</h3>
-                                                                <span class="card__status">${distance}m 거리</span>
+                                                                <span class="card__status">${distance}m</span>
                                                             </div>
                                                         </div>
                                                         <p class="card__description">${address}</p>
