@@ -3,8 +3,6 @@ function getId() {
     let do_split = get_link.split('/');
     let trip_id = do_split[do_split.length - 1];
 
-    console.log(trip_id)
-
     return trip_id;
 }
 
@@ -14,10 +12,10 @@ function getItem() {
         url: `/trips/place/render`,
         data: {trip_id_give: getId()},
         success: function (response) {
-            $('#profile_img').attr('src', `../../static/img/profile/${response['trip']['profile_img']}`);
+            $('#profile_img').attr('src', `https://dk9q1cr2zzfmc.cloudfront.net/profile/${response['trip']['profile_img']}`);
             $('#nickname').text(response['trip']['nickname']);
             $('#title').text(response['trip']['title']);
-            $('#file').attr('src', `../../static/img/${response['trip']['file']}`);
+            $('#file').attr('src', `https://dk9q1cr2zzfmc.cloudfront.net/trips/${response['trip']['file']}`);
             $('#place').text(response['trip']['place']);
             $('#review').text(response['trip']['review']);
             $('#date').text(response['trip']['date']);

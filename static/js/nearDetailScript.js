@@ -22,7 +22,10 @@ function getMap() {
             Number(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lng'])
         ),
         map: map,
-        icon: "../../static/img/marker.png"
+        icon: {
+            content: '<img src="https://dk9q1cr2zzfmc.cloudfront.net/img/marker.png">',
+            anchor: new naver.maps.Point(20,25)
+        }
     });
 
     let infowindow = new naver.maps.InfoWindow({
@@ -30,7 +33,7 @@ function getMap() {
     });
 
     naver.maps.Event.addListener(marker, "click", function () {
-        console.log(infowindow.getMap()); // 정보창이 열려있을 때는 연결된 지도를 반환하고 닫혀있을 때는 null을 반환
+        // infowindow.getMap(): 정보창이 열려있을 때는 연결된 지도를 반환하고 닫혀있을 때는 null을 반환
         if (infowindow.getMap()) {
             infowindow.close();
         } else {
