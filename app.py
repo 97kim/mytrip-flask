@@ -1,16 +1,12 @@
 import os
 
 from flask import Flask, render_template, jsonify, request, redirect, url_for
-
-import jwt, hashlib
-
-import jwt
-import hashlib
-
 from pymongo import MongoClient
 import requests
 import xmltodict
 import json
+import jwt
+import hashlib
 import random
 from datetime import datetime, timedelta
 # python-dotenv 라이브러리 설치
