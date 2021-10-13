@@ -39,11 +39,18 @@
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/mainStyle.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/logout.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='js/bookmark.js') }}"></script>
 
+    <script>
+        $(document).ready(function () {
+            showBookmarks();
+        });
+    </script>
 </head>
 
+<body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="/main" style="color: #073A96">여행어때</a>
@@ -67,7 +74,10 @@
                         Profile
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a class="dropdown-item" href="#">즐겨찾기</a></li>
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                               data-bs-target="#profile_modal"
+                               data-bs-whatever="@mdo">프로필 설정</a></li>
+                        <li><a class="dropdown-item" href="/bookmark">즐겨찾기</a></li>
                         <li><a class="dropdown-item" href="javascript:logout()">로그아웃</a></li>
                     </ul>
                 </li>
@@ -77,118 +87,46 @@
 </nav>
 
 <!-- 여기에 카드 작성 -->
-<script>
-    $(document).ready(function () {
-        showBookmarks();
-    });
 
-    function slide() {
-        $(function () {
-            // Uncaught TypeError: Cannot read property 'add' of null” 오류 -> slick을 여러번 불러와서 발생
-            // .not('.slick-initialized')로 하면 오류가 안 난다.
-
-            // $('.slider-li2').slick({
-            $('.slider-li').not('.slick-initialized').slick({
-                slide: 'li',		//슬라이드 되어야 할 태그 ex) div, li
-                infinite: true, 	//무한 반복 옵션
-                slidesToShow: 3,		// 한 화면에 보여질 컨텐츠 개수
-                slidesToScroll: 1,		//스크롤 한번에 움직일 컨텐츠 개수
-                speed: 100,	 // 다음 버튼 누르고 다음 화면 뜨는데까지 걸리는 시간(ms)
-                dots: false, 		// 스크롤바 아래 점으로 페이지네이션 여부
-                // autoplay: true,			// 자동 스크롤 사용 여부
-                autoplaySpeed: 5000, 		// 자동 스크롤 시 다음으로 넘어가는데 걸리는 시간 (ms)
-                pauseOnHover: true,		// 슬라이드 이동 시 마우스 호버하면 슬라이더 멈추게 설정
-                vertical: false,		// 세로 방향 슬라이드 옵션
-                arrows: true, 		// 옆으로 이동하는 화살표 표시 여부
-                prevArrow: $('#btn_prev'),		// 이전 화살표 모양 설정
-                nextArrow: $('#btn_next'),		// 다음 화살표 모양 설정
-                draggable: true, 	//드래그 가능 여부
-
-                responsive: [ // 반응형 웹 구현 옵션
-                    {
-                        breakpoint: 1500, //화면 사이즈 1500px 보다 작을 시
-                        settings: {
-                            //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
-                            slidesToShow: 2
-                        }
-                    },
-                    {
-                        breakpoint: 800, //화면 사이즈 800px 보다 작을 시
-                        settings: {
-                            //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
-                            slidesToShow: 1
-                        }
-                    }
-                ]
-
-            });
-        })
-    }
-
-    function showBookmarks() {
-        let get_link = window.location.search;
-        let do_split = get_link.split('=');
-        let content_id = do_split[1];
-
-        $('#title').text(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['title']);
-        $('#file').attr('src', JSON.parse(sessionStorage.getItem('near_object'))[content_id]['file'])
-        $('#address').text(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['address']);
-        $('#distance').text(`여기에서 ${JSON.parse(sessionStorage.getItem('near_object'))[content_id]['distance']}m 거리`);
-
-        $.ajax({
-            type: "GET",
-            url: "/bookmark",
-            data: {},
-            success: function (response) {
-                if (response["result"] == "success") {
-                    let bookmarks = response['all_bookmarks'];
-
-                    for (let i = 0; i < bookmarks.length; i++) {
-                        let title = bookmarks[i]['title']
-                        let file = bookmarks[i]['file']
-                        let address = bookmarks[i]['address']
-                        let distance = bookmarks[i]['distance']
-
-                        let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place?content=${content_id}" class="card">
-                                                <img src="../static/img/noImage.png" class="card__image" alt="이미지 없음"/>
-                                                <div class="card__overlay">
-                                                    <div class="card__header">
-                                                        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-                                                            <path/>
-                                                        </svg>
-                                                        <img class="card__thumb" src="../static/img/noImage.png" alt="썸네일 이미지 없음"/>
-                                                        <div class="card__header-text">
-                                                            <h3 class="card__title">${title}</h3>
-                                                            <span class="card__status">${distance}m</span>
-                                                        </div>
-                                                    </div>
-                                                    <p class="card__description">${address}</p>
-                                                </div>
-                                            </a>
-                                        </li>`
-                        $('#bookmark_card').append(temp_html);
-                        slide();
-                    }
-
-                }
-            }
-        })
-    }
-</script>
-
-<body style="background-color: #fef8f8;">
-<div class="bookmark-cards">
+<div class="near-cards" style="margin-bottom: 70px">
     <div class="wrap">
         <div class="slide-title">
-            <div class="d-flex align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center">
                 <h6 style="margin-bottom: 0">나의 즐겨찾기</h6>
             </div>
         </div>
-
         <button type="button" id="btn_prev"><i class="fas fa-chevron-left"></i></button>
         <button type="button" id="btn_next"><i class="fas fa-chevron-right"></i></button>
-        <ul class="cards slider-li" id="bookmark_card"></ul>
+        <ul class="cards slider-li" id="bookmark_card">
+        </ul>
+    </div>
+</div>
+
+<!-- 모달 창 -->
+<div class="modal fade" id="profile_modal" tabindex="-1" aria-labelledby="profile_modal_label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profile_modal_label">프로필 설정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">닉네임:</label>
+                        <input type="text" class="form-control" id="modal_nickname" placeholder="사용하실 닉네임을 입력해주세요">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal_img" class="col-form-label">프로필 사진:</label>
+                        <input type="file" class="form-control" id="modal_img">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" onclick="saveProfile()">저장</button>
+            </div>
+        </div>
     </div>
 </div>
 
