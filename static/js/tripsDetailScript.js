@@ -3,8 +3,6 @@ function getId() {
     let do_split = get_link.split('/');
     let trip_id = do_split[do_split.length - 1];
 
-    console.log(trip_id)
-
     return trip_id;
 }
 
