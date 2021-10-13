@@ -136,27 +136,27 @@ def get_popular_trips():
     info = random.randrange(1, 7)
     cat1 = 'C01'
     content_quantity = 13
-    if (info == 1):
+    if info == 1:
         cat2 = 'C0112'
         cat3 = 'C01120001'
         trip_theme = '가족 '
-    elif (info == 2):
+    elif info == 2:
         cat2 = 'C0113'
         cat3 = 'C01130001'
         trip_theme = '나홀로 '
-    elif (info == 3):
+    elif info == 3:
         cat2 = 'C0114'
         cat3 = 'C01140001'
         trip_theme = '힐링 '
-    elif (info == 4):
+    elif info == 4:
         cat2 = 'C0115'
         cat3 = 'C01150001'
         trip_theme = '걷기 좋은 '
-    elif (info == 5):
+    elif info == 5:
         cat2 = 'C0116'
         cat3 = 'C01160001'
         trip_theme = '캠핑 '
-    elif (info == 6):
+    elif info == 6:
         cat2 = 'C0117'
         cat3 = 'C01170001'
         trip_theme = '맛집 '
@@ -296,8 +296,26 @@ def show_bookmarks():
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
 
-        bookmarks = list(db.bookmark.find({'_id': False}))
-        return render_template('bookmarks.html', user_info=user_info, bookmarks=bookmarks)
+        return render_template('bookmarks.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
+
+
+# 즐겨찾기 된 아이디 전송
+@app.route('/bookmark', methods=['POST'])
+def give_bookmarks_id():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        all_bookmarks = list(db.bookmark.find({"username": user_info["username"]}, {"_id": False}))
+        print(all_bookmarks)
+
+        return jsonify({"all_bookmarks": all_bookmarks})
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
