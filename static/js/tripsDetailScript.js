@@ -1,7 +1,9 @@
 function getId() {
-    let get_link = window.location.search;
-    let do_split = get_link.split('=');
-    let trip_id = do_split[1];
+    let get_link = window.location.pathname;
+    let do_split = get_link.split('/');
+    let trip_id = do_split[do_split.length - 1];
+
+    console.log(trip_id)
 
     return trip_id;
 }
@@ -9,13 +11,13 @@ function getId() {
 function getItem() {
     $.ajax({
         type: "POST",
-        url: `/trips/place`,
+        url: `/trips/place/render`,
         data: {trip_id_give: getId()},
         success: function (response) {
-            $('#profile_img').attr('src', `../static/img/profile/${response['trip']['profile_img']}`);
+            $('#profile_img').attr('src', `../../static/img/profile/${response['trip']['profile_img']}`);
             $('#nickname').text(response['trip']['nickname']);
             $('#title').text(response['trip']['title']);
-            $('#file').attr('src', `../static/img/${response['trip']['file']}`);
+            $('#file').attr('src', `../../static/img/${response['trip']['file']}`);
             $('#place').text(response['trip']['place']);
             $('#review').text(response['trip']['review']);
             $('#date').text(response['trip']['date']);
@@ -26,9 +28,9 @@ function getItem() {
 
 function updateTrip(trip_id) {
     $.ajax({
-        type: "GET",
-        url: `/trips/update?id=${trip_id}`,
-        data: {},
+        type: "POST",
+        url: '/trips/session',
+        data: {trip_id_give: trip_id},
         success: function (response) {
             sessionStorage.setItem('title', response['title']);
             sessionStorage.setItem('place', response['place']);
@@ -44,11 +46,11 @@ function updateTrip(trip_id) {
 function delTrip(trip_id) {
     $.ajax({
         type: "DELETE",
-        url: "/trips",
-        data: {trip_id_give: trip_id},
+        url: `/trips/place/${trip_id}`,
+        data: {},
         success: function (response) {
             alert(response['msg'])
-            window.location.href = "/main";
+            window.location.href = "/trips/list";
         }
     });
 }
@@ -57,7 +59,7 @@ function delTrip(trip_id) {
 function like_place(trip_id) {
     $.ajax({
         type: 'POST',
-        url: '/trips/like',
+        url: '/trips/place/like',
         data: {trip_id_give: trip_id},
         success: function (response) {
             alert(response['msg']);

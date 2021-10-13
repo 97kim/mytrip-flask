@@ -1,7 +1,7 @@
 function getMap() {
-    let get_link = window.location.search;
-    let do_split = get_link.split('=');
-    let content_id = do_split[1];
+    let get_link = window.location.pathname;
+    let do_split = get_link.split('/');
+    let content_id = do_split[do_split.length - 1];
 
     let map = new naver.maps.Map('map', {
         center: new naver.maps.LatLng(
@@ -22,7 +22,7 @@ function getMap() {
             Number(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lng'])
         ),
         map: map,
-        icon: "../static/img/marker.png"
+        icon: "../../static/img/marker.png"
     });
 
     let infowindow = new naver.maps.InfoWindow({
@@ -39,24 +39,24 @@ function getMap() {
     });
 }
 
-function getItem() {
-    let get_link = window.location.search;
-    let do_split = get_link.split('=');
-    let content_id = do_split[1];
+function getId() {
+    let get_link = window.location.pathname;
+    let do_split = get_link.split('/');
+    let content_id = do_split[do_split.length - 1];
 
-    $('#title').text(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['title']);
-    $('#file').attr('src', JSON.parse(sessionStorage.getItem('near_object'))[content_id]['file'])
-    $('#address').text(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['address']);
-    $('#distance').text(`여기에서 ${JSON.parse(sessionStorage.getItem('near_object'))[content_id]['distance']}m 거리`);
+    return content_id;
+}
+
+function getItem() {
+    $('#title').text(JSON.parse(sessionStorage.getItem('near_object'))[getId()]['title']);
+    $('#file').attr('src', JSON.parse(sessionStorage.getItem('near_object'))[getId()]['file'])
+    $('#address').text(JSON.parse(sessionStorage.getItem('near_object'))[getId()]['address']);
+    $('#distance').text(`여기에서 ${JSON.parse(sessionStorage.getItem('near_object'))[getId()]['distance']}m 거리`);
 }
 
 function weather() {
-    let get_link = window.location.search;
-    let do_split = get_link.split('=');
-    let content_id = do_split[1];
-
-    let place_lat = JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lat']
-    let place_lng = JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lng']
+    let place_lat = JSON.parse(sessionStorage.getItem('near_object'))[getId()]['place_lat']
+    let place_lng = JSON.parse(sessionStorage.getItem('near_object'))[getId()]['place_lng']
 
     $.ajax({
         type: "POST",
@@ -86,41 +86,33 @@ function weather() {
     });
 }
 
-function getContentId() {
-    let get_link = window.location.search;
-    let do_split = get_link.split('=');
-    let content_id = do_split[1];
-
-    return content_id;
-}
-
 function toggle_bookmark(content_id) {
 
-    if ($('#bookmark').hasClass("fa-heart")) {
+    if ($('#bookmark').hasClass("fas")) {
         $.ajax({
             type: "POST",
-            url: "/bookmark",
+            url: "/near/place/bookmark",
             data: {
                 content_id_give: content_id,
                 action_give: "uncheck"
             },
             success: function (response) {
                 if (response['result'] == 'success') {
-                    $('#bookmark').removeClass("fa-heart").addClass("fa-heart-o")
+                    $('#bookmark').removeClass("fas").addClass("far")
                 }
             }
         })
     } else {
         $.ajax({
             type: "POST",
-            url: "/bookmark",
+            url: "/near/place/bookmark",
             data: {
                 content_id_give: content_id,
                 action_give: "check"
             },
             success: function (response) {
                 if (response['result'] == 'success') {
-                    $('#bookmark').removeClass("fa-heart-o").addClass("fa-heart")
+                    $('#bookmark').removeClass("far").addClass("fas")
                 }
             }
         });
@@ -131,14 +123,14 @@ function toggle_bookmark(content_id) {
 function getBookmark() {
     $.ajax({
         type: "GET",
-        url: `/near/place/bookmark?content=${getContentId()}`,
+        url: `/near/place/bookmark/${getId()}`,
         data: {},
         success: function (response) {
             console.log(response['bookmark_status']);
             if (response['bookmark_status'] == "True") {
-                $('#bookmark').removeClass("fa-heart-o").addClass("fa-heart");
+                $('#bookmark').removeClass("far").addClass("fas");
             } else {
-                $('#bookmark').removeClass("fa-heart").addClass("fa-heart-o")
+                $('#bookmark').removeClass("fas").addClass("far")
             }
         }
     });
