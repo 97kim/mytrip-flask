@@ -287,6 +287,23 @@ def get_bookmark(content_id):
         return redirect(url_for("login"))
 
 
+# 즐겨찾기 페이지에서 모아보기
+@app.route('/bookmark', methods=['GET'])
+def show_bookmarks():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        bookmarks = list(db.bookmark.find({'_id': False}))
+        return render_template('bookmarks.html', user_info=user_info, bookmarks=bookmarks)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
+
+
 # 근처 여행지 날씨 불러오기
 @app.route('/near/place/weather', methods=['POST'])
 def get_weather():
