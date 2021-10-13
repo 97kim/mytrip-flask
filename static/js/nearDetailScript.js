@@ -89,6 +89,7 @@ function weather() {
 function toggle_bookmark(content_id) {
 
     if ($('#bookmark').hasClass("fas")) {
+
         $.ajax({
             type: "POST",
             url: "/near/place/bookmark",

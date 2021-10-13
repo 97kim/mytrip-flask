@@ -34,8 +34,7 @@
 
     <!--fontawesome cdn-->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
-          integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
-          crossorigin="anonymous">
+          integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
 
     <!--외부 static 파일 불러오기-->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
@@ -79,7 +78,7 @@
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
                                data-bs-target="#profile_modal"
                                data-bs-whatever="@mdo">프로필 설정</a></li>
-                        <li><a class="dropdown-item" href="#">즐겨찾기</a></li>
+                        <li><a class="dropdown-item" href="/bookmark">즐겨찾기</a></li>
                         <li><a class="dropdown-item" href="javascript:logout()">로그아웃</a></li>
                     </ul>
                 </li>
