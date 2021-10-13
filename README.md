@@ -5,6 +5,11 @@ https://kimkj.shop/
 
 <br>
 
+### 🔖 Starting Assignment
+https://velog.io/@rudwnd33/2%EC%B0%A8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-S.A
+
+<br>
+
 ### 🏠 소개
 지금 떠날 수 있는 여행지는 어디??
 
