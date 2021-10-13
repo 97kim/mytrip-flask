@@ -136,27 +136,27 @@ def get_popular_trips():
     info = random.randrange(1, 7)
     cat1 = 'C01'
     content_quantity = 13
-    if (info == 1):
+    if info == 1:
         cat2 = 'C0112'
         cat3 = 'C01120001'
         trip_theme = '가족 '
-    elif (info == 2):
+    elif info == 2:
         cat2 = 'C0113'
         cat3 = 'C01130001'
         trip_theme = '나홀로 '
-    elif (info == 3):
+    elif info == 3:
         cat2 = 'C0114'
         cat3 = 'C01140001'
         trip_theme = '힐링 '
-    elif (info == 4):
+    elif info == 4:
         cat2 = 'C0115'
         cat3 = 'C01150001'
         trip_theme = '걷기 좋은 '
-    elif (info == 5):
+    elif info == 5:
         cat2 = 'C0116'
         cat3 = 'C01160001'
         trip_theme = '캠핑 '
-    elif (info == 6):
+    elif info == 6:
         cat2 = 'C0117'
         cat3 = 'C01170001'
         trip_theme = '맛집 '
