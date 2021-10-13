@@ -292,13 +292,13 @@ function showPopularTrips() {
                 let content_id = popular_list[i]['contentid'];
                 let file = popular_list[i]['firstimage'];
                 if (!file) {
-                    let file = popular_list[i]['firstimage2'];
+                    file = popular_list[i]['firstimage2'];
                 } // file의 약한 예외 처리 기준은 처음부터 사진 있는 정보들만 가져왔기 때문입니다.
                 let areacode = popular_list[i]['areacode'];
                 let address = check_address(areacode)
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                 <a href="/near/place?content=${content_id}" class="card">
+                                 <a href="/near/place/${content_id}" class="card">
                                     <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                     <div class="card__overlay">
                                         <div class="card__header">

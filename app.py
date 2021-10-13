@@ -1,16 +1,12 @@
 import os
 
 from flask import Flask, render_template, jsonify, request, redirect, url_for
-
-import jwt, hashlib
-
-import jwt
-import hashlib
-
 from pymongo import MongoClient
 import requests
 import xmltodict
 import json
+import jwt
+import hashlib
 import random
 from datetime import datetime, timedelta
 # python-dotenv 라이브러리 설치
@@ -506,6 +502,41 @@ def like_place():
     db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': new_like}})
 
     return jsonify({'msg': '좋아요 완료!'})
+
+
+@app.route('/profile', methods=['POST'])
+def save_profile():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        nickname_receive = request.form['nickname_give']
+
+        new_doc = {
+            'nickname': nickname_receive
+        }
+
+        if 'img_give' in request.files:
+            img_receive = request.files['img_give']
+
+            today = datetime.now()
+            time = today.strftime('%Y-%m-%d-%H-%M-%S')
+
+            filename = f"{user_info['username']}-{time}"
+            extension = img_receive.filename.split('.')[-1]
+
+            save_to = f'static/img/profile/{filename}.{extension}'
+            img_receive.save(save_to)
+
+            new_doc['profile_img'] = f'{filename}.{extension}'
+
+        db.users.update_one({'username': user_info['username']}, {'$set': new_doc})
+        db.trips.update_one({'username': user_info['username']}, {'$set': new_doc})
+        return jsonify({'msg': '작성 완료!'})
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
 
 
 if __name__ == '__main__':

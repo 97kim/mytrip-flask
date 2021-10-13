@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/detail.css') }}"/>
     <script type="text/javascript" src="{{ url_for('static',filename='js/tripsDetailScript.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/logout.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='js/modalProfile.js') }}"></script>
 
     <script>
         $(document).ready(function () {
@@ -74,6 +75,9 @@
                         Profile
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                               data-bs-target="#profile_modal"
+                               data-bs-whatever="@mdo">프로필 설정</a></li>
                         <li><a class="dropdown-item" href="#">즐겨찾기</a></li>
                         <li><a class="dropdown-item" href="javascript:logout()">로그아웃</a></li>
                     </ul>
@@ -137,6 +141,34 @@
             </div>
         </div>
     </section>
+</div>
+
+<!-- 모달 창 -->
+<div class="modal fade" id="profile_modal" tabindex="-1" aria-labelledby="profile_modal_label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profile_modal_label">프로필 설정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">닉네임:</label>
+                        <input type="text" class="form-control" id="modal_nickname" placeholder="사용하실 닉네임을 입력해주세요">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal_img" class="col-form-label">프로필 사진:</label>
+                        <input type="file" class="form-control" id="modal_img">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" onclick="saveProfile()">저장</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Site footer -->
