@@ -61,6 +61,7 @@
             getMap();
             getItem();
             weather();
+            getBookmark();
         });
     </script>
 </head>
@@ -115,6 +116,14 @@
                             <header>
                                 <h3 id="distance"></h3>
                             </header>
+                            <div>
+                                <button type="button" class="level-item is-sparta" aria-label="heart"
+                                        onclick="toggle_bookmark(getId())">
+                                        <span class="icon is-small"><i id="bookmark" class="far fa-heart"
+                                                                       aria-hidden="true"></i></span>
+                                    &nbsp;<span>즐겨찾기</span>
+                                </button>
+                            </div>
                         </section>
                     </article>
 
@@ -131,14 +140,6 @@
                         <div>
                             <footer class="d-flex align-items-center justify-content-between">
                                 <a href="#" class="button alt">공유하기</a>
-                                <div style="float: right;">
-                                    <a class="level-item is-sparta" aria-label="heart"
-                                       onclick="toggle_bookmark('${post_id]}', 'heart')">
-                                        <span class="icon is-small"><i class="fa fa-heart"
-                                                                       aria-hidden="true"></i></span>
-                                        &nbsp;<span class="">즐겨찾기</span>
-                                    </a>
-                                </div>
                             </footer>
                         </div>
 

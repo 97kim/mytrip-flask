@@ -14,7 +14,7 @@ function save() {
 
     $.ajax({
         type: "POST",
-        url: "/trips",
+        url: "/trips/place",
         data: form_data,
         cache: false,
         contentType: false,
