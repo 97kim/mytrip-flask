@@ -1,11 +1,17 @@
 import os
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for, session
+from flask import Flask, render_template, jsonify, request, redirect, url_for
+
 import jwt, hashlib
+
+import jwt
+import hashlib
+
 from pymongo import MongoClient
 import requests
 import xmltodict
 import json
+import random
 from datetime import datetime, timedelta
 # python-dotenv 라이브러리 설치
 from dotenv import load_dotenv
@@ -22,6 +28,7 @@ REQUEST_URL = os.getenv('REQUEST_URL')
 WEATHER_URL = os.getenv('WEATHER_URL')
 WEATHER_KEY = os.getenv('WEATHER_KEY')
 SECRET_KEY = os.getenv('SECRET_KEY')
+POPULAR_PLACE = os.getenv('POPULAR_PLACE')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
@@ -49,10 +56,8 @@ def sign_in():
             'id': username_receive,
             'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)
         }
-        print(payload['exp'])
         # 로그인 성공 시 token 발급, 해당 부분 오류 발생 시 .decode('utf-8') 활성화
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')  # .decode('utf-8')
-        print('token' + token)
         return jsonify({'result': 'success', 'token': token})
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
@@ -63,15 +68,12 @@ def sign_up():
     username_receive = request.form['username_give']
     password_receive = request.form['password_give']
     password_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
-    print("복호화 : " + password_hash)
     doc = {
         "username": username_receive,  # 아이디
         "password": password_hash,  # 비밀번호
         "nickname": username_receive,  # 처음에는 아이디로 닉네임 설정하고 프로필 설정에서 변경 가능
         "profile_img": 'default_img.png'  # 처음에는 기본 이미지로 설정하고 프로필 설정에서 변경 가능
     }
-    print(password_receive)
-    print(password_hash)
     db.users.insert_one(doc)
 
     return jsonify({'result': 'success'})
@@ -99,7 +101,6 @@ def main():
         return redirect(url_for("login", msg="login_error."))
 
 
-# main.html에 내 근처 여행지 출력
 @app.route('/near', methods=['POST'])
 def get_near_place():
     token_receive = request.cookies.get('mytoken')
@@ -108,7 +109,6 @@ def get_near_place():
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
 
         if payload:
-
             lat_receive = request.form['lat_give']
             lng_receive = request.form['lng_give']
 
@@ -132,6 +132,56 @@ def get_near_place():
 
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("login"))
+
+
+# 랜덤으로 7가지 추천 테마 여행 띄어주기
+@app.route('/popular/list', methods=['POST'])
+def get_popular_trips():
+    info = random.randrange(1, 7)
+    cat1 = 'C01'
+    content_quantity = 13
+    if (info == 1):
+        cat2 = 'C0112'
+        cat3 = 'C01120001'
+        trip_theme = '가족 '
+    elif (info == 2):
+        cat2 = 'C0113'
+        cat3 = 'C01130001'
+        trip_theme = '나홀로 '
+    elif (info == 3):
+        cat2 = 'C0114'
+        cat3 = 'C01140001'
+        trip_theme = '힐링 '
+    elif (info == 4):
+        cat2 = 'C0115'
+        cat3 = 'C01150001'
+        trip_theme = '걷기 좋은 '
+    elif (info == 5):
+        cat2 = 'C0116'
+        cat3 = 'C01160001'
+        trip_theme = '캠핑 '
+    elif (info == 6):
+        cat2 = 'C0117'
+        cat3 = 'C01170001'
+        trip_theme = '맛집 '
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
+          f'&numOfRows={content_quantity}&MobileApp=trips&MobileOS=ETC&arrange=P&cat1={cat1}' \
+          f'&contentTypeId=25&cat2={cat2}&cat3={cat3}&listYN=Y'
+
+    r = requests.get(url, headers=headers)
+
+    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    popular_list = json_body['response']['body']['items']['item']
+    print(popular_list)
+    return jsonify({'popular_list': popular_list, 'trip_theme': trip_theme})
 
 
 # nearList.html 렌더링
@@ -332,7 +382,7 @@ def write():
         try:
             payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
             user_info = db.users.find_one({"username": payload["id"]})
-            return render_template('update.html', user_info=user_info)
+            return render_template('tripsUpdate.html', user_info=user_info)
         except jwt.ExpiredSignatureError:
             return redirect(url_for("login", msg="Your_login_time_has_expired."))
         except jwt.exceptions.DecodeError:
@@ -440,7 +490,6 @@ def update_trip(trip_id):
 # 리뷰 삭제
 @app.route('/trips/place/<trip_id>', methods=['DELETE'])
 def delete_trip(trip_id):
-
     db.trips.delete_one({'id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
 
