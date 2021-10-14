@@ -55,7 +55,7 @@ function sign_up() {
         $("#input-password").focus()
         return;
     } else if (!is_password(password)) {
-        $("#help-password").text("비밀번호의 형식을 확인해주세요. 영문과 숫자 필수 포함, 특수문자(!@#$%^&*) 사용가능 8-20자").removeClass("is-safe").addClass("is-danger")
+        $("#help-password").text("비밀번호의 형식을 확인해주세요. 영문과 숫자 필수 포함, 특수문자(!@#$%^&*) 사용가능 8-14자").removeClass("is-safe").addClass("is-danger")
         $("#input-password").focus()
         return
     } else {
@@ -101,7 +101,7 @@ function is_nickname(asValue) {
 }
 
 function is_password(asValue) {
-    let regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,20}$/;
+    let regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,14}$/;
     return regExp.test(asValue);
 }
 

@@ -29,6 +29,25 @@ POPULAR_PLACE = os.getenv('POPULAR_PLACE')
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
 
+<TEST>
+def test():
+    print('test1 실행')
+
+    @app.teardown_appcontext
+    def test2():
+        print('test2 실행')
+        token_receive = request.cookies.get('mytoken')
+
+        try:
+            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+            user_info = db.users.find_one({"username": payload["id"]})
+            # return render_template('main.html', user_info=user_info)
+        except jwt.ExpiredSignatureError:
+            return redirect(url_for("login", msg="Your_login_time_has_expired."))
+        except jwt.exceptions.DecodeError:
+            print('이부분')
+            return redirect(url_for("login", msg="login_error."))
+
 
 # 로그인 페이지
 @app.route('/')
@@ -54,6 +73,7 @@ def sign_in():
         }
         # 로그인 성공 시 token 발급, 해당 부분 오류 발생 시 .decode('utf-8') 활성화
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')  # .decode('utf-8')
+        test()
         return jsonify({'result': 'success', 'token': token})
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
@@ -85,16 +105,17 @@ def check_dup():
 # main.html 렌더링
 @app.route('/main', methods=['GET'])
 def main():
-    token_receive = request.cookies.get('mytoken')
-
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.users.find_one({"username": payload["id"]})
-        return render_template('main.html', user_info=user_info)
-    except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="Your_login_time_has_expired."))
-    except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="login_error."))
+    # token_receive = request.cookies.get('mytoken')
+    #
+    # try:
+    #     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+    #     user_info = db.users.find_one({"username": payload["id"]})
+    #     return render_template('main.html', user_info=user_info)
+    return render_template('main.html')
+    # except jwt.ExpiredSignatureError:
+    #     return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    # except jwt.exceptions.DecodeError:
+    #     return redirect(url_for("login", msg="login_error."))
 
 
 @app.route('/near', methods=['POST'])
@@ -130,33 +151,33 @@ def get_near_place():
         return redirect(url_for("login"))
 
 
-# 랜덤으로 7가지 추천 테마 여행 띄어주기
+# 랜덤으로 6가지 추천 테마 여행 띄어주기
 @app.route('/popular/list', methods=['POST'])
 def get_popular_trips():
     info = random.randrange(1, 7)
     cat1 = 'C01'
     content_quantity = 13
-    if (info == 1):
+    if info == 1:
         cat2 = 'C0112'
         cat3 = 'C01120001'
         trip_theme = '가족 '
-    elif (info == 2):
+    elif info == 2:
         cat2 = 'C0113'
         cat3 = 'C01130001'
         trip_theme = '나홀로 '
-    elif (info == 3):
+    elif info == 3:
         cat2 = 'C0114'
         cat3 = 'C01140001'
         trip_theme = '힐링 '
-    elif (info == 4):
+    elif info == 4:
         cat2 = 'C0115'
         cat3 = 'C01150001'
         trip_theme = '걷기 좋은 '
-    elif (info == 5):
+    elif info == 5:
         cat2 = 'C0116'
         cat3 = 'C01160001'
         trip_theme = '캠핑 '
-    elif (info == 6):
+    elif info == 6:
         cat2 = 'C0117'
         cat3 = 'C01170001'
         trip_theme = '맛집 '
@@ -176,7 +197,6 @@ def get_popular_trips():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
-    print(popular_list)
     return jsonify({'popular_list': popular_list, 'trip_theme': trip_theme})
 
 

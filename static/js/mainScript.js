@@ -291,10 +291,9 @@ function showPopularTrips() {
                 let title = popular_list[i]['title'];
                 let content_id = popular_list[i]['contentid'];
                 let file = popular_list[i]['firstimage'];
-                if (!file) {
+                if (!file)
                     file = popular_list[i]['firstimage2'];
-                } // file의 약한 예외 처리 기준은 처음부터 사진 있는 정보들만 가져왔기 때문입니다.
-                let areacode = popular_list[i]['areacode'];
+                let areacode = parseInt(popular_list[i]['areacode']);
                 let address = check_address(areacode)
 
                 let temp_html = `<li style="margin: 0 10px; height: 300px;">
@@ -311,7 +310,7 @@ function showPopularTrips() {
                                                 <span class="card__status">${address}</span>
                                             </div>
                                         </div>
-                                        <p class="card__description" >추가예정(hj)</p>
+                                        <p class="card__description" >${address}로 떠나보기~!</p>
                                     </div>
                                 </a>
                             </li>`;
@@ -324,45 +323,45 @@ function showPopularTrips() {
 }
 
 function check_address(code) {
-    if (code == 1) {
+    if (code === 1) {
         code = '서울특별시'
-    } else if (code == 21) {
+    } else if (code === 21) {
         code = '부산광역시'
-    } else if (code == 22) {
+    } else if (code === 22) {
         code = '대구광역시'
-    } else if (code == 23) {
+    } else if (code === 23) {
         code = '인천광역시'
-    } else if (code == 24) {
+    } else if (code === 24) {
         code = '광주광역시'
-    } else if (code == 25) {
+    } else if (code === 25) {
         code = '대전광역시'
-    } else if (code == 26) {
+    } else if (code === 26) {
         code = '울산광역시'
-    } else if (code == 29) {
+    } else if (code === 29) {
         code = '세종특별자치시'
-    } else if (code == 31) {
+    } else if (code === 31) {
         code = '경기도'
-    } else if (code == 32) {
+    } else if (code === 32) {
         code = '강원도'
-    } else if (code == 33) {
+    } else if (code === 33) {
         code = '충청북도'
-    } else if (code == 34) {
+    } else if (code === 34) {
         code = '충청남도'
-    } else if (code == 35) {
+    } else if (code === 35) {
         code = '전라북도'
-    } else if (code == 36) {
+    } else if (code === 36) {
         code = '전라남도'
-    } else if (code == 37) {
+    } else if (code === 37) {
         code = '경상북도'
-    } else if (code == 38) {
+    } else if (code === 38) {
         code = '경상남도'
-    } else if (code == 39) {
+    } else if (code === 39) {
         code = '제주도'
-    }else if (code == 2) {
+    } else if (code === 2) {
         code = '인천'
-    }else if (code == 4) {
+    } else if (code === 4) {
         code = '대구'
-    }else if (code == 6) {
+    } else if (code === 6) {
         code = '부산'
     }
     return code
