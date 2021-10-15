@@ -169,6 +169,10 @@ p, ul, ol, dl, table {
     color: #e8344e !important;
 }
 
+.is-like {
+    color: #314deb !important;
+}
+
 /* Container */
 
 .custom-container {
