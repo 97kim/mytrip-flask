@@ -558,7 +558,6 @@ def delete_trip(trip_id):
     return jsonify({'msg': '삭제 완료!'})
 
 
-
 # 리뷰 좋아요 - 누가 어떤 리뷰를 좋아요 했는지 db에 저장
 @application.route('/trips/place/like', methods=['POST'])
 def like_place():
@@ -602,29 +601,6 @@ def get_like(trip_id):
         like_status = bool(db.like.find_one({"trip_id": int(trip_id), "username": user_info["username"]}))
 
         return jsonify({"like_status": str(like_status)})
-    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return redirect(url_for("login"))
-
-
-@application.route("/trips/place/like", methods=['GET'])
-def get_like_number():
-    token_receive = request.cookies.get('mytoken')
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        my_username = payload["id"]
-        username_receive = request.args.get("username_give")
-        if username_receive=="":
-            likes = list(db.like.find({}))
-        else:
-            likes = list(db.like.find({"username":username_receive}))
-
-        for post in likes:
-            post["_id"] = str(post["_id"])
-
-            post["count_like"] = db.like.count_documents({"post_id": post["_id"]})
-            post["like_by_me"] = bool(db.likes.find_one({"post_id": post["_id"], "username": my_username}))
-
-        return jsonify({"result": "success", "msg": "포스팅을 가져왔습니다.", "likes": likes})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("login"))
 
