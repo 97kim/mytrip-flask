@@ -28,7 +28,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_REGION = os.getenv('AWS_REGION')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
@@ -472,7 +471,6 @@ def write_trip():
         s3 = boto3.client('s3',
                           aws_access_key_id=AWS_ACCESS_KEY_ID,
                           aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-                          region_name=AWS_REGION
                           )
         s3.put_object(
             ACL="public-read",
@@ -530,7 +528,6 @@ def update_trip(trip_id):
         s3 = boto3.client('s3',
                           aws_access_key_id=AWS_ACCESS_KEY_ID,
                           aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-                          region_name=AWS_REGION
                           )
         s3.put_object(
             ACL="public-read",
@@ -550,8 +547,16 @@ def update_trip(trip_id):
 # 리뷰 삭제
 @application.route('/trips/place/<trip_id>', methods=['DELETE'])
 def delete_trip(trip_id):
+    trip_file = db.trips.find_one({'id': int(trip_id)})['file']
+
+    # s3에서 삭제
+    s3 = boto3.resource('s3')
+    s3.Object(BUCKET_NAME, f'trips/{trip_file}').delete()
+
+    # db에서 삭제
     db.trips.delete_one({'id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
+
 
 
 # 리뷰 좋아요 - 누가 어떤 리뷰를 좋아요 했는지 db에 저장
@@ -652,7 +657,6 @@ def save_profile():
             s3 = boto3.client('s3',
                               aws_access_key_id=AWS_ACCESS_KEY_ID,
                               aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-                              region_name=AWS_REGION
                               )
             s3.put_object(
                 ACL="public-read",
