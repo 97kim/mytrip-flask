@@ -130,7 +130,6 @@ function getBookmark() {
         url: `/near/place/bookmark/${getId()}`,
         data: {},
         success: function (response) {
-            console.log(response['bookmark_status']);
             if (response['bookmark_status'] == "True") {
                 $('#bookmark').removeClass("far").addClass("fas");
             } else {
