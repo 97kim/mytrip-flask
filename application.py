@@ -182,7 +182,6 @@ def get_popular_trips():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
-    print(popular_list)
     return jsonify({'popular_list': popular_list, 'trip_theme': trip_theme})
 
 
@@ -319,7 +318,6 @@ def give_bookmarks_id():
         user_info = db.users.find_one({"username": payload["id"]})
 
         all_bookmarks = list(db.bookmark.find({"username": user_info["username"]}, {"_id": False}))
-        print(all_bookmarks)
 
         return jsonify({"all_bookmarks": all_bookmarks})
     except jwt.ExpiredSignatureError:
