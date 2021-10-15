@@ -8,6 +8,7 @@ import json
 import jwt
 import hashlib
 import random
+import boto3
 from datetime import datetime, timedelta
 # python-dotenv 라이브러리 설치
 from dotenv import load_dotenv
@@ -24,6 +25,10 @@ REQUEST_URL = os.getenv('REQUEST_URL')
 WEATHER_URL = os.getenv('WEATHER_URL')
 WEATHER_KEY = os.getenv('WEATHER_KEY')
 SECRET_KEY = os.getenv('SECRET_KEY')
+
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
@@ -300,8 +305,6 @@ def get_popular_near_place():
         return redirect(url_for("login", msg="login_error."))
 
 
-# WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-
 # nearList.html 렌더링
 @application.route('/near/list', methods=['GET'])
 def get_near_list():
@@ -418,8 +421,25 @@ def show_bookmarks():
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
 
-        bookmarks = list(db.bookmark.find({'_id': False}))
-        return render_template('bookmarks.html', user_info=user_info, bookmarks=bookmarks)
+        return render_template('bookmarks.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
+
+
+# 즐겨찾기 된 아이디 전송
+@application.route('/bookmark', methods=['POST'])
+def give_bookmarks_id():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        all_bookmarks = list(db.bookmark.find({"username": user_info["username"]}, {"_id": False}))
+
+        return jsonify({"all_bookmarks": all_bookmarks})
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
@@ -493,7 +513,7 @@ def get_trips_detail(trip_id):
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="login_error."))
+        return render_template('tripsDetail.html')
 
 
 @application.route('/trips/place/render', methods=['POST'])
@@ -559,23 +579,35 @@ def write_trip():
         trip_title_receive = request.form['title_give']
         trip_place_receive = request.form['place_give']
         trip_review_receive = request.form['review_give']
-        trip_file = request.files["file_give"]
+        trip_file_receive = request.files["file_give"]
 
         today = datetime.now()
         time = today.strftime('%Y-%m-%d-%H-%M-%S')
 
         filename = f'file-{time}'
-        extension = trip_file.filename.split('.')[-1]
+        extension = trip_file_receive.filename.split('.')[-1]
 
-        save_to = f'static/img/{filename}.{extension}'
-        trip_file.save(save_to)
+        full_file_name = f'{filename}.{extension}'
+
+        # boto3(aws s3에 올리기)
+        s3 = boto3.client('s3',
+                          aws_access_key_id=AWS_ACCESS_KEY_ID,
+                          aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                          )
+        s3.put_object(
+            ACL="public-read",
+            Bucket=BUCKET_NAME,
+            Body=trip_file_receive,
+            Key='trips/' + full_file_name,  # 버킷 내 trips 폴더에 저장
+            ContentType=trip_file_receive.content_type
+        )
 
         doc = {
             'id': db.trips.count() + 1,
             'title': trip_title_receive,
             'place': trip_place_receive,
             'review': trip_review_receive,
-            'file': f'{filename}.{extension}',
+            'file': full_file_name,
             'date': today,
             'username': user_info['username'],
             'nickname': user_info['nickname'],
@@ -612,10 +644,22 @@ def update_trip(trip_id):
         filename = f'file-{time}'
         extension = trip_file_receive.filename.split('.')[-1]
 
-        save_to = f'static/img/{filename}.{extension}'
-        trip_file_receive.save(save_to)
+        full_file_name = f'{filename}.{extension}'
 
-        new_doc['file'] = f'{filename}.{extension}'
+        # boto3(aws s3에 올리기)
+        s3 = boto3.client('s3',
+                          aws_access_key_id=AWS_ACCESS_KEY_ID,
+                          aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                          )
+        s3.put_object(
+            ACL="public-read",
+            Bucket=BUCKET_NAME,
+            Body=trip_file_receive,
+            Key='trips/' + full_file_name,  # 버킷 내 trips 폴더에 저장
+            ContentType=trip_file_receive.content_type
+        )
+
+        new_doc['file'] = full_file_name
 
     db.trips.update_one({'id': int(trip_id)}, {'$set': new_doc})
 
@@ -625,8 +669,62 @@ def update_trip(trip_id):
 # 리뷰 삭제
 @application.route('/trips/place/<trip_id>', methods=['DELETE'])
 def delete_trip(trip_id):
+    trip_file = db.trips.find_one({'id': int(trip_id)})['file']
+
+    # s3에서 삭제
+    s3 = boto3.resource('s3')
+    s3.Object(BUCKET_NAME, f'trips/{trip_file}').delete()
+
+    # db에서 삭제
     db.trips.delete_one({'id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
+
+
+# 리뷰 좋아요 - 누가 어떤 리뷰를 좋아요 했는지 db에 저장
+@application.route('/trips/place/like', methods=['POST'])
+def like_place():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        trip_id_receive = request.form['trip_id_give']
+        action_receive = request.form['action_give']
+
+        doc = {
+            'trip_id': int(trip_id_receive),
+            'username': user_info['username'],
+        }
+
+        total_like = db.trips.find_one({'id': int(trip_id_receive)})['like']
+
+        if action_receive == "uncheck":
+            db.like.delete_one(doc)
+            db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': total_like - 1}})
+
+        else:
+            db.like.insert_one(doc)
+            db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': total_like + 1}})
+
+        return jsonify({"result": "success"})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+# 좋아요한 게시글은 나갔다 들어와도 좋아요로 표시
+@application.route('/trips/place/like/<trip_id>', methods=['GET'])
+def get_like(trip_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        like_status = bool(db.like.find_one({"trip_id": int(trip_id), "username": user_info["username"]}))
+
+        return jsonify({"like_status": str(like_status)})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
 
 
 @application.route('/profile', methods=['POST'])
@@ -651,10 +749,22 @@ def save_profile():
             filename = f"{user_info['username']}-{time}"
             extension = img_receive.filename.split('.')[-1]
 
-            save_to = f'static/img/profile/{filename}.{extension}'
-            img_receive.save(save_to)
+            full_file_name = f'{filename}.{extension}'
 
-            new_doc['profile_img'] = f'{filename}.{extension}'
+            # boto3(aws s3에 올리기)
+            s3 = boto3.client('s3',
+                              aws_access_key_id=AWS_ACCESS_KEY_ID,
+                              aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                              )
+            s3.put_object(
+                ACL="public-read",
+                Bucket=BUCKET_NAME,
+                Body=img_receive,
+                Key='profile/' + full_file_name,  # 버킷 내 profile 폴더에 저장
+                ContentType=img_receive.content_type
+            )
+
+            new_doc['profile_img'] = full_file_name
 
         db.users.update_one({'username': user_info['username']}, {'$set': new_doc})
         db.trips.update_one({'username': user_info['username']}, {'$set': new_doc})

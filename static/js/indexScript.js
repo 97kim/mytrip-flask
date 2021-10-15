@@ -106,6 +106,7 @@ function is_password(asValue) {
 
 function check_dup() {
     let username = $("#input-username").val()
+
     if (username === "") {
         $("#help-id").text("아이디를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
         $("#input-username").focus()
