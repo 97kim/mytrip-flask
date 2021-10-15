@@ -51,6 +51,7 @@ function delTrip(trip_id) {
             window.location.href = "/trips/list";
         }
     });
+
 }
 
 // 카카오톡 공유하기
