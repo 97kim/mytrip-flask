@@ -393,7 +393,7 @@ def get_trips_detail(trip_id):
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="login_error."))
+        return render_template('tripsDetail.html')
 
 
 @application.route('/trips/place/render', methods=['POST'])
@@ -560,18 +560,51 @@ def delete_trip(trip_id):
     return jsonify({'msg': '삭제 완료!'})
 
 
+# 리뷰 좋아요 - 누가 어떤 리뷰를 좋아요 했는지 db에 저장
 @application.route('/trips/place/like', methods=['POST'])
 def like_place():
-    trip_id_receive = request.form['trip_id_give']
+    token_receive = request.cookies.get('mytoken')
 
-    target_id = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        trip_id_receive = request.form['trip_id_give']
+        action_receive = request.form['action_give']
 
-    current_like = target_id['like']
-    new_like = current_like + 1
+        doc = {
+            'trip_id': int(trip_id_receive),
+            'username': user_info['username'],
+        }
 
-    db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': new_like}})
+        total_like = db.trips.find_one({'id': int(trip_id_receive)})['like']
 
-    return jsonify({'msg': '좋아요 완료!'})
+        if action_receive == "uncheck":
+            db.like.delete_one(doc)
+            db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': total_like - 1}})
+
+        else:
+            db.like.insert_one(doc)
+            db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': total_like + 1}})
+
+        return jsonify({"result": "success"})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+# 좋아요한 게시글은 나갔다 들어와도 좋아요로 표시
+@application.route('/trips/place/like/<trip_id>', methods=['GET'])
+def get_like(trip_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        like_status = bool(db.like.find_one({"trip_id": int(trip_id), "username": user_info["username"]}))
+
+        return jsonify({"like_status": str(like_status)})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
 
 
 @application.route('/profile', methods=['POST'])

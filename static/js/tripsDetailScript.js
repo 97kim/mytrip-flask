@@ -53,15 +53,99 @@ function delTrip(trip_id) {
     });
 }
 
-// 좋아요 기능
-function like_place(trip_id) {
+// 카카오톡 공유하기
+function kakaoShare() {
     $.ajax({
-        type: 'POST',
-        url: '/trips/place/like',
-        data: {trip_id_give: trip_id},
+        type: "POST",
+        url: `/trips/place/render`,
+        data: {trip_id_give: getId()},
         success: function (response) {
-            alert(response['msg']);
-            window.location.reload();
+            let share_title = response['trip']['title'];
+            let share_place = response['trip']['place'];
+            let share_img = `https://dk9q1cr2zzfmc.cloudfront.net/trips/${response['trip']['file']}`;
+            let share_like = response['trip']['like'];
+
+            Kakao.Link.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: share_title,
+                    description: share_place,
+                    imageUrl: share_img,
+                    link: {
+                        mobileWebUrl: 'https://kimkj.shop' + location.pathname,
+                        webUrl: 'https://kimkj.shop' + location.pathname
+                    },
+                },
+                // 나중에 변수 추가할 것임!!
+                social: {
+                    likeCount: parseInt(share_like),
+                    commentCount: 1,
+                    sharedCount: 1
+                },
+                buttons: [
+                    {
+                        title: '구경 가기',
+                        link: {
+                            mobileWebUrl: 'https://kimkj.shop' + location.pathname,
+                            webUrl: 'https://kimkj.shop' + location.pathname
+                        }
+                    }
+                ],
+            })
+        }
+    });
+}
+
+// 좋아요 기능
+function toggle_like(trip_id) {
+    let like = parseInt($('#like').text());
+
+    if ($('#like').hasClass("fas")) {
+
+        $.ajax({
+            type: "POST",
+            url: "/trips/place/like",
+            data: {
+                trip_id_give: trip_id,
+                action_give: "uncheck"
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    $('#like').removeClass("fas").addClass("far")
+                    $('#like').text(like - 1);
+                }
+            }
+        })
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "/trips/place/like",
+            data: {
+                trip_id_give: trip_id,
+                action_give: "check"
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    $('#like').removeClass("far").addClass("fas")
+                    $('#like').text(like + 1);
+                }
+            }
+        });
+
+    }
+}
+
+function get_like() {
+    $.ajax({
+        type: "GET",
+        url: `/trips/place/like/${getId()}`,
+        data: {},
+        success: function (response) {
+            if (response['like_status'] == "True") {
+                $('#like').removeClass("far").addClass("fas");
+            } else {
+                $('#like').removeClass("fas").addClass("far")
+            }
         }
     });
 }

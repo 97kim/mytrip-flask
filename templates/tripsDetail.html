@@ -42,10 +42,15 @@
     <script type="text/javascript" src="{{ url_for('static',filename='js/tripsDetailScript.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/logout.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/modalProfile.js') }}"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script>
+        Kakao.init('a06f77fa2f554f8e1f314819fccabefd');
+    </script>
 
     <script>
         $(document).ready(function () {
             getItem(); // 제목, 장소, 사진, 리뷰내용, 날짜 출력
+            get_like();
         });
     </script>
 </head>
@@ -73,7 +78,7 @@
                        data-bs-toggle="dropdown" aria-expanded="false">
                         Profile
                     </a>
-                   <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
                                data-bs-target="#profile_modal"
                                data-bs-whatever="@mdo">프로필 설정</a></li>
@@ -117,8 +122,25 @@
                             <h3>내용</h3>
                             <p id="review"></p>
                         </section>
-                        <a href="javascript:like_place(getId())" class="button alt">좋아요</a>
-                        <i class="far fa-thumbs-up" style="margin-left: 10px;"></i> &nbsp;<span id="like"></span>
+                        <div class="d-flex justify-content-between">
+                            <div class="like-box">
+                                <button type="button" class="level-item is-like" aria-label="like"
+                                        onclick="toggle_like(getId())">
+                                        <span class="icon is-small"><i id="like" class="far fa-thumbs-up"
+                                                                       aria-hidden="true"></i></span>
+                                    &nbsp;<span>좋아요</span>
+                                </button>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <button type="button" onclick="kakaoShare()" class="d-flex align-self-center"
+                                        style="text-decoration-line: none;">
+                                    <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png"
+                                         width="20px" height="20px"/>
+                                    <span class="d-flex align-self-center"
+                                          style="margin-left: 10px; color: black;">공유</span>
+                                </button>
+                            </div>
+                        </div>
                     </article>
 
                 </div>
