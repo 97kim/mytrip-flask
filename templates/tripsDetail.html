@@ -42,6 +42,10 @@
     <script type="text/javascript" src="{{ url_for('static',filename='js/tripsDetailScript.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/logout.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/modalProfile.js') }}"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script>
+        Kakao.init('a06f77fa2f554f8e1f314819fccabefd');
+    </script>
 
     <script>
         $(document).ready(function () {
@@ -118,13 +122,24 @@
                             <h3>내용</h3>
                             <p id="review"></p>
                         </section>
-                        <div class="like-box">
-                            <button type="button" class="level-item is-like" aria-label="like"
-                                    onclick="toggle_like(getId())">
+                        <div class="d-flex justify-content-between">
+                            <div class="like-box">
+                                <button type="button" class="level-item is-like" aria-label="like"
+                                        onclick="toggle_like(getId())">
                                         <span class="icon is-small"><i id="like" class="far fa-thumbs-up"
                                                                        aria-hidden="true"></i></span>
-                                &nbsp;<span>좋아요</span>
-                            </button>
+                                    &nbsp;<span>좋아요</span>
+                                </button>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <button type="button" onclick="kakaoShare()" class="d-flex align-self-center"
+                                        style="text-decoration-line: none;">
+                                    <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png"
+                                         width="20px" height="20px"/>
+                                    <span class="d-flex align-self-center"
+                                          style="margin-left: 10px; color: black;">공유</span>
+                                </button>
+                            </div>
                         </div>
                     </article>
 

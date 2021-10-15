@@ -53,8 +53,50 @@ function delTrip(trip_id) {
     });
 }
 
-// 좋아요 기능
+// 카카오톡 공유하기
+function kakaoShare() {
+    $.ajax({
+        type: "POST",
+        url: `/trips/place/render`,
+        data: {trip_id_give: getId()},
+        success: function (response) {
+            let share_title = response['trip']['title'];
+            let share_place = response['trip']['place'];
+            let share_img = `https://dk9q1cr2zzfmc.cloudfront.net/trips/${response['trip']['file']}`;
+            let share_like = response['trip']['like'];
 
+            Kakao.Link.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: share_title,
+                    description: share_place,
+                    imageUrl: share_img,
+                    link: {
+                        mobileWebUrl: 'https://kimkj.shop' + location.pathname,
+                        webUrl: 'https://kimkj.shop' + location.pathname
+                    },
+                },
+                // 나중에 변수 추가할 것임!!
+                social: {
+                    likeCount: parseInt(share_like),
+                    commentCount: 1,
+                    sharedCount: 1
+                },
+                buttons: [
+                    {
+                        title: '구경 가기',
+                        link: {
+                            mobileWebUrl: 'https://kimkj.shop' + location.pathname,
+                            webUrl: 'https://kimkj.shop' + location.pathname
+                        }
+                    }
+                ],
+            })
+        }
+    });
+}
+
+// 좋아요 기능
 function toggle_like(trip_id) {
     let like = parseInt($('#like').text());
 

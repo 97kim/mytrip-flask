@@ -391,7 +391,7 @@ def get_trips_detail(trip_id):
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="login_error."))
+        return render_template('tripsDetail.html')
 
 
 @application.route('/trips/place/render', methods=['POST'])
