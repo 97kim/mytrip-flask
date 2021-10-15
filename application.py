@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask_cors import CORS
 from pymongo import MongoClient
 import requests
 import xmltodict
@@ -14,6 +15,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 application = Flask(__name__)
+cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 # .env 파일 만들어서 외부 노출 방지
 load_dotenv(verbose=True)
