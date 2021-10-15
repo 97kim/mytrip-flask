@@ -54,16 +54,3 @@ function delTrip(trip_id) {
         }
     });
 }
-
-// 좋아요 기능
-function like_place(trip_id) {
-    $.ajax({
-        type: 'POST',
-        url: '/trips/place/like',
-        data: {trip_id_give: trip_id},
-        success: function (response) {
-            alert(response['msg']);
-            window.location.reload();
-        }
-    });
-}
