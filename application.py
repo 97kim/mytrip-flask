@@ -551,6 +551,13 @@ def update_trip(trip_id):
 # 리뷰 삭제
 @application.route('/trips/place/<trip_id>', methods=['DELETE'])
 def delete_trip(trip_id):
+    trip_file = db.trips.find_one({'id': int(trip_id)})['file']
+
+    # s3에서 삭제
+    s3 = boto3.resource('s3')
+    s3.Object(BUCKET_NAME, f'trips/{trip_file}').delete()
+
+    # db에서 삭제
     db.trips.delete_one({'id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
 
