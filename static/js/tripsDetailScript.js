@@ -53,7 +53,6 @@ function delTrip(trip_id) {
     });
 }
 
-
 // 카카오톡 공유하기
 function kakaoShare() {
     $.ajax({
@@ -93,6 +92,60 @@ function kakaoShare() {
                     }
                 ],
             })
+        }
+    });
+}
+
+// 좋아요 기능
+function toggle_like(trip_id) {
+    let like = parseInt($('#like').text());
+
+    if ($('#like').hasClass("fas")) {
+
+        $.ajax({
+            type: "POST",
+            url: "/trips/place/like",
+            data: {
+                trip_id_give: trip_id,
+                action_give: "uncheck"
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    $('#like').removeClass("fas").addClass("far")
+                    $('#like').text(like - 1);
+                }
+            }
+        })
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "/trips/place/like",
+            data: {
+                trip_id_give: trip_id,
+                action_give: "check"
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    $('#like').removeClass("far").addClass("fas")
+                    $('#like').text(like + 1);
+                }
+            }
+        });
+
+    }
+}
+
+function get_like() {
+    $.ajax({
+        type: "GET",
+        url: `/trips/place/like/${getId()}`,
+        data: {},
+        success: function (response) {
+            if (response['like_status'] == "True") {
+                $('#like').removeClass("far").addClass("fas");
+            } else {
+                $('#like').removeClass("fas").addClass("far")
+            }
         }
     });
 }
