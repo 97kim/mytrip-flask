@@ -1912,7 +1912,7 @@ ul.divided li:first-child {
 
     /* Section/Article */
     section, article {
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
 
     header {
@@ -1925,7 +1925,7 @@ ul.divided li:first-child {
 
     /* Box */
     .box {
-        padding: 25px 15px 20px 15px;
+        padding: 25px 15px 25px 15px;
     }
 
     .box .image.featured {

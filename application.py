@@ -391,7 +391,7 @@ def get_trips_detail(trip_id):
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="login_error."))
+        return render_template('tripsDetail.html')
 
 
 @application.route('/trips/place/render', methods=['POST'])
@@ -556,20 +556,6 @@ def delete_trip(trip_id):
     # db에서 삭제
     db.trips.delete_one({'id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
-
-
-@application.route('/trips/place/like', methods=['POST'])
-def like_place():
-    trip_id_receive = request.form['trip_id_give']
-
-    target_id = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
-
-    current_like = target_id['like']
-    new_like = current_like + 1
-
-    db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': new_like}})
-
-    return jsonify({'msg': '좋아요 완료!'})
 
 
 @application.route('/profile', methods=['POST'])
