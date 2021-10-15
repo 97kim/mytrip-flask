@@ -136,12 +136,13 @@ def get_near_place():
         return redirect(url_for("login"))
 
 
-# 랜덤으로 7가지 추천 테마 여행 띄어주기
-@application.route('/popular/list', methods=['POST'])
+# main.html 랜덤으로 6가지 추천 여행지 띄어주기
+@application.route('/popular/trips', methods=['POST'])
 def get_popular_trips():
     info = random.randrange(1, 7)
     cat1 = 'C01'
     content_quantity = 13
+    contentTypeId = 25
     if info == 1:
         cat2 = 'C0112'
         cat3 = 'C01120001'
@@ -173,7 +174,7 @@ def get_popular_trips():
     }
     url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
           f'&numOfRows={content_quantity}&MobileApp=trips&MobileOS=ETC&arrange=P&cat1={cat1}' \
-          f'&contentTypeId=25&cat2={cat2}&cat3={cat3}&listYN=Y'
+          f'&contentTypeId={contentTypeId}&cat2={cat2}&cat3={cat3}&listYN=Y'
 
     r = requests.get(url, headers=headers)
 
@@ -182,7 +183,128 @@ def get_popular_trips():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
-    return jsonify({'popular_list': popular_list, 'trip_theme': trip_theme})
+    return jsonify(
+        {'popular_list': popular_list, 'trip_theme': trip_theme, 'contentTypeId': contentTypeId, 'cat1': cat1,
+         'cat2': cat2, 'cat3': cat3})
+
+
+# popularList.html 에서 추천 여행지 출력하기
+@application.route('/popular/list', methods=['POST'])
+def get_popular_trips2():
+    cat1 = request.form['cat1']
+    cat2 = request.form['cat2']
+    cat3 = request.form['cat3']
+    contenttypeid = request.form['contenttypeid']
+    content_quantity = 13
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
+          f'&numOfRows={content_quantity}&MobileApp=trips&MobileOS=ETC&arrange=P&cat1={cat1}' \
+          f'&contentTypeId={contenttypeid}&cat2={cat2}&cat3={cat3}&listYN=Y'
+
+    r = requests.get(url, headers=headers)
+
+    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    popular_list = json_body['response']['body']['items']['item']
+    return jsonify({'popular_list': popular_list})
+
+
+# popularDetail.html 렌더링
+@application.route('/popular/place/<content_id>', methods=['GET'])
+def get_popular_detail(content_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('popularDetail.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
+
+
+# 인기있는 여행지 날씨 불러오기
+@application.route('/popular/place/weather', methods=['POST'])
+def get_weather_popular():
+    place_lat = request.form['place_lat']
+    place_lng = request.form['place_lng']
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+
+    url = f'{WEATHER_URL}?lat={place_lat}&lon={place_lng}&appid={WEATHER_KEY}&units=metric'
+
+    r = requests.get(url, headers=headers)
+
+    weather_info_popular = json.loads(r.text)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    return jsonify({'weather_info_popular': weather_info_popular})
+
+
+# 즐겨찾기 기능 - 누가 어떤 여행지를 즐겨찾기 했는지 db에 저장_popular
+@application.route("/popular/place/bookmark", methods=['POST'])
+def bookmark():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        content_id_receive = request.form['content_id_give']
+        action_receive = request.form['action_give']
+
+        doc = {
+            'content_id': content_id_receive,
+            'username': user_info['username'],
+        }
+
+        if action_receive == "uncheck":
+            db.bookmark_popular.delete_one(doc)
+        else:
+            db.bookmark_popular.insert_one(doc)
+
+        return jsonify({"result": "success"})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+# 즐겨찾기한 게시글은 나갔다 들어와도 즐겨찾기로 표시_popular
+@application.route('/popular/place/bookmark/<content_id>', methods=['GET'])
+def get_bookmark(content_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        bookmark_status = bool(
+            db.bookmark_popular.find_one({"content_id": content_id, "username": user_info["username"]}))
+
+        return jsonify({"bookmark_status": str(bookmark_status)})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+# 인기 여행지 더보기 html 렌더링
+@application.route('/popular/near/place', methods=['GET'])
+def get_popular_near_place():
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('popularList.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
 
 
 # nearList.html 렌더링
@@ -252,7 +374,7 @@ def get_near_detail(content_id):
 
 # 즐겨찾기 기능 - 누가 어떤 여행지를 즐겨찾기 했는지 db에 저장
 @application.route("/near/place/bookmark", methods=['POST'])
-def bookmark():
+def bookmark_popular():
     token_receive = request.cookies.get('mytoken')
 
     try:
@@ -278,7 +400,7 @@ def bookmark():
 
 # 즐겨찾기한 게시글은 나갔다 들어와도 즐겨찾기로 표시
 @application.route('/near/place/bookmark/<content_id>', methods=['GET'])
-def get_bookmark(content_id):
+def get_bookmark_popular(content_id):
     token_receive = request.cookies.get('mytoken')
 
     try:

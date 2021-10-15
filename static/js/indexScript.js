@@ -2,7 +2,7 @@ function sign_in() {
     let username = $("#input-username").val()
     let password = $("#input-password").val()
 
-    if (username == "") {
+    if (username === "") {
         $("#help-id-login").text("아이디를 입력해주세요.")
         $("#input-username").focus()
         return;
@@ -10,7 +10,7 @@ function sign_in() {
         $("#help-id-login").text("")
     }
 
-    if (password == "") {
+    if (password === "") {
         $("#help-password-login").text("비밀번호를 입력해주세요.")
         $("#input-password").focus()
         return;
@@ -25,7 +25,7 @@ function sign_in() {
             password_give: password
         },
         success: function (response) {
-            if (response['result'] == 'success') {
+            if (response['result'] === 'success') {
                 $.cookie('mytoken', response['token'], {path: '/'});
                 window.location.href = '/main'
             } else {
@@ -49,18 +49,18 @@ function sign_up() {
         return;
     }
 
-    if (password == "") {
+    if (password === "") {
         $("#help-password").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
         $("#input-password").focus()
         return;
     } else if (!is_password(password)) {
-        $("#help-password").text("비밀번호의 형식을 확인해주세요. 영문과 숫자 필수 포함, 특수문자(!@#$%^&*) 사용가능 8-20자").removeClass("is-safe").addClass("is-danger")
+        $("#help-password").text("비밀번호의 형식을 확인해주세요. 영문과 숫자 필수 포함, 특수문자(!@#$%^&*) 사용가능 8-14자").removeClass("is-safe").addClass("is-danger")
         $("#input-password").focus()
         return
     } else {
         $("#help-password").text("사용할 수 있는 비밀번호입니다.").removeClass("is-danger").addClass("is-success")
     }
-    if (password2 == "") {
+    if (password2 === "") {
         $("#help-password2").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
         $("#input-password2").focus()
         return;
@@ -100,13 +100,14 @@ function is_nickname(asValue) {
 }
 
 function is_password(asValue) {
-    let regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,20}$/;
+    let regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,14}$/;
     return regExp.test(asValue);
 }
 
 function check_dup() {
     let username = $("#input-username").val()
-    if (username == "") {
+
+    if (username === "") {
         $("#help-id").text("아이디를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
         $("#input-username").focus()
         return;
@@ -124,7 +125,6 @@ function check_dup() {
             username_give: username
         },
         success: function (response) {
-
             if (response["exists"]) {
                 $("#help-id").text("이미 존재하는 아이디입니다.").removeClass("is-safe").addClass("is-danger")
                 $("#input-username").focus()

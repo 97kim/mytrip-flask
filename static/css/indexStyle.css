@@ -1,6 +1,10 @@
 body {
-    background-color: RGBA(232, 52, 78, 0.2);
     min-height: 100vh;
+    background: url(../../static/trips-background.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .section {
@@ -10,32 +14,37 @@ body {
 }
 
 .title {
+    margin-top: 60px;
     font-family: 'Jua', sans-serif;
     font-weight: 800;
-    font-size: 5rem;
+    font-size: 6rem;
+    color: #2d1f1f;
 }
 
 .subtitle {
     font-family: 'Nanum Gothic', sans-serif;
-    font-size: 2rem;
+    font-size: 1rem;
+    margin-top: 20px;
+    color: #2d1f1f;
+    margin-bottom: 40px;
 }
 
-.is-sparta {
-    color: #e8344e !important;
+.is-trips {
+    /*background-color: #ffffff;*/
 }
 
-.button.is-sparta {
-    background-color: #e8344e;
+.button.is-trips {
+    background-color: #2d1f1f;
     border-color: transparent;
     color: #fff !important;
 }
 
-.button.is-sparta.is-outlined {
+.button.is-trips.is-outlined {
     background-color: transparent;
-    border-color: #e8344e;
-    color: #e8344e !important;
+    /*border-color: #e8344e;*/
+    background-color: #2d1f1f;
 }
 
 .help {
-    color: gray;
+    color: #675d5d;
 }
