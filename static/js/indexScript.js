@@ -39,7 +39,6 @@ function sign_up() {
     let username = $("#input-username").val()
     let password = $("#input-password").val()
     let password2 = $("#input-password2").val()
-    console.log(username, password, password2)
 
 
     if ($("#help-id").hasClass("is-danger")) {
@@ -107,7 +106,6 @@ function is_password(asValue) {
 
 function check_dup() {
     let username = $("#input-username").val()
-    console.log(username)
     if (username == "") {
         $("#help-id").text("아이디를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
         $("#input-username").focus()
