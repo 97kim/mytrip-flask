@@ -24,7 +24,7 @@ function getMap() {
         map: map,
         icon: {
             content: '<img src="https://dk9q1cr2zzfmc.cloudfront.net/img/marker.png">',
-            anchor: new naver.maps.Point(20,25)
+            anchor: new naver.maps.Point(20, 25)
         }
     });
 
@@ -130,7 +130,6 @@ function getBookmark() {
         url: `/near/place/bookmark/${getId()}`,
         data: {},
         success: function (response) {
-            console.log(response['bookmark_status']);
             if (response['bookmark_status'] == "True") {
                 $('#bookmark').removeClass("far").addClass("fas");
             } else {
@@ -138,4 +137,31 @@ function getBookmark() {
             }
         }
     });
+}
+
+// 카카오톡 공유하기
+function kakaoShare() {
+    Kakao.Link.sendDefault({
+        objectType: 'feed',
+        content: {
+            title: JSON.parse(sessionStorage.getItem('near_object'))[getId()]['title'],
+            description: JSON.parse(sessionStorage.getItem('near_object'))[getId()]['address']
+            ,
+            imageUrl:
+                JSON.parse(sessionStorage.getItem('near_object'))[getId()]['file'],
+            link: {
+                mobileWebUrl: 'https://kimkj.shop' + location.pathname,
+                webUrl: 'https://kimkj.shop' + location.pathname
+            },
+        },
+        buttons: [
+            {
+                title: '구경 가기',
+                link: {
+                    mobileWebUrl: 'https://kimkj.shop' + location.pathname,
+                    webUrl: 'https://kimkj.shop' + location.pathname
+                }
+            }
+        ],
+    })
 }
