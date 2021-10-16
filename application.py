@@ -768,12 +768,76 @@ def save_profile():
 
             new_doc['profile_img'] = full_file_name
 
+        # 프로필 사진 바꾸면 프로필 사진이 필요한 db 업데이트
         db.users.update_one({'username': user_info['username']}, {'$set': new_doc})
         db.trips.update_one({'username': user_info['username']}, {'$set': new_doc})
+        db.comments.update_one({'username': user_info['username']}, {'$set': new_doc})
         return jsonify({'msg': '작성 완료!'})
 
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("login"))
+
+
+@application.route('/trips/place/comment/<trip_id>', methods=['POST'])
+def comment(trip_id):
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        trip_id_receive = int(trip_id)
+        comment_receive = request.form['comment_give']
+        date_receive = request.form['date_give']
+
+        nickname = db.users.find_one({'username': user_info['username']})['nickname']
+        profile_img = db.users.find_one({'username': user_info['username']})['profile_img']
+
+        doc = {
+            'comment_id': db.comments.count() + 1,
+            'trip_id': trip_id_receive,
+            'username': user_info['username'],
+            'nickname': nickname,
+            'profile_img': profile_img,
+            'comment': comment_receive,
+            'date': date_receive
+        }
+
+        db.comments.insert_one(doc)
+        return jsonify({'result': 'success'})
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+@application.route('/trips/place/comment/<trip_id>', methods=['GET'])
+def show_comments(trip_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        trip_id_receive = int(trip_id)
+        all_comments = list(db.comments.find({'trip_id': trip_id_receive}, {'_id': False}).sort('date', -1))
+
+        return jsonify({'all_comments': all_comments, 'now_user': payload['id']})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return render_template('tripsDetail.html')
+
+
+@application.route('/trips/place/comment/<trip_id>', methods=['DELETE'])
+def delete_comment(trip_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        trip_id_receive = int(trip_id)
+        comment_id_receive = int(request.form['comment_id'])
+
+        db.comments.delete_one({'trip_id': trip_id_receive, 'comment_id': comment_id_receive, 'username': payload['id']})
+        print(trip_id_receive, comment_id_receive, payload['id'])
+
+        return jsonify({'result': 'success'})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return render_template('tripsDetail.html')
 
 
 if __name__ == '__main__':

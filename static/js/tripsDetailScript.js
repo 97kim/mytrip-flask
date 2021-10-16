@@ -150,3 +150,105 @@ function get_like() {
         }
     });
 }
+
+function comment() {
+    let comment = $('#comment_content').val();
+    let date = Date();
+    if (comment) {
+        $.ajax({
+            type: "POST",
+            url: `/trips/place/comment/${getId()}`,
+            data: {comment_give: comment, date_give: date},
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    $('#comment_content').val("");
+                    window.location.reload();
+                }
+            }
+        });
+    } else {
+        alert('댓글을 입력해주세요!')
+    }
+}
+
+function showComments() {
+    $.ajax({
+        type: "GET",
+        url: `/trips/place/comment/${getId()}`,
+        data: {},
+        success: function (response) {
+            let all_comments = response['all_comments'];
+            for (let i = 0; i < all_comments.length; i++) {
+                let comment_id = all_comments[i]['comment_id'];
+                let profile_img = all_comments[i]['profile_img'];
+                let nickname = all_comments[i]['nickname'];
+                let comment = all_comments[i]['comment'];
+                let date = new Date(all_comments[i]['date']);
+                let date_before = time2str(date);
+
+                let html_temp = `<div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://dk9q1cr2zzfmc.cloudfront.net/profile/${profile_img}" width="35px" height="35px" style="object-fit: cover; border-radius: 50%;" />
+                                            <span style="margin-left: 5px; font-size: 15px; font-weight: 700;">${nickname}</span>
+                                            <span style="margin-left: 5px; font-size: 13px;">${date_before}</span>
+                                        </div>
+                                        <a id="comment${comment_id}" href="javascript:deleteComment(${comment_id})" style="display: none;"><i class="fas fa-trash-alt" style="color: #6E85B2;"></i></a>
+                                    </div>
+                                    <div style="margin: 5px 0 0 5px; word-break:break-all; font-size: 14px; font-weight: 400;">${comment}</div>
+                                 </div>`;
+                $('#comment_list').append(html_temp);
+
+                // 로그인한 유저와 댓글을 쓴 유저가 같으면 삭제 아이콘이 뜸
+                if (response['now_user'] == all_comments[i]['username']) {
+                    $(`#comment${comment_id}`).css('display', 'block');
+                } else {
+                    $(`#comment${comment_id}`).css('display', 'none');
+                }
+            }
+        }
+    });
+}
+
+function deleteComment(comment_id) {
+    $.ajax({
+        type: "DELETE",
+        url: `/trips/place/comment/${getId()}`,
+        data: {comment_id: comment_id},
+        success: function (response) {
+            if (response['result'] == 'success') {
+                alert('댓글 삭제 완료!');
+                window.location.reload();
+            }
+        }
+    });
+}
+
+function time2str(date) {
+    let today = new Date();
+    let time = (today - date) / 1000 / 60;  // 분
+
+    if (time < 1) {
+        return "방금";
+    }
+
+    if (time < 60) {
+        return parseInt(time) + "분 전";
+    }
+    time = time / 60  // 시간
+    if (time < 24) {
+        return parseInt(time) + "시간 전";
+    }
+    time = time / 24
+    if (time < 7) {
+        return parseInt(time) + "일 전";
+    }
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+function autoHeight() {
+    $('textarea').keyup(function (e) {
+        $(this).css('height', 'auto');
+        $(this).height(this.scrollHeight);
+    });
+}
