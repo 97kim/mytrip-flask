@@ -681,6 +681,7 @@ def delete_trip(trip_id):
 
     # db에서 삭제
     db.trips.delete_one({'id': int(trip_id)})
+    db.comments.delete({'id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
 
 
@@ -795,7 +796,6 @@ def comment(trip_id):
         profile_img = db.users.find_one({'username': user_info['username']})['profile_img']
 
         doc = {
-            # 'comment_id': db.comments.count() + 1,
             'trip_id': trip_id_receive,
             'username': user_info['username'],
             'nickname': nickname,
@@ -825,7 +825,7 @@ def show_comments(trip_id):
 
         return jsonify({'all_comments': all_comments, 'now_user': payload['id']})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return render_template('tripsDetail.html')
+        return redirect(url_for("login"))
 
 
 @application.route('/trips/place/comment/<trip_id>', methods=['DELETE'])
@@ -841,7 +841,7 @@ def delete_comment(trip_id):
 
         return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return render_template('tripsDetail.html')
+        return redirect(url_for("login"))
 
 
 if __name__ == '__main__':
