@@ -681,6 +681,7 @@ def delete_trip(trip_id):
 
     # db에서 삭제
     db.trips.delete_one({'id': int(trip_id)})
+    db.comments.delete({'id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
 
 
