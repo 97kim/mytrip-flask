@@ -825,7 +825,7 @@ def show_comments(trip_id):
 
         return jsonify({'all_comments': all_comments, 'now_user': payload['id']})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return render_template('tripsDetail.html')
+        return redirect(url_for("login"))
 
 
 @application.route('/trips/place/comment/<trip_id>', methods=['DELETE'])
@@ -841,7 +841,7 @@ def delete_comment(trip_id):
 
         return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return render_template('tripsDetail.html')
+        return redirect(url_for("login"))
 
 
 if __name__ == '__main__':
