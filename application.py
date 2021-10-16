@@ -372,6 +372,31 @@ def get_near_detail(content_id):
         return redirect(url_for("login", msg="login_error."))
 
 
+# nearDetail.html 추천 여행지 상세정보 출력
+@application.route('/near/place/intro', methods=['POST'])
+def get_near_detailintro():
+    content_id_receive = request.form['content_id_give']
+    content_type_id_receive = request.form['content_type_id_give']
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailIntro?serviceKey={OPEN_API_KEY}&pageNo=1' \
+          f'&contentId={content_id_receive}&contentTypeId={content_type_id_receive}&MobileOS=ETC&MobileApp=TourAPI3.0_Guide' \
+
+    r = requests.get(url, headers=headers)
+
+    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    detailintro_list = json_body['response']['body']['items']['item']
+
+    return jsonify({'detailintro_list': detailintro_list})
+
+
 # 즐겨찾기 기능 - 누가 어떤 여행지를 즐겨찾기 했는지 db에 저장
 @application.route("/near/place/bookmark", methods=['POST'])
 def bookmark_popular():

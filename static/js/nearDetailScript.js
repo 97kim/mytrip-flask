@@ -57,6 +57,43 @@ function getItem() {
     $('#distance').text(`여기에서 ${JSON.parse(sessionStorage.getItem('near_object'))[getId()]['distance']}m 거리`);
 }
 
+function getDetailintro() {
+    let content_type_id = sessionStorage.getItem('content_type_id');
+
+    $.ajax({
+        type: "POST",
+        url: '/near/place/intro',
+        data: {
+            content_id_give: getId(),
+            content_type_id_give: content_type_id,
+        },
+        success: function (response) {
+            let detailintro_list = response['detailintro_list'];
+
+            for (let i = 0; i < detailintro_list.length; i++) {
+                let opendate = detailintro_list[i]['opendate'];
+                let restdate = detailintro_list[i]['restdate'];
+                let useseason = detailintro_list[i]['useseason'];
+                let usetime = detailintro_list[i]['usetime'];
+                let infocenter = detailintro_list[i]['infocenter'];
+                let parking = detailintro_list[i]['parking'];
+
+                let temp_html = `<div id="info_card" class="card" style="width: 18rem;">
+                                     <ul class="list-group list-group-flush">
+                                     <li class="list-group-item">${opendate}</li>
+                                     <li class="list-group-item">${restdate}</li>
+                                     <li class="list-group-item">${useseason}</li>
+                                     <li class="list-group-item">${usetime}</li>
+                                     <li class="list-group-item">${infocenter}</li>
+                                     <li class="list-group-item">${parking}</li>
+                                     </ul>
+                                 </div>`;
+                $('#info_card').append(temp_html);
+            }
+        }
+    });
+}
+
 function weather() {
     let place_lat = JSON.parse(sessionStorage.getItem('near_object'))[getId()]['place_lat']
     let place_lng = JSON.parse(sessionStorage.getItem('near_object'))[getId()]['place_lng']

@@ -62,6 +62,7 @@
         $(document).ready(function () {
             getMap();
             getItem();
+            getDetailintro();
             weather();
             getBookmark();
         });
@@ -116,6 +117,11 @@
                         <header>
                             <h2 id="title"></h2>
                             <p id="address"></p>
+                            <div id="info_card" class="card" style="width: 18rem;">
+                                     <ul class="list-group list-group-flush">
+                                      <li class="list-group-item"></li>
+                                     </ul>
+                            </div>
                         </header>
                         <section>
                             <header>
