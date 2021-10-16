@@ -162,7 +162,7 @@ function comment() {
             success: function (response) {
                 if (response['result'] == 'success') {
                     $('#comment_content').val("");
-                    window.location.reload();
+                    showComments();
                 }
             }
         });
@@ -172,6 +172,7 @@ function comment() {
 }
 
 function showComments() {
+    $('#comment_list').empty();
     $.ajax({
         type: "GET",
         url: `/trips/place/comment/${getId()}`,
@@ -179,7 +180,7 @@ function showComments() {
         success: function (response) {
             let all_comments = response['all_comments'];
             for (let i = 0; i < all_comments.length; i++) {
-                let comment_id = all_comments[i]['comment_id'];
+                let comment_id = all_comments[i]['_id'];
                 let profile_img = all_comments[i]['profile_img'];
                 let nickname = all_comments[i]['nickname'];
                 let comment = all_comments[i]['comment'];
@@ -193,7 +194,7 @@ function showComments() {
                                             <span style="margin-left: 5px; font-size: 15px; font-weight: 700;">${nickname}</span>
                                             <span style="margin-left: 5px; font-size: 13px;">${date_before}</span>
                                         </div>
-                                        <a id="comment${comment_id}" href="javascript:deleteComment(${comment_id})" style="display: none;"><i class="fas fa-trash-alt" style="color: #6E85B2;"></i></a>
+                                        <a id="${comment_id}" href="javascript:deleteComment('${comment_id}')" style="display: none;"><i class="fas fa-trash-alt" style="color: #6E85B2;"></i></a>
                                     </div>
                                     <div style="margin: 5px 0 0 5px; word-break:break-all; font-size: 14px; font-weight: 400;">${comment}</div>
                                  </div>`;
@@ -201,9 +202,9 @@ function showComments() {
 
                 // 로그인한 유저와 댓글을 쓴 유저가 같으면 삭제 아이콘이 뜸
                 if (response['now_user'] == all_comments[i]['username']) {
-                    $(`#comment${comment_id}`).css('display', 'block');
+                    $(`#${comment_id}`).css('display', 'block');
                 } else {
-                    $(`#comment${comment_id}`).css('display', 'none');
+                    $(`#${comment_id}`).css('display', 'none');
                 }
             }
         }
@@ -211,6 +212,7 @@ function showComments() {
 }
 
 function deleteComment(comment_id) {
+    console.log(comment_id)
     $.ajax({
         type: "DELETE",
         url: `/trips/place/comment/${getId()}`,
@@ -218,7 +220,7 @@ function deleteComment(comment_id) {
         success: function (response) {
             if (response['result'] == 'success') {
                 alert('댓글 삭제 완료!');
-                window.location.reload();
+                showComments();
             }
         }
     });
