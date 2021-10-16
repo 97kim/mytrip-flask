@@ -833,7 +833,6 @@ def delete_comment(trip_id):
         comment_id_receive = int(request.form['comment_id'])
 
         db.comments.delete_one({'trip_id': trip_id_receive, 'comment_id': comment_id_receive, 'username': payload['id']})
-        print(trip_id_receive, comment_id_receive, payload['id'])
 
         return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
