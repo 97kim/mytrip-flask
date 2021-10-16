@@ -1,6 +1,6 @@
 body {
     min-height: 100vh;
-    background: linear-gradient( rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) ) ,url(https://dk9q1cr2zzfmc.cloudfront.net/img/trips-background.jpg) no-repeat center center fixed;
+    background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) ) ,url(https://dk9q1cr2zzfmc.cloudfront.net/img/trips-background.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -22,15 +22,10 @@ body {
 }
 
 .subtitle {
-    font-family: 'Nanum Gothic', sans-serif;
-    font-size: 1rem;
-    margin-top: 20px;
+    font-family: 'Jua', sans-serif;
+    font-size: 1.2rem;
     color: #2d1f1f;
     margin-bottom: 40px;
-}
-
-.is-trips {
-    /*background-color: #ffffff;*/
 }
 
 .button.is-trips {
@@ -41,7 +36,7 @@ body {
 
 .button.is-trips.is-outlined {
     background-color: transparent;
-    /*border-color: #e8344e;*/
+    border-color: #2d1f1f;
     background-color: #2d1f1f;
 }
 
