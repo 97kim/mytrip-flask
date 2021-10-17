@@ -1,5 +1,5 @@
 //popularList 에서 content 수량 입력 받기
-function PopularPlaceQuantity (quantity) {
+function PopularPlaceQuantity(quantity) {
 //    타임어택 4차 테스트 답안 참고 예정
 }
 
@@ -37,9 +37,7 @@ function geoInfoPopularList() {
                         if (!file) {
                             file = "../../static/img/noImage.png"
                         }
-                        // obj[content_id] = {
 
-                        // }
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                              <a href="/popular/place/${content_id}" class="card">
                                                 <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
@@ -51,10 +49,10 @@ function geoInfoPopularList() {
                                                         <img class="card__thumb" src="${file}" alt="썸네일"/>
                                                         <div class="card__header-text">
                                                             <h3 class="card__title">${title}</h3>
-                                                            <span class="card__status">뭐넣지</span>
+                                                            <span class="card__status">업데이트 예정</span>
                                                         </div>
                                                     </div>
-                                                    <p class="card__description">${address}</p>
+                                                    <p class="card__description">업데이트 예정</p>
                                                 </div>
                                             </a>
                                         </li>`;
