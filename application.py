@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, render_template, jsonify, request, redirect, url_for
+# from flask_cors import CORS
 from pymongo import MongoClient
 import requests
 import xmltodict
@@ -12,8 +13,11 @@ import boto3
 from datetime import datetime, timedelta
 # python-dotenv 라이브러리 설치
 from dotenv import load_dotenv
+# mongoDB에서 String을 ObjectId으로 변환시키기 위함
+from bson import ObjectId
 
 application = Flask(__name__)
+# cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 # .env 파일 만들어서 외부 노출 방지
 load_dotenv(verbose=True)
@@ -181,9 +185,6 @@ def get_popular_trips():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
-    test = {
-
-    }
 
     return jsonify(
         {'popular_list': popular_list, 'trip_theme': trip_theme, 'contentTypeId': contentTypeId, 'cat1': cat1,
@@ -248,7 +249,6 @@ def get_weather_popular():
     r = requests.get(url, headers=headers)
 
     weather_info_popular = json.loads(r.text)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
-
     return jsonify({'weather_info_popular': weather_info_popular})
 
 
@@ -681,6 +681,8 @@ def delete_trip(trip_id):
 
     # db에서 삭제
     db.trips.delete_one({'id': int(trip_id)})
+    db.like.delete_many({'trip_id': int(trip_id)})
+    db.comments.delete_many({'trip_id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
 
 
@@ -770,10 +772,74 @@ def save_profile():
 
             new_doc['profile_img'] = full_file_name
 
+        # 프로필 사진 바꾸면 프로필 사진이 필요한 db 업데이트
         db.users.update_one({'username': user_info['username']}, {'$set': new_doc})
         db.trips.update_one({'username': user_info['username']}, {'$set': new_doc})
+        db.comments.update_one({'username': user_info['username']}, {'$set': new_doc})
         return jsonify({'msg': '작성 완료!'})
 
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+@application.route('/trips/place/comment/<trip_id>', methods=['POST'])
+def comment(trip_id):
+    token_receive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        trip_id_receive = int(trip_id)
+        comment_receive = request.form['comment_give']
+        date_receive = request.form['date_give']
+
+        nickname = db.users.find_one({'username': user_info['username']})['nickname']
+        profile_img = db.users.find_one({'username': user_info['username']})['profile_img']
+
+        doc = {
+            'trip_id': trip_id_receive,
+            'username': user_info['username'],
+            'nickname': nickname,
+            'profile_img': profile_img,
+            'comment': comment_receive,
+            'date': date_receive
+        }
+
+        db.comments.insert_one(doc)
+        return jsonify({'result': 'success'})
+
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+@application.route('/trips/place/comment/<trip_id>', methods=['GET'])
+def show_comments(trip_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        trip_id_receive = int(trip_id)
+        all_comments = list(db.comments.find({'trip_id': trip_id_receive}).sort('date', -1))
+
+        for comments in all_comments:
+            comments['_id'] = str(comments['_id'])
+
+        return jsonify({'all_comments': all_comments, 'now_user': payload['id']})
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("login"))
+
+
+@application.route('/trips/place/comment/<trip_id>', methods=['DELETE'])
+def delete_comment(trip_id):
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        trip_id_receive = int(trip_id)
+        comment_id_receive = ObjectId(request.form['comment_id'])
+
+        db.comments.delete_one({'trip_id': trip_id_receive, '_id': comment_id_receive, 'username': payload['id']})
+
+        return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("login"))
 
