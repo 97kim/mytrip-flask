@@ -197,7 +197,7 @@ def get_popular_trips2():
     cat2 = request.form['cat2']
     cat3 = request.form['cat3']
     contenttypeid = request.form['contenttypeid']
-    content_quantity = 13
+    content_quantity = 30
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
@@ -214,7 +214,9 @@ def get_popular_trips2():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
-    return jsonify({'popular_list': popular_list})
+
+    return jsonify(
+        {'popular_list': popular_list,'contentTypeId': contenttypeid, 'cat1': cat1, 'cat2': cat2, 'cat3': cat3})
 
 
 # popularDetail.html 렌더링
