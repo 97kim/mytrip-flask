@@ -130,8 +130,6 @@ function geoInfo() {
     function onGeoOK(position) { //위치 정보 공유 승인 시
         const lat = position.coords.latitude; //위도
         const lng = position.coords.longitude; //경도
-        // localStorage.setItem("lat", lat)
-        // localStorage.setItem("lng", lng)
         $.ajax({
                 type: "POST",
                 url: "/near",
@@ -263,7 +261,7 @@ function showPopularTrips() {
             sessionStorage.setItem('cat1', response['cat1']);
             sessionStorage.setItem('cat2', response['cat2']);
             sessionStorage.setItem('cat3', response['cat3']);
-            sessionStorage.setItem('contenttypeid', response['contentTypeId']);
+            sessionStorage.setItem('content_type_id', response['content_type_id']);
 
             //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
             let obj = {};
@@ -275,7 +273,7 @@ function showPopularTrips() {
                 if (!file)
                     file = "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png";
                 let areacode = parseInt(popular_list[i]['areacode']);
-                let address = check_address(areacode);
+                let address = checkAddress(areacode);
                 let mapx = popular_list[i]['mapx'];
                 let mapy = popular_list[i]['mapy'];
                 if (!mapx || !mapy) {
@@ -318,7 +316,7 @@ function showPopularTrips() {
 }
 
 
-function check_address(code) {
+function checkAddress(code) {
     if (code === 1) {
         code = '서울'
     } else if (code === 2) {
