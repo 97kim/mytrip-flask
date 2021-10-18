@@ -372,9 +372,9 @@ def get_near_detail(content_id):
         return redirect(url_for("login", msg="login_error."))
 
 
-# nearDetail.html 추천 여행지 상세정보 출력
+# nearDetail.html 추천 여행지 상세정보 출력 : 개장일, 쉬는날, 이용시기, 이용시간, 주차시설 등
 @application.route('/near/place/intro', methods=['POST'])
-def get_near_detailintro():
+def get_near_detail_intro():
     content_id_receive = request.form['content_id_give']
     content_type_id_receive = request.form['content_type_id_give']
 
@@ -392,9 +392,8 @@ def get_near_detailintro():
     json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
-    detailintro_list = json_body['response']['body']['items']['item']
-
-    return jsonify({'detailintro_list': detailintro_list})
+    detail_intro_list = json_body['response']['body']['items']['item']
+    return jsonify({'detail_intro_list': detail_intro_list})
 
 
 # 즐겨찾기 기능 - 누가 어떤 여행지를 즐겨찾기 했는지 db에 저장
@@ -858,7 +857,6 @@ def delete_comment(trip_id):
         comment_id_receive = int(request.form['comment_id'])
 
         db.comments.delete_one({'trip_id': trip_id_receive, 'comment_id': comment_id_receive, 'username': payload['id']})
-        print(trip_id_receive, comment_id_receive, payload['id'])
 
         return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
