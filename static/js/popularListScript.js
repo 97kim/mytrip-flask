@@ -60,9 +60,6 @@ function popularList(quantity) {
                 sessionStorage.setItem('cat3', cat3);
                 sessionStorage.setItem('content_type_id', content_type_id);
 
-                // 중복 코드 제거 예정
-                let obj = {};
-
                 for (let i = 0; i < popular_list.length; i++) {
                     let content_id = popular_list[i]['contentid'];
                     let title = popular_list[i]['title'];
@@ -76,13 +73,6 @@ function popularList(quantity) {
                     if (!mapx || !mapy) {
                         mapx = 0;
                         mapy = 0;
-                    }
-                    obj[content_id] = {
-                        'title': title,
-                        'address': address,
-                        'file': file,
-                        'place_lat': mapy,
-                        'place_lng': mapx
                     }
 
                     let temp_html = `<li style="margin: 0 10px; height: 300px;">
@@ -105,7 +95,6 @@ function popularList(quantity) {
                             </li>`;
                     $('#popular_card').append(temp_html);
                 }
-                sessionStorage.setItem('popular_object', JSON.stringify(obj));
             }
         }
     )

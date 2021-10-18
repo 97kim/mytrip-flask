@@ -15,9 +15,6 @@ function geoInfoList(type) {
                     $('#near_card').empty();
                     let near_list = response['near_list'];
 
-                    //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
-                    let obj = {};
-
                     for (let i = 0; i < near_list.length; i++) {
                         let title = near_list[i]['title'];
                         let address = near_list[i]['addr1'];
@@ -26,20 +23,7 @@ function geoInfoList(type) {
                             file = "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png";
                         }
                         let distance = near_list[i]['dist'];
-                        let place_lat = near_list[i]['mapy'];
-                        let place_lng = near_list[i]['mapx'];
                         let content_id = near_list[i]['contentid'];
-                        let content_type_id = near_list[i]['contenttypeid'];
-
-                        obj[content_id] = {
-                            'title': title,
-                            'address': address,
-                            'file': file,
-                            'distance': distance,
-                            'place_lat': place_lat,
-                            'place_lng': place_lng,
-                            'content_type_id': content_type_id,
-                        }
 
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                              <a href="/near/place/${content_id}" class="card">
@@ -61,7 +45,6 @@ function geoInfoList(type) {
                                         </li>`;
                         $('#near_card').append(temp_html);
                     }
-                    sessionStorage.setItem('near_object', JSON.stringify(obj));
                 }
             }
         )
