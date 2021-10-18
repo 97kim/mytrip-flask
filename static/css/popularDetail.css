@@ -2044,3 +2044,8 @@ ul.divided li:first-child {
     border-radius: 50%;
     object-fit: cover;
 }
+
+#title {
+    line-height: 1em;
+}
+

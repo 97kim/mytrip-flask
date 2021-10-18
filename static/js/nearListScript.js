@@ -29,6 +29,7 @@ function geoInfoList(type) {
                         let place_lat = near_list[i]['mapy'];
                         let place_lng = near_list[i]['mapx'];
                         let content_id = near_list[i]['contentid'];
+                        let content_type_id = near_list[i]['contenttypeid'];
 
                         obj[content_id] = {
                             'title': title,
@@ -36,7 +37,8 @@ function geoInfoList(type) {
                             'file': file,
                             'distance': distance,
                             'place_lat': place_lat,
-                            'place_lng': place_lng
+                            'place_lng': place_lng,
+                            'content_type_id': content_type_id,
                         }
 
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
