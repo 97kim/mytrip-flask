@@ -84,22 +84,23 @@ function PopularList() {
     )
 }
 
+
 function check_address(code) {
     if (code === 1) {
-        code = '서울특별시'
-    } else if (code === 21) {
-        code = '부산광역시'
-    } else if (code === 22) {
-        code = '대구광역시'
-    } else if (code === 23) {
-        code = '인천광역시'
-    } else if (code === 24) {
-        code = '광주광역시'
-    } else if (code === 25) {
-        code = '대전광역시'
-    } else if (code === 26) {
-        code = '울산광역시'
-    } else if (code === 29) {
+        code = '서울'
+    } else if (code === 2) {
+        code = '인천'
+    } else if (code === 3) {
+        code = '대전'
+    } else if (code === 4) {
+        code = '대구'
+    } else if (code === 5) {
+        code = '광주'
+    } else if (code === 6) {
+        code = '부산'
+    } else if (code === 7) {
+        code = '울산'
+    } else if (code === 8) {
         code = '세종특별자치시'
     } else if (code === 31) {
         code = '경기도'
@@ -110,21 +111,15 @@ function check_address(code) {
     } else if (code === 34) {
         code = '충청남도'
     } else if (code === 35) {
-        code = '전라북도'
-    } else if (code === 36) {
-        code = '전라남도'
-    } else if (code === 37) {
         code = '경상북도'
-    } else if (code === 38) {
+    } else if (code === 36) {
         code = '경상남도'
+    } else if (code === 37) {
+        code = '전라북도'
+    } else if (code === 38) {
+        code = '전라남도'
     } else if (code === 39) {
         code = '제주도'
-    } else if (code === 2) {
-        code = '인천'
-    } else if (code === 4) {
-        code = '대구'
-    } else if (code === 6) {
-        code = '부산'
     }
     return code
 }
