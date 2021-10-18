@@ -403,6 +403,9 @@ def get_near_type():
     lat_receive = request.form['lat_give']
     lng_receive = request.form['lng_give']
     type_receive = request.form['type_give']
+    quantity_receive = request.form['quantity_give']
+
+    print(type_receive)
 
     if type_receive == 'trip':
         type_code = 12
@@ -419,7 +422,8 @@ def get_near_type():
     }
 
     url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId={type_code}&mapX={lng_receive}&mapY={lat_receive}' \
-          '&radius=5000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=40&pageNo=1'
+          f'&radius=5000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows={quantity_receive}&' \
+          f'pageNo=1'
 
     r = requests.get(url, headers=headers)
 
