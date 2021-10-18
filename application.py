@@ -251,6 +251,31 @@ def get_popular_detail(content_id):
         return redirect(url_for("login", msg="login_error."))
 
 
+# nearDetail.html 추천 여행지 상세정보 출력 : 개장일, 쉬는날, 이용시기, 이용시간, 주차시설 등
+@application.route('/popular/place/intro', methods=['POST'])
+def get_popular_detail_intro():
+    content_id_receive = request.form['content_id_give']
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailCommon?ServiceKey={OPEN_API_KEY}&' \
+          f'contentId={content_id_receive}&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&defaultYN=Y&firstImageYN=Y&' \
+          f'areacodeYN=Y&catcodeYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&transGuideYN=Y'
+
+    r = requests.get(url, headers=headers)
+
+    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    detail_intro_list = json_body['response']['body']['items']['item']
+
+    return jsonify({'detail_intro_list': detail_intro_list})
+
+
 # 인기있는 여행지 날씨 불러오기
 @application.route('/popular/place/weather', methods=['POST'])
 def get_weather_popular():
@@ -272,7 +297,7 @@ def get_weather_popular():
 
 # 즐겨찾기 기능 - 누가 어떤 여행지를 즐겨찾기 했는지 db에 저장_popular
 @application.route("/popular/place/bookmark", methods=['POST'])
-def bookmark():
+def bookmark_popular():
     token_receive = request.cookies.get('mytoken')
 
     try:
@@ -280,10 +305,14 @@ def bookmark():
         user_info = db.users.find_one({"username": payload["id"]})
         content_id_receive = request.form['content_id_give']
         action_receive = request.form['action_give']
+        title_receive = request.form['title_give']
+        file_receive = request.form['file_give']
 
         doc = {
             'content_id': content_id_receive,
             'username': user_info['username'],
+            'title': title_receive,
+            'file': file_receive
         }
 
         if action_receive == "uncheck":
@@ -296,9 +325,27 @@ def bookmark():
         return redirect(url_for("login"))
 
 
+# 즐겨찾기 된 아이디 전송
+@application.route('/popular/bookmark', methods=['POST'])
+def give_popular_bookmarks_id():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+
+        all_bookmarks = list(db.bookmark_popular.find({"username": user_info["username"]}, {"_id": False}))
+
+        return jsonify({"all_bookmarks": all_bookmarks})
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))
+
+
 # 즐겨찾기한 게시글은 나갔다 들어와도 즐겨찾기로 표시_popular
 @application.route('/popular/place/bookmark/<content_id>', methods=['GET'])
-def get_bookmark(content_id):
+def get_bookmark_popular(content_id):
     token_receive = request.cookies.get('mytoken')
 
     try:
@@ -346,16 +393,15 @@ def get_near_list():
 @application.route('/near/place/intro', methods=['POST'])
 def get_near_detail_intro():
     content_id_receive = request.form['content_id_give']
-    content_type_id_receive = request.form['content_type_id_give']
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
                       'Chrome/73.0.3683.86 Safari/537.36'
     }
 
-    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailIntro?serviceKey={OPEN_API_KEY}' \
-          f'&&pageNo=1contentId={content_id_receive}&contentTypeId={content_type_id_receive}' \
-          f'&MobileOS=ETC&MobileApp=TourAPI3.0_Guide' \
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailCommon?ServiceKey={OPEN_API_KEY}&' \
+          f'contentId={content_id_receive}&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&defaultYN=Y&firstImageYN=Y&' \
+          f'areacodeYN=Y&catcodeYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&transGuideYN=Y'
 
     r = requests.get(url, headers=headers)
 
@@ -364,6 +410,7 @@ def get_near_detail_intro():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     detail_intro_list = json_body['response']['body']['items']['item']
+
     return jsonify({'detail_intro_list': detail_intro_list})
 
 
@@ -373,6 +420,9 @@ def get_near_type():
     lat_receive = request.form['lat_give']
     lng_receive = request.form['lng_give']
     type_receive = request.form['type_give']
+    quantity_receive = request.form['quantity_give']
+
+    print(type_receive)
 
     if type_receive == 'trip':
         type_code = 12
@@ -389,9 +439,11 @@ def get_near_type():
     }
 
     url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId={type_code}&mapX={lng_receive}&mapY={lat_receive}' \
-          '&radius=5000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=40&pageNo=1'
+          f'&radius=5000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows={quantity_receive}&' \
+          f'pageNo=1'
 
     r = requests.get(url, headers=headers)
+
 
     dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
     json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
@@ -418,18 +470,25 @@ def get_near_detail(content_id):
 
 # 즐겨찾기 기능 - 누가 어떤 여행지를 즐겨찾기 했는지 db에 저장
 @application.route("/near/place/bookmark", methods=['POST'])
-def bookmark_popular():
+def bookmark_near():
     token_receive = request.cookies.get('mytoken')
 
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
+
         content_id_receive = request.form['content_id_give']
         action_receive = request.form['action_give']
+        title_receive = request.form['title_give']
+        address_receive = request.form['address_give']
+        file_receive = request.form['file_give']
 
         doc = {
             'content_id': content_id_receive,
             'username': user_info['username'],
+            'title': title_receive,
+            'address': address_receive,
+            'file': file_receive
         }
 
         if action_receive == "uncheck":
@@ -444,7 +503,7 @@ def bookmark_popular():
 
 # 즐겨찾기한 게시글은 나갔다 들어와도 즐겨찾기로 표시
 @application.route('/near/place/bookmark/<content_id>', methods=['GET'])
-def get_bookmark_popular(content_id):
+def get_bookmark(content_id):
     token_receive = request.cookies.get('mytoken')
 
     try:
@@ -475,7 +534,7 @@ def show_bookmarks():
 
 
 # 즐겨찾기 된 아이디 전송
-@application.route('/bookmark', methods=['POST'])
+@application.route('/near/bookmark', methods=['POST'])
 def give_bookmarks_id():
     token_receive = request.cookies.get('mytoken')
 
@@ -861,8 +920,8 @@ def show_comments(trip_id):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         trip_id_receive = trip_id
-        all_comments = list(
-            db.comments.find({'trip_id': ObjectId(trip_id_receive)}, {'trip_id': False}).sort('date', -1))
+
+        all_comments = list(db.comments.find({'trip_id': ObjectId(trip_id_receive)}, {'trip_id': False}).sort('date', -1))
 
         for comments in all_comments:
             comments['_id'] = str(comments['_id'])
@@ -881,8 +940,7 @@ def delete_comment(trip_id):
         trip_id_receive = trip_id
         comment_id_receive = ObjectId(request.form['comment_id'])
 
-        db.comments.delete_one(
-            {'trip_id': ObjectId(trip_id_receive), '_id': comment_id_receive, 'username': payload['id']})
+        db.comments.delete_one({'trip_id': ObjectId(trip_id_receive), '_id': comment_id_receive, 'username': payload['id']})
 
         return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):

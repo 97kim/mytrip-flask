@@ -74,6 +74,9 @@
 
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
+                    <a class="nav-link" href="/popular/list">Popular</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/near/list">Near</a>
                 </li>
                 <li class="nav-item">
@@ -99,29 +102,27 @@
         </div>
     </div>
 </nav>
-
 <div class="sort">
-    <a id="family" href="javascript:checkTheme(1, perPage)" style="text-decoration: none;">가족여행</a>
-    <span> &nbsp; | &nbsp;</span>
-    <a id="alone" href="javascript:checkTheme(2, perPage)" style="text-decoration: none;">나홀로 여행</a>
-    <span> &nbsp; | &nbsp;</span>
-    <a id="healing" href="javascript:checkTheme(3, perPage)" style="text-decoration: none;">힐링 여행</a>
-    <span> &nbsp; | &nbsp;</span>
-    <a id="walking" href="javascript:checkTheme(4, perPage)" style="text-decoration: none;">걷기 좋은 여행</a>
-    <span> &nbsp; | &nbsp;</span>
-    <a id="camping" href="javascript:checkTheme(5, perPage)" style="text-decoration: none;">캠핑 여행</a>
-    <span> &nbsp; | &nbsp;</span>
-    <a id="famous_restaurant" href="javascript:checkTheme(6, perPage)" style="text-decoration: none;">맛집 여행</a>
-</div>
-
-<span>
-    <select class="custom-select" style="width: 10%;margin: 0% 90%;" id="perPagingSelect">
+    <div>
+        <a id="family" href="javascript:checkTheme(1, perPage)" style="text-decoration: none;">가족여행</a>
+        <span> &nbsp; | &nbsp;</span>
+        <a id="alone" href="javascript:checkTheme(2, perPage)" style="text-decoration: none;">나홀로 여행</a>
+        <span> &nbsp; | &nbsp;</span>
+        <a id="healing" href="javascript:checkTheme(3, perPage)" style="text-decoration: none;">힐링 여행</a>
+        <span> &nbsp; | &nbsp;</span>
+        <a id="walking" href="javascript:checkTheme(4, perPage)" style="text-decoration: none;">걷기 좋은 여행</a>
+        <span> &nbsp; | &nbsp;</span>
+        <a id="camping" href="javascript:checkTheme(5, perPage)" style="text-decoration: none;">캠핑 여행</a>
+        <span> &nbsp; | &nbsp;</span>
+        <a id="famous_restaurant" href="javascript:checkTheme(6, perPage)" style="text-decoration: none;">맛집 여행</a>
+    </div>
+    <select style="width: 70px; margin: 5px 0;" id="perPagingSelect">
         <option value="15">15</option>
         <option value="20">20</option>
         <option value="25">25</option>
         <option value="30">30</option>
     </select>
-</span>
+</div>
 
 <div class="before-render" style="width: 100%; height: 100vh;">
     <div id="container-box">

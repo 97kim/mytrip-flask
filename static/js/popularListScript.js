@@ -61,9 +61,6 @@ function popularList(quantity) {
                 sessionStorage.setItem('cat3', cat3);
                 sessionStorage.setItem('content_type_id', content_type_id);
 
-                // 중복 코드 제거 예정
-                let obj = {};
-
                 for (let i = 0; i < popular_list.length; i++) {
                     let content_id = popular_list[i]['contentid'];
                     let title = popular_list[i]['title'];
@@ -78,6 +75,7 @@ function popularList(quantity) {
                         mapx = 0;
                         mapy = 0;
                     }
+
                     let covid = checkCovid(address)
                     let covid_city_name = covid_check_city(covid)
                     let covid_count = JSON.parse(sessionStorage.getItem('covid_info'))[covid_city_name]['newCcase']
@@ -110,7 +108,6 @@ function popularList(quantity) {
                             </li>`;
                     $('#popular_card').append(temp_html);
                 }
-                sessionStorage.setItem('popular_object', JSON.stringify(obj));
             }
         }
     )

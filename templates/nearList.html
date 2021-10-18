@@ -49,8 +49,14 @@
     <script type="text/javascript" src="{{ url_for('static',filename='js/modalProfile.js') }}"></script>
 
     <script>
+        let perPage2 = "15";
+
         $(document).ready(function () {
-            geoInfoList('trip');
+            geoInfoList(perPage2);
+            $("#perPagingSelect2").change(function () {
+                perPage2 = $(this).val();
+                geoInfoList(perPage2)
+            })
         });
     </script>
 
@@ -66,6 +72,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/popular/list">Popular</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/near/list">Near</a>
                 </li>
@@ -93,14 +102,23 @@
 </nav>
 
 <div class="sort">
-    <a id="trip" href="javascript:geoInfoList('trip')" style="text-decoration: none;">여행지</a>
-    <span> &nbsp; | &nbsp;</span>
-    <a id="food" href="javascript:geoInfoList('food')" style="text-decoration: none;">음식점</a>
-    <span> &nbsp; | &nbsp;</span>
-    <a id="accommodation" href="javascript:geoInfoList('accommodation')" style="text-decoration: none;">숙박</a>
-    <span> &nbsp; | &nbsp;</span>
-    <a id="festival" href="javascript:geoInfoList('festival')" style="text-decoration: none;">축제공연행사</a>
+    <div>
+        <a id="trip" href="javascript:checkType(12, perPage2)" style="text-decoration: none;">여행지</a>
+        <span> &nbsp; | &nbsp;</span>
+        <a id="food" href="javascript:checkType(39, perPage2)" style="text-decoration: none;">음식점</a>
+        <span> &nbsp; | &nbsp;</span>
+        <a id="accommodation" href="javascript:checkType(32, perPage2)" style="text-decoration: none;">숙박</a>
+        <span> &nbsp; | &nbsp;</span>
+        <a id="festival" href="javascript:checkType(15, perPage2)" style="text-decoration: none;">축제공연행사</a>
+    </div>
+    <select style="width: 70px; margin: 5px 0;" id="perPagingSelect2">
+        <option value="15">15</option>
+        <option value="20">20</option>
+        <option value="25">25</option>
+        <option value="30">30</option>
+    </select>
 </div>
+
 
 <div class="before-render" style="width: 100%; height: 100vh;">
     <div id="container-box">
