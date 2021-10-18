@@ -1,5 +1,5 @@
-// slick 슬라이드
-function slide4() {
+
+function slide_popular() {
     $(function () {
         // Uncaught TypeError: Cannot read property 'add' of null” 오류 -> slick을 여러번 불러와서 발생
         // .not('.slick-initialized')로 하면 오류가 안 난다.
@@ -16,8 +16,8 @@ function slide4() {
             pauseOnHover: true,		// 슬라이드 이동 시 마우스 호버하면 슬라이더 멈추게 설정
             vertical: false,		// 세로 방향 슬라이드 옵션
             arrows: true, 		// 옆으로 이동하는 화살표 표시 여부
-            prevArrow: $('#btn_prev_popular_detail'),		// 이전 화살표 모양 설정
-            nextArrow: $('#btn_next_popular_detail'),		// 다음 화살표 모양 설정
+            prevArrow: $('#btn_prev4'),		// 이전 화살표 모양 설정
+            nextArrow: $('#btn_next4'),		// 다음 화살표 모양 설정
             draggable: true, 	//드래그 가능 여부
 
             responsive: [ // 반응형 웹 구현 옵션

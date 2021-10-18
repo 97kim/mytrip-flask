@@ -1,6 +1,7 @@
+import functools
 import os
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, g
 # from flask_cors import CORS
 from pymongo import MongoClient
 import requests
@@ -36,6 +37,24 @@ BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
+
+
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        token_receive = request.cookies.get('mytoken')
+
+        try:
+            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+            user_info = db.users.find_one({"username": payload["id"]})
+            return render_template('main.html', user_info=user_info)
+        except jwt.ExpiredSignatureError:
+            return redirect(url_for("login", msg="Your_login_time_has_expired."))
+        except jwt.exceptions.DecodeError:
+            return redirect(url_for("login", msg="login_error."))
+        return view(**kwargs)
+
+    return wrapped_view
 
 
 # 로그인 페이지
@@ -131,7 +150,6 @@ def get_near_place():
             json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
             near_list = json_body['response']['body']['items']['item']
-
             return jsonify({'near_list': near_list})
 
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -194,11 +212,11 @@ def get_popular_trips():
 # popularList.html 에서 추천 여행지 출력하기
 @application.route('/popular/list', methods=['POST'])
 def get_popular_trips2():
+    content_quantity = request.form['quantity']
     cat1 = request.form['cat1']
     cat2 = request.form['cat2']
     cat3 = request.form['cat3']
     contenttypeid = request.form['contenttypeid']
-    content_quantity = 13
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
@@ -215,7 +233,9 @@ def get_popular_trips2():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
-    return jsonify({'popular_list': popular_list})
+
+    return jsonify(
+        {'popular_list': popular_list, 'contentTypeId': contenttypeid, 'cat1': cat1, 'cat2': cat2, 'cat3': cat3})
 
 
 # popularDetail.html 렌더링
@@ -355,7 +375,6 @@ def get_near_type():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     near_list = json_body['response']['body']['items']['item']
-
     return jsonify({'near_list': near_list})
 
 
