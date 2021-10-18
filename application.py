@@ -203,6 +203,7 @@ def get_popular_trips():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
+    print(popular_list)
     return jsonify(
         {'popular_list': popular_list, 'trip_theme': trip_theme, 'contentTypeId': contentTypeId, 'cat1': cat1,
          'cat2': cat2, 'cat3': cat3})
@@ -211,7 +212,7 @@ def get_popular_trips():
 # popularList.html 에서 추천 여행지 출력하기
 @application.route('/popular/list', methods=['POST'])
 def get_popular_trips2():
-    content_quantity = request.form['type']
+    content_quantity = request.form['quantity']
     cat1 = request.form['cat1']
     cat2 = request.form['cat2']
     cat3 = request.form['cat3']
@@ -232,9 +233,37 @@ def get_popular_trips2():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
-    print(f'리스트 {popular_list}')
-    return jsonify({'popular_list': popular_list})
 
+    return jsonify(
+        {'popular_list': popular_list, 'contentTypeId': contenttypeid, 'cat1': cat1, 'cat2': cat2, 'cat3': cat3})
+
+# popularList.html 에서 추천 여행지 선택 결과를 출력하기(선택 가능한 페이지)
+@application.route('/popular/list/choice', methods=['POST'])
+def get_popular_trips3():
+    content_quantity = request.form['quantity']
+    cat1 = request.form['cat1']
+    cat2 = request.form['cat2']
+    cat3 = request.form['cat3']
+    contenttypeid = request.form['contenttypeid']
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
+          f'&numOfRows={content_quantity}&MobileApp=trips&MobileOS=ETC&arrange=P&cat1={cat1}' \
+          f'&contentTypeId={contenttypeid}&cat2={cat2}&cat3={cat3}&listYN=Y'
+
+    r = requests.get(url, headers=headers)
+
+    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    popular_list = json_body['response']['body']['items']['item']
+
+    return jsonify(
+        {'popular_list': popular_list, 'contentTypeId': contenttypeid, 'cat1': cat1, 'cat2': cat2, 'cat3': cat3})
 
 # popularDetail.html 렌더링
 @application.route('/popular/place/<content_id>', methods=['GET'])

@@ -78,7 +78,6 @@ function slide2() {
                     }
                 }
             ]
-
         });
     })
 }
@@ -122,7 +121,6 @@ function slide() {
                     }
                 }
             ]
-
         });
     })
 }
@@ -132,8 +130,8 @@ function geoInfo() {
     function onGeoOK(position) { //위치 정보 공유 승인 시
         const lat = position.coords.latitude; //위도
         const lng = position.coords.longitude; //경도
-        localStorage.setItem("lat", lat)
-        localStorage.setItem("lng", lng)
+        // localStorage.setItem("lat", lat)
+        // localStorage.setItem("lng", lng)
         $.ajax({
                 type: "POST",
                 url: "/near",
@@ -149,54 +147,24 @@ function geoInfo() {
                         let title = near_list[i]['title'];
                         let address = near_list[i]['addr1'];
                         let file = near_list[i]['firstimage'];
+                        if (!file) {
+                            file = "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png";
+                        }
                         let distance = near_list[i]['dist'];
                         let place_lat = near_list[i]['mapy'];
                         let place_lng = near_list[i]['mapx'];
                         let content_id = near_list[i]['contentid'];
 
+                        obj[content_id] = {
+                            'title': title,
+                            'address': address,
+                            'file': file,
+                            'distance': distance,
+                            'place_lat': place_lat,
+                            'place_lng': place_lng
+                        }
 
-                        if (!file) {
-
-                            obj[content_id] = {
-                                'title': title,
-                                'address': address,
-                                'file': "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png",
-                                'distance': distance,
-                                'place_lat': place_lat,
-                                'place_lng': place_lng
-                            }
-
-                            let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place/${content_id}" class="card">
-                                                <img src="https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png" class="card__image" alt="이미지 없음"/>
-                                                <div class="card__overlay">
-                                                    <div class="card__header">
-                                                        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-                                                            <path/>
-                                                        </svg>
-                                                        <img class="card__thumb" src="https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png" alt="썸네일 이미지 없음"/>
-                                                        <div class="card__header-text">
-                                                            <h3 class="card__title">${title}</h3>
-                                                            <span class="card__status">${distance}m</span>
-                                                        </div>
-                                                    </div>
-                                                    <p class="card__description">${address}</p>
-                                                </div>
-                                            </a>
-                                        </li>`;
-                            $('#near_card').append(temp_html);
-                        } else {
-
-                            obj[content_id] = {
-                                'title': title,
-                                'address': address,
-                                'file': file,
-                                'distance': distance,
-                                'place_lat': place_lat,
-                                'place_lng': place_lng
-                            }
-
-                            let temp_html = `<li style="margin: 0 10px; height: 300px;">
+                        let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                              <a href="/near/place/${content_id}" class="card">
                                                 <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                                 <div class="card__overlay">
@@ -214,8 +182,7 @@ function geoInfo() {
                                                 </div>
                                             </a>
                                         </li>`;
-                            $('#near_card').append(temp_html);
-                        }
+                        $('#near_card').append(temp_html);
                         slide();
                     }
                     sessionStorage.setItem('near_object', JSON.stringify(obj));
@@ -283,25 +250,17 @@ function showPopularTrips() {
     $.ajax({
         type: 'POST',
         url: '/popular/trips',
-        data: {lat_give: localStorage.getItem("lat"), lng_give: localStorage.getItem("lng")},
+        data: {},
         success: function (response) {
             $('#popular_card').empty();
             let popular_list = response['popular_list'];
             let trip_theme = response['trip_theme'];
 
             // popularListScript 정보 전달용
-            let cat1 = response['cat1']
-            let cat2 = response['cat2']
-            let cat3 = response['cat3']
-            let contentTypeId = response['contentTypeId']
-
-            data = {
-                cat1,cat2,cat3,contentTypeId
-            }
-            sessionStorage.setItem('cat1', JSON.stringify(cat1));
-            sessionStorage.setItem('cat2', JSON.stringify(cat2));
-            sessionStorage.setItem('cat3', JSON.stringify(cat3));
-            sessionStorage.setItem('contenttypeid', JSON.stringify(contentTypeId));
+            sessionStorage.setItem('cat1', response['cat1']);
+            sessionStorage.setItem('cat2', response['cat2']);
+            sessionStorage.setItem('cat3', response['cat3']);
+            sessionStorage.setItem('contenttypeid', response['contentTypeId']);
 
             //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
             let obj = {};
@@ -311,9 +270,9 @@ function showPopularTrips() {
                 let title = popular_list[i]['title'];
                 let file = popular_list[i]['firstimage'];
                 if (!file)
-                    file = popular_list[i]['firstimage2'];
+                    file = "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png";
                 let areacode = parseInt(popular_list[i]['areacode']);
-                let address = check_address(areacode)
+                let address = check_address(areacode);
                 let mapx = popular_list[i]['mapx'];
                 let mapy = popular_list[i]['mapy'];
                 if (!mapx || !mapy) {
