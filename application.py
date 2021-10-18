@@ -13,6 +13,8 @@ import boto3
 from datetime import datetime, timedelta
 # python-dotenv 라이브러리 설치
 from dotenv import load_dotenv
+# mongoDB에서 String을 ObjectId으로 변환시키기 위함
+from bson import ObjectId
 
 application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
@@ -703,6 +705,8 @@ def delete_trip(trip_id):
 
     # db에서 삭제
     db.trips.delete_one({'id': int(trip_id)})
+    db.like.delete_many({'trip_id': int(trip_id)})
+    db.comments.delete_many({'trip_id': int(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
 
 
@@ -817,7 +821,6 @@ def comment(trip_id):
         profile_img = db.users.find_one({'username': user_info['username']})['profile_img']
 
         doc = {
-            'comment_id': db.comments.count() + 1,
             'trip_id': trip_id_receive,
             'username': user_info['username'],
             'nickname': nickname,
@@ -840,11 +843,14 @@ def show_comments(trip_id):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         trip_id_receive = int(trip_id)
-        all_comments = list(db.comments.find({'trip_id': trip_id_receive}, {'_id': False}).sort('date', -1))
+        all_comments = list(db.comments.find({'trip_id': trip_id_receive}).sort('date', -1))
+
+        for comments in all_comments:
+            comments['_id'] = str(comments['_id'])
 
         return jsonify({'all_comments': all_comments, 'now_user': payload['id']})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return render_template('tripsDetail.html')
+        return redirect(url_for("login"))
 
 
 @application.route('/trips/place/comment/<trip_id>', methods=['DELETE'])
@@ -854,13 +860,13 @@ def delete_comment(trip_id):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         trip_id_receive = int(trip_id)
-        comment_id_receive = int(request.form['comment_id'])
+        comment_id_receive = ObjectId(request.form['comment_id'])
 
-        db.comments.delete_one({'trip_id': trip_id_receive, 'comment_id': comment_id_receive, 'username': payload['id']})
+        db.comments.delete_one({'trip_id': trip_id_receive, '_id': comment_id_receive, 'username': payload['id']})
 
         return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-        return render_template('tripsDetail.html')
+        return redirect(url_for("login"))
 
 
 if __name__ == '__main__':
