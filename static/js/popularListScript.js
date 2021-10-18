@@ -40,6 +40,7 @@ function popularList(quantity) {
     let cat2 = sessionStorage.getItem('cat2')
     let cat3 = sessionStorage.getItem('cat3')
     let content_type_id = sessionStorage.getItem('content_type_id')
+    $('.before-render').show();
 
     $.ajax({
             type: "POST",
