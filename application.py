@@ -500,12 +500,13 @@ def show_trips():
     sort_type = request.args.get('sort')
 
     if sort_type == 'date':
-        all_trips = list(db.trips.find({}, {'_id': False}).sort("date", -1))
+        all_trips = list(db.trips.find({}).sort("date", -1))
     else:
-        all_trips = list(db.trips.find({}, {'_id': False}).sort("like", -1))
+        all_trips = list(db.trips.find({}).sort("like", -1))
 
     for trips in all_trips:
         trips['date'] = trips['date'].strftime('%Y.%m.%d')
+        trips['_id'] = str(trips['_id'])
 
     return jsonify({'all_trips': all_trips})
 
@@ -534,7 +535,7 @@ def get_trips_detail(trip_id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
 
-        trip = db.trips.find_one({"id": int(trip_id)})
+        trip = db.trips.find_one({"_id": ObjectId(trip_id)})
 
         status = (trip["username"] == payload["id"])
         return render_template('tripsDetail.html', user_info=user_info, status=status)
@@ -548,7 +549,7 @@ def get_trips_detail(trip_id):
 def trips_detail():
     trip_id_receive = request.form['trip_id_give']
 
-    trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+    trip = db.trips.find_one({'_id': ObjectId(trip_id_receive)}, {'_id': False})
 
     trip['date'] = trip['date'].strftime('%Y.%m.%d')
 
@@ -586,7 +587,7 @@ def write():
 def update():
     trip_id_receive = request.form['trip_id_give']
 
-    trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+    trip = db.trips.find_one({'_id': ObjectId(trip_id_receive)})
 
     title = trip['title']
     place = trip['place']
@@ -631,7 +632,7 @@ def write_trip():
         )
 
         doc = {
-            'id': db.trips.count() + 1,
+            # 'id': db.trips.count() + 1,
             'title': trip_title_receive,
             'place': trip_place_receive,
             'review': trip_review_receive,
@@ -689,7 +690,7 @@ def update_trip(trip_id):
 
         new_doc['file'] = full_file_name
 
-    db.trips.update_one({'id': int(trip_id)}, {'$set': new_doc})
+    db.trips.update_one({'_id': ObjectId(trip_id)}, {'$set': new_doc})
 
     return jsonify({'msg': '수정 완료!'})
 
@@ -697,16 +698,16 @@ def update_trip(trip_id):
 # 리뷰 삭제
 @application.route('/trips/place/<trip_id>', methods=['DELETE'])
 def delete_trip(trip_id):
-    trip_file = db.trips.find_one({'id': int(trip_id)})['file']
+    trip_file = db.trips.find_one({'_id': ObjectId(trip_id)})['file']
 
     # s3에서 삭제
     s3 = boto3.resource('s3')
     s3.Object(BUCKET_NAME, f'trips/{trip_file}').delete()
 
     # db에서 삭제
-    db.trips.delete_one({'id': int(trip_id)})
-    db.like.delete_many({'trip_id': int(trip_id)})
-    db.comments.delete_many({'trip_id': int(trip_id)})
+    db.trips.delete_one({'_id': ObjectId(trip_id)})
+    db.like.delete_many({'trip_id': ObjectId(trip_id)})
+    db.comments.delete_many({'trip_id': ObjectId(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
 
 
@@ -722,19 +723,19 @@ def like_place():
         action_receive = request.form['action_give']
 
         doc = {
-            'trip_id': int(trip_id_receive),
+            'trip_id': ObjectId(trip_id_receive),
             'username': user_info['username'],
         }
 
-        total_like = db.trips.find_one({'id': int(trip_id_receive)})['like']
+        total_like = db.trips.find_one({'_id': ObjectId(trip_id_receive)})['like']
 
         if action_receive == "uncheck":
             db.like.delete_one(doc)
-            db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': total_like - 1}})
+            db.trips.update_one({'_id': ObjectId(trip_id_receive)}, {'$set': {'like': total_like - 1}})
 
         else:
             db.like.insert_one(doc)
-            db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': total_like + 1}})
+            db.trips.update_one({'_id': ObjectId(trip_id_receive)}, {'$set': {'like': total_like + 1}})
 
         return jsonify({"result": "success"})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -750,7 +751,7 @@ def get_like(trip_id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
 
-        like_status = bool(db.like.find_one({"trip_id": int(trip_id), "username": user_info["username"]}))
+        like_status = bool(db.like.find_one({"trip_id": ObjectId(trip_id), "username": user_info["username"]}))
 
         return jsonify({"like_status": str(like_status)})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -812,7 +813,7 @@ def comment(trip_id):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
-        trip_id_receive = int(trip_id)
+        trip_id_receive = trip_id
         comment_receive = request.form['comment_give']
         date_receive = request.form['date_give']
 
@@ -820,7 +821,7 @@ def comment(trip_id):
         profile_img = db.users.find_one({'username': user_info['username']})['profile_img']
 
         doc = {
-            'trip_id': trip_id_receive,
+            'trip_id': ObjectId(trip_id_receive),
             'username': user_info['username'],
             'nickname': nickname,
             'profile_img': profile_img,
@@ -841,8 +842,8 @@ def show_comments(trip_id):
 
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        trip_id_receive = int(trip_id)
-        all_comments = list(db.comments.find({'trip_id': trip_id_receive}).sort('date', -1))
+        trip_id_receive = trip_id
+        all_comments = list(db.comments.find({'trip_id': ObjectId(trip_id_receive)}, {'trip_id': False}).sort('date', -1))
 
         for comments in all_comments:
             comments['_id'] = str(comments['_id'])
@@ -858,10 +859,10 @@ def delete_comment(trip_id):
 
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        trip_id_receive = int(trip_id)
+        trip_id_receive = trip_id
         comment_id_receive = ObjectId(request.form['comment_id'])
 
-        db.comments.delete_one({'trip_id': trip_id_receive, '_id': comment_id_receive, 'username': payload['id']})
+        db.comments.delete_one({'trip_id': ObjectId(trip_id_receive), '_id': comment_id_receive, 'username': payload['id']})
 
         return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
