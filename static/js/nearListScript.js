@@ -20,6 +20,7 @@ function checkType(code, quantity) {
 // 현재 위치 불러와 근처 여행지, 음식점, 숙박, 축제공연행사 조회 (5km, 항목당 최대 40개)
 function geoInfoList(quantity) {
     $('#near_card').empty();
+    $('.before-render').show();
     let type = sessionStorage.getItem('type')
 
     function onGeoOK(position) { //위치 정보 공유 승인 시
