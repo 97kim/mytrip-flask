@@ -1,3 +1,12 @@
+.input-group-mb-3 {
+    margin-left: 150px;
+    margin-right: 150px;
+}
+
+.wrap3 {
+    margin-top: 90px;
+}
+
 :root {
     /* html에서 :root는 html 선택자랑 같다 */
     /* 변수처럼 사용 가능. 예시) color: var(--surface-color) */
