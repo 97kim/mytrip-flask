@@ -57,8 +57,9 @@ function getItem() {
     $('#distance').text(`여기에서 ${JSON.parse(sessionStorage.getItem('near_object'))[getId()]['distance']}m 거리`);
 }
 
-function getDetailintro() {
-    let content_type_id = sessionStorage.getItem('content_type_id');
+function getDetailIntro() {
+    let content_type_id = JSON.parse(sessionStorage.getItem('near_object'))[getId()]['content_type_id']
+    console.log(typeof content_type_id)
 
     $.ajax({
         type: "POST",
@@ -68,28 +69,74 @@ function getDetailintro() {
             content_type_id_give: content_type_id,
         },
         success: function (response) {
-            let detailintro_list = response['detailintro_list'];
+            let detail_intro_list = response['detail_intro_list'];
 
-            for (let i = 0; i < detailintro_list.length; i++) {
-                let opendate = detailintro_list[i]['opendate'];
-                let restdate = detailintro_list[i]['restdate'];
-                let useseason = detailintro_list[i]['useseason'];
-                let usetime = detailintro_list[i]['usetime'];
-                let infocenter = detailintro_list[i]['infocenter'];
-                let parking = detailintro_list[i]['parking'];
-
-                let temp_html = `<div id="info_card" class="card" style="width: 18rem;">
-                                     <ul class="list-group list-group-flush">
-                                     <li class="list-group-item">${opendate}</li>
-                                     <li class="list-group-item">${restdate}</li>
-                                     <li class="list-group-item">${useseason}</li>
+            if (content_type_id == '12') {
+                let usetime = detail_intro_list['usetime'];
+                let restdate = detail_intro_list['restdate'];
+                let infocenter = detail_intro_list['infocenter'];
+                let parking = detail_intro_list['parking'];
+                let temp_html = `<ul class="list-group list-group-flush">
                                      <li class="list-group-item">${usetime}</li>
+                                     <li class="list-group-item">${restdate}</li>
                                      <li class="list-group-item">${infocenter}</li>
                                      <li class="list-group-item">${parking}</li>
-                                     </ul>
-                                 </div>`;
+                                 </ul>`;
                 $('#info_card').append(temp_html);
+            } else if (content_type_id == '39') {
+                let firstmenu = detail_intro_list['firstmenu'];
+                let opentimefood = detail_intro_list['opentimefood'];
+                let restdatefood = detail_intro_list['restdatefood'];
+                let packing = detail_intro_list['packing'];
+                let infocenterfood = detail_intro_list['infocenterfood'];
+                let parkingfood = detail_intro_list['parkingfood'];
+                if (!parkingfood) {
+                    parkingfood = infocenterfood + '로 별도 문의'
+                }
+                let temp_html = `<ul class="list-group list-group-flush">
+                                     <li class="list-group-item">${firstmenu}</li>
+                                     <li class="list-group-item">${opentimefood}</li>
+                                      <li class="list-group-item">${restdatefood}</li>
+                                       <li class="list-group-item">${packing}</li>
+                                     <li class="list-group-item">${infocenterfood}</li>
+                                     <li class="list-group-item">${parkingfood}</li>
+                                 </ul>`;
+                $('#info_card').append(temp_html);
+            } else if (content_type_id == '32') {
+                let checkintime = detail_intro_list['checkintime'];
+                let checkouttime = detail_intro_list['checkouttime'];
+                let accomcountlodging = detail_intro_list['accomcountlodging'];
+                let chkcooking = detail_intro_list['chkcooking'];
+                let infocenterlodging = detail_intro_list['infocenterlodging'];
+                let parking = detail_intro_list['parking'];
+                let temp_html = `<ul class="list-group list-group-flush">
+                                     <li class="list-group-item">${checkintime}</li>
+                                     <li class="list-group-item">${checkouttime}</li>
+                                     <li class="list-group-item">${accomcountlodging}</li>
+                                     <li class="list-group-item">${chkcooking}</li>
+                                     <li class="list-group-item">${infocenterlodging}</li>
+                                     <li class="list-group-item">${parking}</li>
+                                 </ul>`;
+                $('#info_card').append(temp_html);
+            } else if (content_type_id == '15') {
+                let bookingplace = detail_intro_list['bookingplace'];
+                let eventstartdate = detail_intro_list['eventstartdate'];
+                let eventenddate = detail_intro_list['eventenddate'];
+                let program = detail_intro_list['program'];
+                let eventplace = detail_intro_list['eventplace'];
+                let placeinfo = detail_intro_list['placeinfo'];
+                let temp_html = `<ul class="list-group list-group-flush">
+                                    <li class="list-group-item">${bookingplace}</li>
+                                    <li class="list-group-item">${eventstartdate}</li>
+                                    <li class="list-group-item">${eventenddate}</li>
+                                    <li class="list-group-item">${program}</li>
+                                    <li class="list-group-item">${eventplace}</li>
+                                    <li class="list-group-item">${placeinfo}</li>
+                                 </ul>`;
+                $('#info_card').append(temp_html);
+
             }
+
         }
     });
 }
