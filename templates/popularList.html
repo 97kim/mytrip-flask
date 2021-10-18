@@ -52,10 +52,10 @@
         let perPage = "15";
 
         $(document).ready(function () {
-            popular_list(perPage);
+            popularList(perPage);
             $("#perPagingSelect").change(function () {
                 perPage = $(this).val();
-                popular_list(perPage)
+                popularList(perPage)
             })
         });
     </script>
@@ -101,17 +101,17 @@
 </nav>
 
 <div class="sort">
-    <a id="family" href="javascript:checkThema(1, perPage)" style="text-decoration: none;">가족여행</a>
+    <a id="family" href="javascript:checkTheme(1, perPage)" style="text-decoration: none;">가족여행</a>
     <span> &nbsp; | &nbsp;</span>
-    <a id="alone" href="javascript:checkThema(2, perPage)" style="text-decoration: none;">나홀로 여행</a>
+    <a id="alone" href="javascript:checkTheme(2, perPage)" style="text-decoration: none;">나홀로 여행</a>
     <span> &nbsp; | &nbsp;</span>
-    <a id="healing" href="javascript:checkThema(3, perPage)" style="text-decoration: none;">힐링 여행</a>
+    <a id="healing" href="javascript:checkTheme(3, perPage)" style="text-decoration: none;">힐링 여행</a>
     <span> &nbsp; | &nbsp;</span>
-    <a id="walking" href="javascript:checkThema(4, perPage)" style="text-decoration: none;">걷기 좋은 여행</a>
+    <a id="walking" href="javascript:checkTheme(4, perPage)" style="text-decoration: none;">걷기 좋은 여행</a>
     <span> &nbsp; | &nbsp;</span>
-    <a id="camping" href="javascript:checkThema(5, perPage)" style="text-decoration: none;">캠핑 여행</a>
+    <a id="camping" href="javascript:checkTheme(5, perPage)" style="text-decoration: none;">캠핑 여행</a>
     <span> &nbsp; | &nbsp;</span>
-    <a id="famous_restaurant" href="javascript:checkThema(6, perPage)" style="text-decoration: none;">맛집 여행</a>
+    <a id="famous_restaurant" href="javascript:checkTheme(6, perPage)" style="text-decoration: none;">맛집 여행</a>
 </div>
 
 <span>

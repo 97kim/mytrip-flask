@@ -1,7 +1,6 @@
-import functools
 import os
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for, g
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 # from flask_cors import CORS
 from pymongo import MongoClient
 import requests
@@ -37,24 +36,6 @@ BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
-
-
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        token_receive = request.cookies.get('mytoken')
-
-        try:
-            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-            user_info = db.users.find_one({"username": payload["id"]})
-            return render_template('main.html', user_info=user_info)
-        except jwt.ExpiredSignatureError:
-            return redirect(url_for("login", msg="Your_login_time_has_expired."))
-        except jwt.exceptions.DecodeError:
-            return redirect(url_for("login", msg="login_error."))
-        return view(**kwargs)
-
-    return wrapped_view
 
 
 # 로그인 페이지
@@ -162,7 +143,7 @@ def get_popular_trips():
     info = random.randrange(1, 7)
     cat1 = 'C01'
     content_quantity = 13
-    contentTypeId = 25
+    content_type_id = 25
     if info == 1:
         cat2 = 'C0112'
         cat3 = 'C01120001'
@@ -194,7 +175,7 @@ def get_popular_trips():
     }
     url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
           f'&numOfRows={content_quantity}&MobileApp=trips&MobileOS=ETC&arrange=P&cat1={cat1}' \
-          f'&contentTypeId={contentTypeId}&cat2={cat2}&cat3={cat3}&listYN=Y'
+          f'&contentTypeId={content_type_id}&cat2={cat2}&cat3={cat3}&listYN=Y'
 
     r = requests.get(url, headers=headers)
 
@@ -205,7 +186,7 @@ def get_popular_trips():
     popular_list = json_body['response']['body']['items']['item']
 
     return jsonify(
-        {'popular_list': popular_list, 'trip_theme': trip_theme, 'contentTypeId': contentTypeId, 'cat1': cat1,
+        {'popular_list': popular_list, 'trip_theme': trip_theme, 'content_type_id': content_type_id, 'cat1': cat1,
          'cat2': cat2, 'cat3': cat3})
 
 
@@ -216,7 +197,7 @@ def get_popular_trips2():
     cat1 = request.form['cat1']
     cat2 = request.form['cat2']
     cat3 = request.form['cat3']
-    contenttypeid = request.form['contenttypeid']
+    content_type_id = request.form['content_type_id']
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
@@ -224,7 +205,7 @@ def get_popular_trips2():
     }
     url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
           f'&numOfRows={content_quantity}&MobileApp=trips&MobileOS=ETC&arrange=P&cat1={cat1}' \
-          f'&contentTypeId={contenttypeid}&cat2={cat2}&cat3={cat3}&listYN=Y'
+          f'&contentTypeId={content_type_id}&cat2={cat2}&cat3={cat3}&listYN=Y'
 
     r = requests.get(url, headers=headers)
 
@@ -235,7 +216,7 @@ def get_popular_trips2():
     popular_list = json_body['response']['body']['items']['item']
 
     return jsonify(
-        {'popular_list': popular_list, 'contentTypeId': contenttypeid, 'cat1': cat1, 'cat2': cat2, 'cat3': cat3})
+        {'popular_list': popular_list, 'content_type_id': content_type_id, 'cat1': cat1, 'cat2': cat2, 'cat3': cat3})
 
 
 # popularDetail.html 렌더링
@@ -316,7 +297,7 @@ def get_bookmark(content_id):
 
 
 # 인기 여행지 더보기 html 렌더링
-@application.route('/popular/near/place', methods=['GET'])
+@application.route('/popular/list', methods=['GET'])
 def get_popular_near_place():
     token_receive = request.cookies.get('mytoken')
     try:

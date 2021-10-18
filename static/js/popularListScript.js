@@ -1,9 +1,9 @@
-function checkThema(type, quantity) {
+function checkTheme(type, quantity) {
     type = parseInt(type)
     let cat1 = "C01";
     let cat2 = "";
     let cat3 = "";
-    let contentTypeId = "C0112";
+    let content_type_id = "25";
 
     if (type === 1) {
         cat2 = 'C0112'
@@ -28,23 +28,23 @@ function checkThema(type, quantity) {
     sessionStorage.setItem('cat1', cat1);
     sessionStorage.setItem('cat2', cat2);
     sessionStorage.setItem('cat3', cat3);
-    sessionStorage.setItem('contenttypeid', contentTypeId);
-    popular_list(quantity)
+    sessionStorage.setItem('content_type_id', content_type_id);
+    popularList(quantity)
 }
 
 // 추천여행지 출력, 추천여행지 선택한 결과 출력
-function popular_list(quantity) {
+function popularList(quantity) {
     $('#popular_card').empty();
     // main.html 에서 가져온 정보들, main 의 정보를 그대로 list 창에서 보여주기 위함
     let cat1 = sessionStorage.getItem('cat1')
     let cat2 = sessionStorage.getItem('cat2')
     let cat3 = sessionStorage.getItem('cat3')
-    let contentTypeId = sessionStorage.getItem('contentTypeId')
+    let content_type_id = sessionStorage.getItem('content_type_id')
 
     $.ajax({
             type: "POST",
             url: "/popular/list",
-            data: {quantity: quantity, cat1: cat1, cat2: cat2, cat3: cat3, contenttypeid: contentTypeId},
+            data: {quantity: quantity, cat1: cat1, cat2: cat2, cat3: cat3, content_type_id: content_type_id},
             success: function (response) {
                 $('.before-render').hide();
                 $('#popular_card').empty();
@@ -53,12 +53,12 @@ function popular_list(quantity) {
                 let cat1 = response['cat1'];
                 let cat2 = response['cat2'];
                 let cat3 = response['cat3'];
-                let contentTypeId = response['contentTypeId']
+                let content_type_id = response['content_type_id']
 
                 sessionStorage.setItem('cat1', cat1);
                 sessionStorage.setItem('cat2', cat2);
                 sessionStorage.setItem('cat3', cat3);
-                sessionStorage.setItem('contenttypeid', contentTypeId);
+                sessionStorage.setItem('content_type_id', content_type_id);
 
                 // 중복 코드 제거 예정
                 let obj = {};
