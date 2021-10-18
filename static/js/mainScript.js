@@ -294,7 +294,7 @@ function showPopularTrips() {
     });
 }
 
-function covid(city) {
+function covid() {
     $.ajax({
         type: 'GET',
         url: 'https://api.corona-19.kr/korea/country/new/?serviceKey=eRyPhYXEzDktxKJ8QOUwcACLjHd5msf4M',
