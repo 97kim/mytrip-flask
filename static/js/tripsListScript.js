@@ -8,7 +8,7 @@ function showListSort(type) {
             let trip_list = response['all_trips'];
 
             for (let i = 0; i < trip_list.length; i++) {
-                let trip_id = trip_list[i]['id'];
+                let trip_id = trip_list[i]['_id'];
                 let trip_title = trip_list[i]['title'];
                 let trip_place = trip_list[i]['place'];
                 let trip_file = trip_list[i]['file'];
