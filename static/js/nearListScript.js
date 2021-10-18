@@ -22,57 +22,24 @@ function geoInfoList(type) {
                         let title = near_list[i]['title'];
                         let address = near_list[i]['addr1'];
                         let file = near_list[i]['firstimage'];
+                        if (!file) {
+                            file = "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png";
+                        }
                         let distance = near_list[i]['dist'];
                         let place_lat = near_list[i]['mapy'];
                         let place_lng = near_list[i]['mapx'];
                         let content_id = near_list[i]['contentid'];
-                        let content_type_id = near_list[i]['contenttypeid']
 
+                        obj[content_id] = {
+                            'title': title,
+                            'address': address,
+                            'file': file,
+                            'distance': distance,
+                            'place_lat': place_lat,
+                            'place_lng': place_lng
+                        }
 
-                        if (!file) {
-
-                            obj[content_id] = {
-                                'title': title,
-                                'address': address,
-                                'file': "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png",
-                                'distance': distance,
-                                'place_lat': place_lat,
-                                'place_lng': place_lng,
-                                'content_type_id': content_type_id
-                            }
-
-                            let temp_html = `<li style="margin: 0 10px; height: 300px;">
-                                             <a href="/near/place/${content_id}" class="card">
-                                                <img src="https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png" class="card__image" alt="이미지 없음"/>
-                                                <div class="card__overlay">
-                                                    <div class="card__header">
-                                                        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
-                                                            <path/>
-                                                        </svg>
-                                                        <img class="card__thumb" src="https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png" alt="썸네일 이미지 없음"/>
-                                                        <div class="card__header-text">
-                                                            <h3 class="card__title">${title}</h3>
-                                                            <span class="card__status">${distance}m</span>
-                                                        </div>
-                                                    </div>
-                                                    <p class="card__description">${address}</p>
-                                                </div>
-                                            </a>
-                                        </li>`;
-                            $('#near_card').append(temp_html);
-                        } else {
-
-                            obj[content_id] = {
-                                'title': title,
-                                'address': address,
-                                'file': file,
-                                'distance': distance,
-                                'place_lat': place_lat,
-                                'place_lng': place_lng,
-                                'content_type_id': content_type_id
-                            }
-
-                            let temp_html = `<li style="margin: 0 10px; height: 300px;">
+                        let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                              <a href="/near/place/${content_id}" class="card">
                                                 <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                                 <div class="card__overlay">
@@ -90,8 +57,7 @@ function geoInfoList(type) {
                                                 </div>
                                             </a>
                                         </li>`;
-                            $('#near_card').append(temp_html);
-                        }
+                        $('#near_card').append(temp_html);
                     }
                     sessionStorage.setItem('near_object', JSON.stringify(obj));
                 }

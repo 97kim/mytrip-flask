@@ -197,7 +197,7 @@ def get_popular_trips2():
     cat2 = request.form['cat2']
     cat3 = request.form['cat3']
     contenttypeid = request.form['contenttypeid']
-    content_quantity = 13
+    content_quantity = 30
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
@@ -214,7 +214,9 @@ def get_popular_trips2():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
-    return jsonify({'popular_list': popular_list})
+
+    return jsonify(
+        {'popular_list': popular_list,'contentTypeId': contenttypeid, 'cat1': cat1, 'cat2': cat2, 'cat3': cat3})
 
 
 # popularDetail.html 렌더링
@@ -324,6 +326,30 @@ def get_near_list():
         return redirect(url_for("login", msg="login_error."))
 
 
+# nearDetail.html 추천 여행지 상세정보 출력 : 개장일, 쉬는날, 이용시기, 이용시간, 주차시설 등
+@application.route('/near/place/intro', methods=['POST'])
+def get_near_detail_intro():
+    content_id_receive = request.form['content_id_give']
+    content_type_id_receive = request.form['content_type_id_give']
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailIntro?serviceKey={OPEN_API_KEY}&pageNo=1' \
+          f'&contentId={content_id_receive}&contentTypeId={content_type_id_receive}&MobileOS=ETC&MobileApp=TourAPI3.0_Guide' \
+
+    r = requests.get(url, headers=headers)
+
+    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    detail_intro_list = json_body['response']['body']['items']['item']
+    return jsonify({'detail_intro_list': detail_intro_list})
+
+
 # nearList.html에 리스트 출력
 @application.route('/near/list', methods=['POST'])
 def get_near_type():
@@ -372,30 +398,6 @@ def get_near_detail(content_id):
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="login_error."))
-
-
-# nearDetail.html 추천 여행지 상세정보 출력 : 개장일, 쉬는날, 이용시기, 이용시간, 주차시설 등
-@application.route('/near/place/intro', methods=['POST'])
-def get_near_detail_intro():
-    content_id_receive = request.form['content_id_give']
-    content_type_id_receive = request.form['content_type_id_give']
-
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
-                      'Chrome/73.0.3683.86 Safari/537.36'
-    }
-
-    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailIntro?serviceKey={OPEN_API_KEY}&pageNo=1' \
-          f'&contentId={content_id_receive}&contentTypeId={content_type_id_receive}&MobileOS=ETC&MobileApp=TourAPI3.0_Guide' \
-
-    r = requests.get(url, headers=headers)
-
-    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
-    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
-    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
-
-    detail_intro_list = json_body['response']['body']['items']['item']
-    return jsonify({'detail_intro_list': detail_intro_list})
 
 
 # 즐겨찾기 기능 - 누가 어떤 여행지를 즐겨찾기 했는지 db에 저장
