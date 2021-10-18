@@ -25,6 +25,7 @@ function geoInfoList(quantity) {
     function onGeoOK(position) { //위치 정보 공유 승인 시
         const lat = position.coords.latitude; //위도
         const lng = position.coords.longitude; //경도
+        $('.before-render').show();
 
         $.ajax({
                 type: "POST",
