@@ -1,12 +1,46 @@
-function getMap() {
+function getId() {
     let get_link = window.location.pathname;
     let do_split = get_link.split('/');
     let content_id = do_split[do_split.length - 1];
 
+    return content_id;
+}
+
+function getDetailIntro() {
+    $.ajax({
+        type: "POST",
+        url: '/near/place/intro',
+        data: {
+            content_id_give: getId(),
+        },
+        async: false,
+        success: function (response) {
+            let detail_intro_list = response['detail_intro_list'];
+            $('#title').text(detail_intro_list['title']);
+            $('#file').attr('src', detail_intro_list['firstimage'])
+            $('#address').text(detail_intro_list['addr1']);
+            $('#overview').html(detail_intro_list['overview']);
+            if (detail_intro_list['homepage']) {
+                $('#homepage').html(detail_intro_list['homepage']);
+            } else {
+                $('#homepage').text('');
+            }
+            if (!detail_intro_list['mapy'] || !detail_intro_list['mapx'] ) {
+                detail_intro_list['mapy'] = 0;
+                detail_intro_list['mapx'] = 0;
+            }
+
+            sessionStorage.setItem('near_place_lat', detail_intro_list['mapy']);
+            sessionStorage.setItem('near_place_lng', detail_intro_list['mapx']);
+        }
+    });
+}
+
+function getMap() {
     let map = new naver.maps.Map('map', {
         center: new naver.maps.LatLng(
-            Number(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lat']),
-            Number(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lng'])
+            Number(sessionStorage.getItem('near_place_lat')),
+            Number(sessionStorage.getItem('near_place_lng'))
         ),
         zoom: 16,
         zoomControl: true,
@@ -18,8 +52,8 @@ function getMap() {
 
     let marker = new naver.maps.Marker({
         position: new naver.maps.LatLng(
-            Number(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lat']),
-            Number(JSON.parse(sessionStorage.getItem('near_object'))[content_id]['place_lng'])
+            Number(sessionStorage.getItem('near_place_lat')),
+            Number(sessionStorage.getItem('near_place_lng'))
         ),
         map: map,
         icon: {
@@ -42,187 +76,9 @@ function getMap() {
     });
 }
 
-function getId() {
-    let get_link = window.location.pathname;
-    let do_split = get_link.split('/');
-    let content_id = do_split[do_split.length - 1];
-
-    return content_id;
-}
-
-function getItem() {
-    $('#title').text(JSON.parse(sessionStorage.getItem('near_object'))[getId()]['title']);
-    $('#file').attr('src', JSON.parse(sessionStorage.getItem('near_object'))[getId()]['file'])
-    $('#address').text(JSON.parse(sessionStorage.getItem('near_object'))[getId()]['address']);
-    $('#distance').text(`여기에서 ${JSON.parse(sessionStorage.getItem('near_object'))[getId()]['distance']}m 거리`);
-}
-
-function getDetailIntro() {
-    let content_type_id = JSON.parse(sessionStorage.getItem('near_object'))[getId()]['content_type_id']
-
-    $.ajax({
-        type: "POST",
-        url: '/near/place/intro',
-        data: {
-            content_id_give: getId(),
-            content_type_id_give: content_type_id,
-        },
-        success: function (response) {
-            let detail_intro_list = response['detail_intro_list'];
-
-
-            if (content_type_id == '12') {
-                let usetime = detail_intro_list['usetime'];
-                let restdate = detail_intro_list['restdate'];
-                let infocenter = detail_intro_list['infocenter'];
-                let parking = detail_intro_list['parking'];
-                if (!usetime || usetime == null) {
-                    usetime = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!restdate || restdate == null) {
-                    restdate = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!parking || parking == null) {
-                    parking = '문의 및 안내로 별도 문의'
-                }
-                ;
-                let temp_html = `<ul class="list-group list-group-flush">
-                                     <li class="list-group-item">이용시간:${usetime}</li>
-                                     <li class="list-group-item">휴무일:${restdate}</li>
-                                     <li class="list-group-item">문의 및 안내:${infocenter}</li>
-                                     <li class="list-group-item">주차시설:${parking}</li>
-                                 </ul>`;
-                $('#info_card').append(temp_html);
-            } else if (content_type_id == '39') {
-                let firstmenu = detail_intro_list['firstmenu'];
-                let opentimefood = detail_intro_list['opentimefood'];
-                let restdatefood = detail_intro_list['restdatefood'];
-                let packing = detail_intro_list['packing'];
-                let infocenterfood = detail_intro_list['infocenterfood'];
-                let parkingfood = detail_intro_list['parkingfood'];
-                if (!firstmenu || firstmenu == null) {
-                    firstmenu = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!opentimefood || opentimefood == null) {
-                    opentimefood = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!restdatefood || restdatefood == null) {
-                    restdatefood = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!packing || packing == null) {
-                    packing = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!parkingfood || parkingfood == null) {
-                    parkingfood = '문의 및 안내로 별도 문의'
-                }
-                ;
-
-                let temp_html = `<ul class="list-group list-group-flush">
-                                     <li class="list-group-item">대표메뉴:${firstmenu}</li>
-                                     <li class="list-group-item">영업시간:${opentimefood}</li>
-                                      <li class="list-group-item">쉬는날:${restdatefood}</li>
-                                       <li class="list-group-item">포장가능여부:${packing}</li>
-                                     <li class="list-group-item">문의 및 안내:${infocenterfood}</li>
-                                     <li class="list-group-item">주차 시설:${parkingfood}</li>
-                                 </ul>`;
-                $('#info_card').append(temp_html);
-            } else if (content_type_id == '32') {
-                let checkintime = detail_intro_list['checkintime'];
-                let checkouttime = detail_intro_list['checkouttime'];
-                let accomcountlodging = detail_intro_list['accomcountlodging'];
-                let chkcooking = detail_intro_list['chkcooking'];
-                let infocenterlodging = detail_intro_list['infocenterlodging'];
-                let parkinglodging = detail_intro_list['parkinglodging'];
-                if (!checkintime || checkintime == null) {
-                    checkintime = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!checkouttime || checkouttime == null) {
-                    checkouttime = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!accomcountlodging || accomcountlodging == null) {
-                    accomcountlodging = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!chkcooking || chkcooking == null) {
-                    chkcooking = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!parkinglodging || parkinglodging == null) {
-                    parkinglodging = '문의 및 안내로 별도 문의'
-                }
-                ;
-                let temp_html = `<ul class="list-group list-group-flush">
-                                     <li class="list-group-item">입실시간:${checkintime}</li>
-                                     <li class="list-group-item">퇴실시간:${checkouttime}</li>
-                                     <li class="list-group-item">숙박가능인원:${accomcountlodging}</li>
-                                     <li class="list-group-item">객실 내 취사:${chkcooking}</li>
-                                     <li class="list-group-item">문의 및 안내:${infocenterlodging}</li>
-                                     <li class="list-group-item">주차 시설:${parkinglodging}</li>
-                                 </ul>`;
-                $('#info_card').append(temp_html);
-            } else if (content_type_id == '15') {
-                let bookingplace = detail_intro_list['bookingplace'];
-                let eventstartdate = detail_intro_list['eventstartdate'];
-                let eventenddate = detail_intro_list['eventenddate'];
-                let program = detail_intro_list['program'];
-                let eventplace = detail_intro_list['eventplace'];
-                let placeinfo = detail_intro_list['placeinfo'];
-                let sponsor1 = detail_intro_list['sponsor1'];
-                let sponsor1tel = detail_intro_list['sponsor1tel'];
-
-                if (!bookingplace || bookingplace == null) {
-                    bookingplace = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!eventstartdate || eventstartdate == null) {
-                    eventstartdate = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!eventenddate || eventenddate == null) {
-                    eventenddate = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!program || program == null) {
-                    program = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!eventplace || eventplace == null) {
-                    eventplace = '문의 및 안내로 별도 문의'
-                }
-                ;
-                if (!placeinfo || placeinfo == null) {
-                    placeinfo = '문의 및 안내로 별도 문의'
-                }
-                ;
-                let temp_html = `<ul class="list-group list-group-flush">
-                                    <li class="list-group-item">예매처:${bookingplace}</li>
-                                    <li class="list-group-item">행사시작일:${eventstartdate}</li>
-                                    <li class="list-group-item">행사종료일:${eventenddate}</li>
-                                    <li class="list-group-item">프로그램:${program}</li>
-                                    <li class="list-group-item">행사장소:${eventplace}</li>
-                                    <li class="list-group-item">행사장위치안내:${placeinfo}</li>
-                                    <li class="list-group-item">주최:${sponsor1}</li>
-                                    <li class="list-group-item">주최자 연락처:${sponsor1tel}</li>
-                                 </ul>`;
-                $('#info_card').append(temp_html);
-
-            }
-
-        }
-    });
-}
-
 function weather() {
-    let place_lat = JSON.parse(sessionStorage.getItem('near_object'))[getId()]['place_lat']
-    let place_lng = JSON.parse(sessionStorage.getItem('near_object'))[getId()]['place_lng']
+    let place_lat = sessionStorage.getItem('near_place_lat')
+    let place_lng = sessionStorage.getItem('near_place_lng')
 
     $.ajax({
         type: "POST",
@@ -253,15 +109,20 @@ function weather() {
 }
 
 function toggle_bookmark(content_id) {
+    let title = $('#title').text();
+    let address = $('#address').text();
+    let file = $('#file').attr('src');
 
     if ($('#bookmark').hasClass("fas")) {
-
         $.ajax({
             type: "POST",
             url: "/near/place/bookmark",
             data: {
                 content_id_give: content_id,
-                action_give: "uncheck"
+                action_give: "uncheck",
+                title_give: title,
+                address_give: address,
+                file_give: file
             },
             success: function (response) {
                 if (response['result'] == 'success') {
@@ -275,7 +136,10 @@ function toggle_bookmark(content_id) {
             url: "/near/place/bookmark",
             data: {
                 content_id_give: content_id,
-                action_give: "check"
+                action_give: "check",
+                title_give: title,
+                address_give: address,
+                file_give: file
             },
             success: function (response) {
                 if (response['result'] == 'success') {

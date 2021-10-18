@@ -9,7 +9,7 @@
 
     <!--https 사이트에서 http 사이트 요청 시 발생하는 보안 문제 해결-->
     <!--우리 사이트는 https이고 요청을 보내는 한국관광공사api 사이트는 http라서 발생했던 문제 해결-->
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+{#    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">#}
 
     <!--메타태그 설정-->
     <meta property="og:title" content="여행어때"/>
@@ -64,9 +64,8 @@
 
     <script>
         $(document).ready(function () {
-            getMap();
-            getItem();
             getDetailIntro();
+            getMap();
             weather();
             getBookmark();
         });
@@ -83,6 +82,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/popular/list">Popular</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/near/list">Near</a>
                 </li>
@@ -121,15 +123,11 @@
                         <header>
                             <h2 id="title"></h2>
                             <p id="address"></p>
-                            <div id="info_card" class="card" style="width: 25rem;">
-                                     <ul class="list-group list-group-flush">
-                                      <li class="list-group-item"></li>
-                                     </ul>
-                            </div>
                         </header>
                         <section>
                             <header>
-                                <h3 id="distance"></h3>
+                                <p id="overview"></p>
+                                <p id="homepage"></p>
                             </header>
                             <div>
                                 <button type="button" class="level-item is-sparta" aria-label="heart"
