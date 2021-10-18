@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, render_template, jsonify, request, redirect, url_for
-from flask_cors import CORS
+# from flask_cors import CORS
 from pymongo import MongoClient
 import requests
 import xmltodict
@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 from bson import ObjectId
 
 application = Flask(__name__)
-cors = CORS(application, resources={r"/*": {"origins": "*"}})
+# cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 # .env 파일 만들어서 외부 노출 방지
 load_dotenv(verbose=True)
@@ -131,7 +131,6 @@ def get_near_place():
             json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
             near_list = json_body['response']['body']['items']['item']
-
             return jsonify({'near_list': near_list})
 
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -144,7 +143,7 @@ def get_popular_trips():
     info = random.randrange(1, 7)
     cat1 = 'C01'
     content_quantity = 13
-    contentTypeId = 25
+    content_type_id = 25
     if info == 1:
         cat2 = 'C0112'
         cat3 = 'C01120001'
@@ -176,7 +175,7 @@ def get_popular_trips():
     }
     url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
           f'&numOfRows={content_quantity}&MobileApp=trips&MobileOS=ETC&arrange=P&cat1={cat1}' \
-          f'&contentTypeId={contentTypeId}&cat2={cat2}&cat3={cat3}&listYN=Y'
+          f'&contentTypeId={content_type_id}&cat2={cat2}&cat3={cat3}&listYN=Y'
 
     r = requests.get(url, headers=headers)
 
@@ -185,19 +184,20 @@ def get_popular_trips():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     popular_list = json_body['response']['body']['items']['item']
+
     return jsonify(
-        {'popular_list': popular_list, 'trip_theme': trip_theme, 'contentTypeId': contentTypeId, 'cat1': cat1,
+        {'popular_list': popular_list, 'trip_theme': trip_theme, 'content_type_id': content_type_id, 'cat1': cat1,
          'cat2': cat2, 'cat3': cat3})
 
 
 # popularList.html 에서 추천 여행지 출력하기
 @application.route('/popular/list', methods=['POST'])
 def get_popular_trips2():
+    content_quantity = request.form['quantity']
     cat1 = request.form['cat1']
     cat2 = request.form['cat2']
     cat3 = request.form['cat3']
-    contenttypeid = request.form['contenttypeid']
-    content_quantity = 30
+    content_type_id = request.form['content_type_id']
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
@@ -205,7 +205,7 @@ def get_popular_trips2():
     }
     url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?serviceKey={OPEN_API_KEY}&pageNo=1' \
           f'&numOfRows={content_quantity}&MobileApp=trips&MobileOS=ETC&arrange=P&cat1={cat1}' \
-          f'&contentTypeId={contenttypeid}&cat2={cat2}&cat3={cat3}&listYN=Y'
+          f'&contentTypeId={content_type_id}&cat2={cat2}&cat3={cat3}&listYN=Y'
 
     r = requests.get(url, headers=headers)
 
@@ -216,7 +216,7 @@ def get_popular_trips2():
     popular_list = json_body['response']['body']['items']['item']
 
     return jsonify(
-        {'popular_list': popular_list,'contentTypeId': contenttypeid, 'cat1': cat1, 'cat2': cat2, 'cat3': cat3})
+        {'popular_list': popular_list, 'content_type_id': content_type_id, 'cat1': cat1, 'cat2': cat2, 'cat3': cat3})
 
 
 # popularDetail.html 렌더링
@@ -250,7 +250,6 @@ def get_weather_popular():
     r = requests.get(url, headers=headers)
 
     weather_info_popular = json.loads(r.text)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
-
     return jsonify({'weather_info_popular': weather_info_popular})
 
 
@@ -298,7 +297,7 @@ def get_bookmark(content_id):
 
 
 # 인기 여행지 더보기 html 렌더링
-@application.route('/popular/near/place', methods=['GET'])
+@application.route('/popular/list', methods=['GET'])
 def get_popular_near_place():
     token_receive = request.cookies.get('mytoken')
     try:
@@ -324,6 +323,30 @@ def get_near_list():
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="login_error."))
+
+
+# nearDetail.html 추천 여행지 상세정보 출력 : 개장일, 쉬는날, 이용시기, 이용시간, 주차시설 등
+@application.route('/near/place/intro', methods=['POST'])
+def get_near_detail_intro():
+    content_id_receive = request.form['content_id_give']
+    content_type_id_receive = request.form['content_type_id_give']
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36(KHTML, like Gecko) '
+                      'Chrome/73.0.3683.86 Safari/537.36'
+    }
+
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailIntro?serviceKey={OPEN_API_KEY}&pageNo=1' \
+          f'&contentId={content_id_receive}&contentTypeId={content_type_id_receive}&MobileOS=ETC&MobileApp=TourAPI3.0_Guide' \
+
+    r = requests.get(url, headers=headers)
+
+    dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
+    json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
+    json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
+
+    detail_intro_list = json_body['response']['body']['items']['item']
+    return jsonify({'detail_intro_list': detail_intro_list})
 
 
 # nearList.html에 리스트 출력
@@ -357,7 +380,6 @@ def get_near_type():
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
 
     near_list = json_body['response']['body']['items']['item']
-
     return jsonify({'near_list': near_list})
 
 
@@ -478,12 +500,13 @@ def show_trips():
     sort_type = request.args.get('sort')
 
     if sort_type == 'date':
-        all_trips = list(db.trips.find({}, {'_id': False}).sort("date", -1))
+        all_trips = list(db.trips.find({}).sort("date", -1))
     else:
-        all_trips = list(db.trips.find({}, {'_id': False}).sort("like", -1))
+        all_trips = list(db.trips.find({}).sort("like", -1))
 
     for trips in all_trips:
         trips['date'] = trips['date'].strftime('%Y.%m.%d')
+        trips['_id'] = str(trips['_id'])
 
     return jsonify({'all_trips': all_trips})
 
@@ -512,7 +535,7 @@ def get_trips_detail(trip_id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
 
-        trip = db.trips.find_one({"id": int(trip_id)})
+        trip = db.trips.find_one({"_id": ObjectId(trip_id)})
 
         status = (trip["username"] == payload["id"])
         return render_template('tripsDetail.html', user_info=user_info, status=status)
@@ -526,7 +549,7 @@ def get_trips_detail(trip_id):
 def trips_detail():
     trip_id_receive = request.form['trip_id_give']
 
-    trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+    trip = db.trips.find_one({'_id': ObjectId(trip_id_receive)}, {'_id': False})
 
     trip['date'] = trip['date'].strftime('%Y.%m.%d')
 
@@ -564,7 +587,7 @@ def write():
 def update():
     trip_id_receive = request.form['trip_id_give']
 
-    trip = db.trips.find_one({'id': int(trip_id_receive)}, {'_id': False})
+    trip = db.trips.find_one({'_id': ObjectId(trip_id_receive)})
 
     title = trip['title']
     place = trip['place']
@@ -609,7 +632,7 @@ def write_trip():
         )
 
         doc = {
-            'id': db.trips.count() + 1,
+            # 'id': db.trips.count() + 1,
             'title': trip_title_receive,
             'place': trip_place_receive,
             'review': trip_review_receive,
@@ -667,7 +690,7 @@ def update_trip(trip_id):
 
         new_doc['file'] = full_file_name
 
-    db.trips.update_one({'id': int(trip_id)}, {'$set': new_doc})
+    db.trips.update_one({'_id': ObjectId(trip_id)}, {'$set': new_doc})
 
     return jsonify({'msg': '수정 완료!'})
 
@@ -675,16 +698,16 @@ def update_trip(trip_id):
 # 리뷰 삭제
 @application.route('/trips/place/<trip_id>', methods=['DELETE'])
 def delete_trip(trip_id):
-    trip_file = db.trips.find_one({'id': int(trip_id)})['file']
+    trip_file = db.trips.find_one({'_id': ObjectId(trip_id)})['file']
 
     # s3에서 삭제
     s3 = boto3.resource('s3')
     s3.Object(BUCKET_NAME, f'trips/{trip_file}').delete()
 
     # db에서 삭제
-    db.trips.delete_one({'id': int(trip_id)})
-    db.like.delete_many({'trip_id': int(trip_id)})
-    db.comments.delete_many({'trip_id': int(trip_id)})
+    db.trips.delete_one({'_id': ObjectId(trip_id)})
+    db.like.delete_many({'trip_id': ObjectId(trip_id)})
+    db.comments.delete_many({'trip_id': ObjectId(trip_id)})
     return jsonify({'msg': '삭제 완료!'})
 
 
@@ -700,19 +723,19 @@ def like_place():
         action_receive = request.form['action_give']
 
         doc = {
-            'trip_id': int(trip_id_receive),
+            'trip_id': ObjectId(trip_id_receive),
             'username': user_info['username'],
         }
 
-        total_like = db.trips.find_one({'id': int(trip_id_receive)})['like']
+        total_like = db.trips.find_one({'_id': ObjectId(trip_id_receive)})['like']
 
         if action_receive == "uncheck":
             db.like.delete_one(doc)
-            db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': total_like - 1}})
+            db.trips.update_one({'_id': ObjectId(trip_id_receive)}, {'$set': {'like': total_like - 1}})
 
         else:
             db.like.insert_one(doc)
-            db.trips.update_one({'id': int(trip_id_receive)}, {'$set': {'like': total_like + 1}})
+            db.trips.update_one({'_id': ObjectId(trip_id_receive)}, {'$set': {'like': total_like + 1}})
 
         return jsonify({"result": "success"})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -728,7 +751,7 @@ def get_like(trip_id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
 
-        like_status = bool(db.like.find_one({"trip_id": int(trip_id), "username": user_info["username"]}))
+        like_status = bool(db.like.find_one({"trip_id": ObjectId(trip_id), "username": user_info["username"]}))
 
         return jsonify({"like_status": str(like_status)})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -790,8 +813,7 @@ def comment(trip_id):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.users.find_one({"username": payload["id"]})
-
-        trip_id_receive = int(trip_id)
+        trip_id_receive = trip_id
         comment_receive = request.form['comment_give']
         date_receive = request.form['date_give']
 
@@ -799,7 +821,7 @@ def comment(trip_id):
         profile_img = db.users.find_one({'username': user_info['username']})['profile_img']
 
         doc = {
-            'trip_id': trip_id_receive,
+            'trip_id': ObjectId(trip_id_receive),
             'username': user_info['username'],
             'nickname': nickname,
             'profile_img': profile_img,
@@ -820,8 +842,8 @@ def show_comments(trip_id):
 
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        trip_id_receive = int(trip_id)
-        all_comments = list(db.comments.find({'trip_id': trip_id_receive}).sort('date', -1))
+        trip_id_receive = trip_id
+        all_comments = list(db.comments.find({'trip_id': ObjectId(trip_id_receive)}, {'trip_id': False}).sort('date', -1))
 
         for comments in all_comments:
             comments['_id'] = str(comments['_id'])
@@ -837,10 +859,10 @@ def delete_comment(trip_id):
 
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        trip_id_receive = int(trip_id)
+        trip_id_receive = trip_id
         comment_id_receive = ObjectId(request.form['comment_id'])
 
-        db.comments.delete_one({'trip_id': trip_id_receive, '_id': comment_id_receive, 'username': payload['id']})
+        db.comments.delete_one({'trip_id': ObjectId(trip_id_receive), '_id': comment_id_receive, 'username': payload['id']})
 
         return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):

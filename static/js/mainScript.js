@@ -78,7 +78,6 @@ function slide2() {
                     }
                 }
             ]
-
         });
     })
 }
@@ -122,7 +121,6 @@ function slide() {
                     }
                 }
             ]
-
         });
     })
 }
@@ -132,8 +130,6 @@ function geoInfo() {
     function onGeoOK(position) { //위치 정보 공유 승인 시
         const lat = position.coords.latitude; //위도
         const lng = position.coords.longitude; //경도
-        // localStorage.setItem("lat", lat)
-        // localStorage.setItem("lng", lng)
         $.ajax({
                 type: "POST",
                 url: "/near",
@@ -156,6 +152,7 @@ function geoInfo() {
                         let place_lat = near_list[i]['mapy'];
                         let place_lng = near_list[i]['mapx'];
                         let content_id = near_list[i]['contentid'];
+                        let content_type_id = near_list[i]['contenttypeid'];
 
                         obj[content_id] = {
                             'title': title,
@@ -163,8 +160,10 @@ function geoInfo() {
                             'file': file,
                             'distance': distance,
                             'place_lat': place_lat,
-                            'place_lng': place_lng
+                            'place_lng': place_lng,
+                            'content_type_id': content_type_id,
                         }
+
 
                         let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                              <a href="/near/place/${content_id}" class="card">
@@ -210,7 +209,7 @@ function showTrips() {
             let trip_list = response['all_trips'];
 
             for (let i = 0; i < trip_list.length; i++) {
-                let trip_id = trip_list[i]['id'];
+                let trip_id = trip_list[i]['_id'];
                 let trip_title = trip_list[i]['title'];
                 let trip_place = trip_list[i]['place'];
                 let trip_file = trip_list[i]['file'];
@@ -259,15 +258,10 @@ function showPopularTrips() {
             let trip_theme = response['trip_theme'];
 
             // popularListScript 정보 전달용
-            let cat1 = response['cat1']
-            let cat2 = response['cat2']
-            let cat3 = response['cat3']
-            let contentTypeId = response['contentTypeId']
-
-            sessionStorage.setItem('cat1', cat1);
-            sessionStorage.setItem('cat2', cat2);
-            sessionStorage.setItem('cat3', cat3);
-            sessionStorage.setItem('contenttypeid', contentTypeId);
+            sessionStorage.setItem('cat1', response['cat1']);
+            sessionStorage.setItem('cat2', response['cat2']);
+            sessionStorage.setItem('cat3', response['cat3']);
+            sessionStorage.setItem('content_type_id', response['content_type_id']);
 
             //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
             let obj = {};
@@ -279,7 +273,7 @@ function showPopularTrips() {
                 if (!file)
                     file = "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png";
                 let areacode = parseInt(popular_list[i]['areacode']);
-                let address = check_address(areacode);
+                let address = checkAddress(areacode);
                 let mapx = popular_list[i]['mapx'];
                 let mapy = popular_list[i]['mapy'];
                 if (!mapx || !mapy) {
@@ -322,22 +316,22 @@ function showPopularTrips() {
 }
 
 
-function check_address(code) {
+function checkAddress(code) {
     if (code === 1) {
-        code = '서울특별시'
-    } else if (code === 21) {
-        code = '부산광역시'
-    } else if (code === 22) {
-        code = '대구광역시'
-    } else if (code === 23) {
-        code = '인천광역시'
-    } else if (code === 24) {
-        code = '광주광역시'
-    } else if (code === 25) {
-        code = '대전광역시'
-    } else if (code === 26) {
-        code = '울산광역시'
-    } else if (code === 29) {
+        code = '서울'
+    } else if (code === 2) {
+        code = '인천'
+    } else if (code === 3) {
+        code = '대전'
+    } else if (code === 4) {
+        code = '대구'
+    } else if (code === 5) {
+        code = '광주'
+    } else if (code === 6) {
+        code = '부산'
+    } else if (code === 7) {
+        code = '울산'
+    } else if (code === 8) {
         code = '세종특별자치시'
     } else if (code === 31) {
         code = '경기도'
@@ -348,21 +342,15 @@ function check_address(code) {
     } else if (code === 34) {
         code = '충청남도'
     } else if (code === 35) {
-        code = '전라북도'
-    } else if (code === 36) {
-        code = '전라남도'
-    } else if (code === 37) {
         code = '경상북도'
-    } else if (code === 38) {
+    } else if (code === 36) {
         code = '경상남도'
+    } else if (code === 37) {
+        code = '전라북도'
+    } else if (code === 38) {
+        code = '전라남도'
     } else if (code === 39) {
         code = '제주도'
-    } else if (code === 2) {
-        code = '인천'
-    } else if (code === 4) {
-        code = '대구'
-    } else if (code === 6) {
-        code = '부산'
     }
     return code
 }
