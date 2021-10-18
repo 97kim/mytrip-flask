@@ -121,14 +121,6 @@ def main():
         return redirect(url_for("login", msg="login_error."))  # main.html 렌더링
 
 
-@application.route('/main/search', methods=['GET'])
-def search_test():
-    value = request.args.get('search_test')
-
-
-
-
-
 @application.route('/near', methods=['POST'])
 def get_near_place():
     token_receive = request.cookies.get('mytoken')

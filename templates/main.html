@@ -46,7 +46,7 @@
 
     <script>
         $(document).ready(function () {
-            test();
+            covid();
             geoInfo(); // 위치 좌표 서버로 보내서 api 데이터 얻어온 뒤 화면에 출력
             showTrips(); // 사용자가 올린 데이터 가져오기
             showPopularTrips(); // 랜덤으로 인기있는(검색량기준) 전국 상위 여행지 출력
@@ -89,18 +89,6 @@
         </div>
     </div>
 </nav>
-
-<div class="test-cards">
-    <div class="wrap3">
-        <div class="input-group-mb-3">
-            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="단어를 입력해주세요"
-                   aria-describedby="basic-addon2" id="search_test">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" onclick="search()">검색하기</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="near-cards">
     <div class="wrap">

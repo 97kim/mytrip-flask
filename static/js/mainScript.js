@@ -201,19 +201,6 @@ function onGeoError() { //위치 정보 공유 거부 시
     alert('현재 위치를 찾을 수 없습니다.')
 }
 
-function search() {
-    let search_test = $("#search_test").val();
-    alert(search_test)
-    $.ajax({
-        type: 'GET',
-        url: `/main/search?search_test=${search_test}`,
-        data: {},
-        success: function (response) {
-            alert(response['msg']);
-        }
-    });
-    $("#search_test").empty()
-}
 
 function showTrips() {
     $.ajax({
@@ -345,15 +332,15 @@ function covid() {
     });
 }
 
-function checkCovid(address) {
-    let value = '';
-    if (address.length > 3) {
-        let a = address.charAt(0)
-        let b = address.charAt(2)
-        value = a + b
+function checkCovid(str) {
+    let address = '';
+    if (str.length > 3) {
+        let a = str.charAt(0)
+        let b = str.charAt(2)
+        address = a + b
     } else
-        value = address.substr(0, 2)
-    return value
+        address = str.substr(0, 2)
+    return address
 }
 
 // 중복 코드 정리 예정
