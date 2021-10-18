@@ -76,11 +76,14 @@ function getDetailIntro() {
                 let restdate = detail_intro_list['restdate'];
                 let infocenter = detail_intro_list['infocenter'];
                 let parking = detail_intro_list['parking'];
+                if (!parking) {
+                    parking = infocenter + '로 별도 문의'
+                };
                 let temp_html = `<ul class="list-group list-group-flush">
-                                     <li class="list-group-item">${usetime}</li>
-                                     <li class="list-group-item">${restdate}</li>
-                                     <li class="list-group-item">${infocenter}</li>
-                                     <li class="list-group-item">${parking}</li>
+                                     <li class="list-group-item">이용시간:${usetime}</li>
+                                     <li class="list-group-item">휴무일:${restdate}</li>
+                                     <li class="list-group-item">문의 및 안내:${infocenter}</li>
+                                     <li class="list-group-item">주차시설:${parking}</li>
                                  </ul>`;
                 $('#info_card').append(temp_html);
             } else if (content_type_id == '39') {
@@ -90,16 +93,14 @@ function getDetailIntro() {
                 let packing = detail_intro_list['packing'];
                 let infocenterfood = detail_intro_list['infocenterfood'];
                 let parkingfood = detail_intro_list['parkingfood'];
-                if (!parkingfood) {
-                    parkingfood = infocenterfood + '로 별도 문의'
-                }
+
                 let temp_html = `<ul class="list-group list-group-flush">
-                                     <li class="list-group-item">${firstmenu}</li>
-                                     <li class="list-group-item">${opentimefood}</li>
-                                      <li class="list-group-item">${restdatefood}</li>
-                                       <li class="list-group-item">${packing}</li>
-                                     <li class="list-group-item">${infocenterfood}</li>
-                                     <li class="list-group-item">${parkingfood}</li>
+                                     <li class="list-group-item">대표메뉴:${firstmenu}</li>
+                                     <li class="list-group-item">영업시간:${opentimefood}</li>
+                                      <li class="list-group-item">쉬는날:${restdatefood}</li>
+                                       <li class="list-group-item">포장가능여부:${packing}</li>
+                                     <li class="list-group-item">문의 및 안내:${infocenterfood}</li>
+                                     <li class="list-group-item">주차 시설:${parkingfood}</li>
                                  </ul>`;
                 $('#info_card').append(temp_html);
             } else if (content_type_id == '32') {
@@ -110,12 +111,12 @@ function getDetailIntro() {
                 let infocenterlodging = detail_intro_list['infocenterlodging'];
                 let parking = detail_intro_list['parking'];
                 let temp_html = `<ul class="list-group list-group-flush">
-                                     <li class="list-group-item">${checkintime}</li>
-                                     <li class="list-group-item">${checkouttime}</li>
-                                     <li class="list-group-item">${accomcountlodging}</li>
-                                     <li class="list-group-item">${chkcooking}</li>
-                                     <li class="list-group-item">${infocenterlodging}</li>
-                                     <li class="list-group-item">${parking}</li>
+                                     <li class="list-group-item">입실시간:${checkintime}</li>
+                                     <li class="list-group-item">퇴실시간:${checkouttime}</li>
+                                     <li class="list-group-item">숙박가능인원:${accomcountlodging}</li>
+                                     <li class="list-group-item">객실 내 취사:${chkcooking}</li>
+                                     <li class="list-group-item">문의 및 안내:${infocenterlodging}</li>
+                                     <li class="list-group-item">주차 시설:${parking}</li>
                                  </ul>`;
                 $('#info_card').append(temp_html);
             } else if (content_type_id == '15') {
@@ -125,13 +126,17 @@ function getDetailIntro() {
                 let program = detail_intro_list['program'];
                 let eventplace = detail_intro_list['eventplace'];
                 let placeinfo = detail_intro_list['placeinfo'];
+                let sponsor1 = detail_intro_list['sponsor1'];
+                let sponsor1tel = detail_intro_list['sponsor1tel'];
                 let temp_html = `<ul class="list-group list-group-flush">
-                                    <li class="list-group-item">${bookingplace}</li>
-                                    <li class="list-group-item">${eventstartdate}</li>
-                                    <li class="list-group-item">${eventenddate}</li>
-                                    <li class="list-group-item">${program}</li>
-                                    <li class="list-group-item">${eventplace}</li>
-                                    <li class="list-group-item">${placeinfo}</li>
+                                    <li class="list-group-item">예매처:${bookingplace}</li>
+                                    <li class="list-group-item">행사시작일:${eventstartdate}</li>
+                                    <li class="list-group-item">행사종료일:${eventenddate}</li>
+                                    <li class="list-group-item">프로그램:${program}</li>
+                                    <li class="list-group-item">행사장소:${eventplace}</li>
+                                    <li class="list-group-item">행사장위치안내:${placeinfo}</li>
+                                    <li class="list-group-item">주최:${sponsor1}</li>
+                                    <li class="list-group-item">주최자 연락처:${sponsor1tel}</li>
                                  </ul>`;
                 $('#info_card').append(temp_html);
 
