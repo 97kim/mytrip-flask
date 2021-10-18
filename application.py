@@ -33,6 +33,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
+COVID_KEY = os.getenv('COVID_KEY')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
@@ -91,7 +92,7 @@ def check_dup():
 
 
 # main.html 렌더링
-@application.route('/main', methods=['GET'])
+
 def main():
     token_receive = request.cookies.get('mytoken')
 
@@ -103,6 +104,21 @@ def main():
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="login_error."))
+
+
+# main.html 렌더링
+@application.route('/main', methods=['GET'])
+def main():
+    token_receive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({"username": payload["id"]})
+        return render_template('main.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="Your_login_time_has_expired."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="login_error."))  # main.html 렌더링
 
 
 @application.route('/near', methods=['POST'])
@@ -121,8 +137,9 @@ def get_near_place():
                               'Chrome/73.0.3683.86 Safari/537.36'
             }
 
-            url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}' \
-                  '&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
+            url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}' \
+                  f'&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC' \
+                  f'&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
 
             r = requests.get(url, headers=headers)
 
@@ -903,6 +920,7 @@ def show_comments(trip_id):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         trip_id_receive = trip_id
+
         all_comments = list(db.comments.find({'trip_id': ObjectId(trip_id_receive)}, {'trip_id': False}).sort('date', -1))
 
         for comments in all_comments:

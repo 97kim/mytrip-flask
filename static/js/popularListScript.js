@@ -42,6 +42,7 @@ function popularList(quantity) {
     let content_type_id = sessionStorage.getItem('content_type_id')
     $('.before-render').show();
 
+
     $.ajax({
             type: "POST",
             url: "/popular/list",
@@ -76,6 +77,18 @@ function popularList(quantity) {
                         mapy = 0;
                     }
 
+                    let covid = checkCovid(address)
+                    let covid_city_name = covid_check_city(covid)
+                    let covid_count = JSON.parse(sessionStorage.getItem('covid_info'))[covid_city_name]['newCcase']
+
+                    obj[content_id] = {
+                        'title': title,
+                        'address': address,
+                        'file': file,
+                        'place_lat': mapy,
+                        'place_lng': mapx
+                    }
+
                     let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                  <a href="/popular/place/${content_id}" class="card">
                                     <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
@@ -90,7 +103,7 @@ function popularList(quantity) {
                                                 <span class="card__status">${address}</span>
                                             </div>
                                         </div>
-                                        <p class="card__description" ></p>
+                                        <p class="card__description" >이 지역의 일일코로나 감염자 수 ${covid_count}명</p>
                                     </div>
                                 </a>
                             </li>`;
@@ -101,6 +114,55 @@ function popularList(quantity) {
     )
 }
 
+
+function checkCovid(str) {
+    let address = '';
+    if (str.length > 3) {
+        let a = str.charAt(0)
+        let b = str.charAt(2)
+        address = a + b
+    } else
+        address = str.substr(0, 2)
+    return address
+}
+
+function covid_check_city(address) {
+    let city = "";
+    if (address === "서울") {
+        city = "seoul"
+    } else if (address === "부산") {
+        city = "busan"
+    } else if (address === "대구") {
+        city = "daegu"
+    } else if (address === "인천") {
+        city = "incheon"
+    } else if (address === "광주") {
+        city = "gwangju"
+    } else if (address === "대전") {
+        city = "daejeon"
+    } else if (address === "울산") {
+        city = "ulsan"
+    } else if (address === "경기") {
+        city = "gyeonggi"
+    } else if (address === "강원") {
+        city = "gangwon"
+    } else if (address === "충북") {
+        city = "chungbuk"
+    } else if (address === "충남") {
+        city = "chungnam"
+    } else if (address === "전북") {
+        city = "jeonbuk"
+    } else if (address === "전남") {
+        city = "jeonnam"
+    } else if (address === "경북") {
+        city = "gyeongbuk"
+    } else if (address === "경남") {
+        city = "gyeongnam"
+    } else if (address === "제주") {
+        city = "jeju"
+    }
+    return city;
+}
 
 function check_address(code) {
     if (code === 1) {
