@@ -278,7 +278,8 @@ function showPopularTrips() {
                 let address = checkAddress(areacode);
 
                 let covid = checkCovid(address)
-
+                let covid_city_name = covid_check_city(covid)
+                let covid_count = JSON.parse(sessionStorage.getItem('covid_info'))[covid_city_name]['newCcase']
 
                 let mapx = popular_list[i]['mapx'];
                 let mapy = popular_list[i]['mapy'];
@@ -308,7 +309,7 @@ function showPopularTrips() {
                                                 <span class="card__status">${address}</span>
                                             </div>
                                         </div>
-                                        <p class="card__description" ></p>
+                                        <p class="card__description">이 지역의 일일코로나 감염자 수 ${covid_count}명</p>
                                     </div>
                                 </a>
                             </li>`;
@@ -321,13 +322,13 @@ function showPopularTrips() {
     });
 }
 
-function covid() {
+function covid(city) {
     $.ajax({
         type: 'GET',
         url: 'https://api.corona-19.kr/korea/country/new/?serviceKey=eRyPhYXEzDktxKJ8QOUwcACLjHd5msf4M',
         data: {},
         success: function (response) {
-            sessionStorage.setItem('covid', response)
+            sessionStorage.setItem('covid_info', JSON.stringify(response))
         }
     });
 }
@@ -341,6 +342,44 @@ function checkCovid(str) {
     } else
         address = str.substr(0, 2)
     return address
+}
+
+function covid_check_city(address) {
+    let city = "";
+    if (address === "서울") {
+        city = "seoul"
+    } else if (address === "부산") {
+        city = "busan"
+    } else if (address === "대구") {
+        city = "daegu"
+    } else if (address === "인천") {
+        city = "incheon"
+    } else if (address === "광주") {
+        city = "gwangju"
+    } else if (address === "대전") {
+        city = "daejeon"
+    } else if (address === "울산") {
+        city = "ulsan"
+    } else if (address === "경기") {
+        city = "gyeonggi"
+    } else if (address === "강원") {
+        city = "gangwon"
+    } else if (address === "충북") {
+        city = "chungbuk"
+    } else if (address === "충남") {
+        city = "chungnam"
+    } else if (address === "전북") {
+        city = "jeonbuk"
+    } else if (address === "전남") {
+        city = "jeonnam"
+    } else if (address === "경북") {
+        city = "gyeongbuk"
+    } else if (address === "경남") {
+        city = "gyeongnam"
+    } else if (address === "제주") {
+        city = "jeju"
+    }
+    return city;
 }
 
 // 중복 코드 정리 예정

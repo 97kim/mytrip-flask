@@ -90,6 +90,7 @@ def check_dup():
     exists = bool(db.users.find_one({"username": username_receive}))
     return jsonify({'result': 'success', 'exists': exists})
 
+
 # main.html 렌더링
 
 def main():
@@ -103,7 +104,6 @@ def main():
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="login_error."))
-
 
 
 # main.html 렌더링
@@ -861,7 +861,8 @@ def show_comments(trip_id):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         trip_id_receive = trip_id
-        all_comments = list(db.comments.find({'trip_id': ObjectId(trip_id_receive)}, {'trip_id': False}).sort('date', -1))
+        all_comments = list(
+            db.comments.find({'trip_id': ObjectId(trip_id_receive)}, {'trip_id': False}).sort('date', -1))
 
         for comments in all_comments:
             comments['_id'] = str(comments['_id'])
@@ -880,7 +881,8 @@ def delete_comment(trip_id):
         trip_id_receive = trip_id
         comment_id_receive = ObjectId(request.form['comment_id'])
 
-        db.comments.delete_one({'trip_id': ObjectId(trip_id_receive), '_id': comment_id_receive, 'username': payload['id']})
+        db.comments.delete_one(
+            {'trip_id': ObjectId(trip_id_receive), '_id': comment_id_receive, 'username': payload['id']})
 
         return jsonify({'result': 'success'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
