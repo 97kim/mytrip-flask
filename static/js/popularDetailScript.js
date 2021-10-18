@@ -171,7 +171,6 @@ function getBookmark_popular() {
         url: `/popular/place/bookmark/${getId_popular()}`,
         data: {},
         success: function (response) {
-            console.log(response['bookmark_status']);
             if (response['bookmark_status'] == "True") {
                 $('#bookmark').removeClass("far").addClass("fas");
             } else {
