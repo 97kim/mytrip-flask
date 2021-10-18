@@ -59,7 +59,6 @@ function getItem() {
 
 function getDetailIntro() {
     let content_type_id = JSON.parse(sessionStorage.getItem('near_object'))[getId()]['content_type_id']
-    console.log(typeof content_type_id)
 
     $.ajax({
         type: "POST",
@@ -70,6 +69,7 @@ function getDetailIntro() {
         },
         success: function (response) {
             let detail_intro_list = response['detail_intro_list'];
+            console.log(detail_intro_list)
 
             if (content_type_id == '12') {
                 let usetime = detail_intro_list['usetime'];
