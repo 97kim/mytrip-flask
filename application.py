@@ -122,7 +122,7 @@ def main():
 
 
 @application.route('/main/search', methods=['GET'])
-def tests():
+def search_test():
     value = request.args.get('search_test')
 
 
@@ -145,8 +145,9 @@ def get_near_place():
                               'Chrome/73.0.3683.86 Safari/537.36'
             }
 
-            url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}&mapY={lat_receive}' \
-                  '&radius=4000&listYN=Y&MobileOS=ETC&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
+            url = f'{REQUEST_URL}?ServiceKey={OPEN_API_KEY}&contentTypeId=12&mapX={lng_receive}' \
+                  f'&mapY={lat_receive}&radius=4000&listYN=Y&MobileOS=ETC' \
+                  f'&MobileApp=TourAPI3.0_Guide&arrange=E&numOfRows=10&pageNo=1'
 
             r = requests.get(url, headers=headers)
 
@@ -360,8 +361,9 @@ def get_near_detail_intro():
                       'Chrome/73.0.3683.86 Safari/537.36'
     }
 
-    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailIntro?serviceKey={OPEN_API_KEY}&pageNo=1' \
-          f'&contentId={content_id_receive}&contentTypeId={content_type_id_receive}&MobileOS=ETC&MobileApp=TourAPI3.0_Guide' \
+    url = f'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailIntro?serviceKey={OPEN_API_KEY}' \
+          f'&&pageNo=1contentId={content_id_receive}&contentTypeId={content_type_id_receive}' \
+          f'&MobileOS=ETC&MobileApp=TourAPI3.0_Guide' \
 
     r = requests.get(url, headers=headers)
 

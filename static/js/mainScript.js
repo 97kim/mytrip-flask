@@ -345,7 +345,6 @@ function covid() {
     });
 }
 
-
 function checkCovid(address) {
     let value = '';
     if (address.length > 3) {
