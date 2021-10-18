@@ -45,6 +45,7 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/public.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/popularDetail.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/weather.css') }}"/>
+
     <script type="text/javascript" src="{{ url_for('static',filename='js/popularDetailScript.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/logout.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static',filename='js/modalProfile.js') }}"></script>
@@ -60,6 +61,7 @@
 
     <script>
         $(document).ready(function () {
+            slide_popular();
             getMap_popular();
             getItem_popular();
             weather_popular();
@@ -203,9 +205,9 @@
                         <a href='/popular/near/place'>더보기</a>
                     </div>
                 </div>
-                <button type="button" id="btn_prev"><i class="fas fa-chevron-left"></i></button>
-                <button type="button" id="btn_next"><i class="fas fa-chevron-right"></i></button>
-                <ul class="cards slider-li3" id="popular_card">
+                <button type="button" id="btn_prev3"><i class="fas fa-chevron-left"></i></button>
+                <button type="button" id="btn_next3"><i class="fas fa-chevron-right"></i></button>
+                <ul class="cards slider-li4" id="popular_card">
                     <div class="before-render">
                         <div id="container-box">
                             <div id="dot"></div>

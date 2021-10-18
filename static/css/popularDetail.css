@@ -1,11 +1,16 @@
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900,300italic");
 
+.near-cards {
+    position: relative;
+    margin-top: 80px;
+}
+
 .slide-title {
     font-family: 'yg-jalnan', verdana, tahoma;
     margin-bottom: 20px;
 }
 
-#btn_prev {
+#btn_prev4 {
     position: absolute;
     top: 50%;
     left: 4%;
@@ -15,7 +20,7 @@
     border: none;
 }
 
-#btn_next {
+#btn_next4 {
     position: absolute;
     top: 50%;
     right: 4%;

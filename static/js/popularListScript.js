@@ -1,46 +1,41 @@
-//popularList 에서 content 수량 입력 받기
-function PopularPlaceQuantity (quantity) {
-//    타임어택 4차 테스트 답안 참고 예정
+//popularList 에서 테마여행지 입력 받기
+function get_popular_trips2(type) {
+
 }
 
 // 추천여행지 출력
-function geoInfoPopularList() {
+function geoInfoPopularList(content_quantity) {
     $('#popular_card').empty();
+    // 기본으로 보여주는 콘텐츠 15개
+    if (content_quantity == null) {
+        content_quantity = 15;
+    }
 
-    function onGeoOK(position) { //위치 정보 공유 승인 시
-        const lat = position.coords.latitude; //위도
-        const lng = position.coords.longitude; //경도
+    let cat1 = sessionStorage.getItem('cat1').replaceAll('"', '');
+    let cat2 = sessionStorage.getItem('cat2').replaceAll('"', '');
+    let cat3 = sessionStorage.getItem('cat3').replaceAll('"', '');
+    let contenttypeid = sessionStorage.getItem('contenttypeid');
+    alert(contenttypeid)
+    $.ajax({
+            type: "POST",
+            url: "/popular/list",
+            data: {content_quantity: content_quantity, cat1: cat1, cat2: cat2, cat3: cat3, contenttypeid: contenttypeid},
+            success: function (response) {
+                $('.before-render').hide();
+                $('#popular_card').empty();
+                let popular_list = response['popular_list'];
 
-        let cat1 = sessionStorage.getItem('cat1').replaceAll('"', '');
-        let cat2 = sessionStorage.getItem('cat2').replaceAll('"', '');
-        let cat3 = sessionStorage.getItem('cat3').replaceAll('"', '');
-        let contenttypeid = sessionStorage.getItem('contenttypeid');
+                for (let i = 0; i < popular_list.length; i++) {
+                    let title = popular_list[i]['title'];
+                    let content_id = popular_list[i]['contentid'];
+                    let file = popular_list[i]['firstimage'];
+                    let areacode = parseInt(popular_list[i]['areacode']);
+                    let address = check_address(areacode)
+                    if (!file) {
+                        file = "../../static/img/noImage.png"
+                    }
 
-        $.ajax({
-                type: "POST",
-                url: "/popular/list",
-                data: {cat1: cat1, cat2: cat2, cat3: cat3, contenttypeid: contenttypeid},
-                success: function (response) {
-                    $('.before-render').hide();
-                    $('#popular_card').empty();
-                    let popular_list = response['popular_list'];
-
-                    for (let i = 0; i < popular_list.length; i++) {
-                        let title = popular_list[i]['title'];
-                        let address = popular_list[i]['addr1'];
-                        let distance = popular_list[i]['dist'];
-                        let content_id = popular_list[i]['contentid'];
-                        let file = popular_list[i]['firstimage'];
-                        if (!file) {
-                            file = popular_list[i]['firstimage2'];
-                        }
-                        if (!file) {
-                            file = "../../static/img/noImage.png"
-                        }
-                        // obj[content_id] = {
-
-                        // }
-                        let temp_html = `<li style="margin: 0 10px; height: 300px;">
+                    let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                              <a href="/popular/place/${content_id}" class="card">
                                                 <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                                 <div class="card__overlay">
@@ -51,25 +46,62 @@ function geoInfoPopularList() {
                                                         <img class="card__thumb" src="${file}" alt="썸네일"/>
                                                         <div class="card__header-text">
                                                             <h3 class="card__title">${title}</h3>
-                                                            <span class="card__status">뭐넣지</span>
+                                                            <span class="card__status">${address}</span>
                                                         </div>
                                                     </div>
-                                                    <p class="card__description">${address}</p>
+                                                    <p class="card__description">추가 예정</p>
                                                 </div>
                                             </a>
                                         </li>`;
-                        $('#popular_card').append(temp_html);
-                    }
-                    // sessionStorage.setItem('popular_object', JSON.stringify(obj));
+                    $('#popular_card').append(temp_html);
                 }
+                // sessionStorage.setItem('popular_object', JSON.stringify(obj));
             }
-        )
-    }
+        }
+    )
+}
 
-    function onGeoError() { //위치 정보 공유 거부 시
-        alert('현재 위치를 찾을 수 없습니다.')
+function check_address(code) {
+    if (code === 1) {
+        code = '서울특별시'
+    } else if (code === 21) {
+        code = '부산광역시'
+    } else if (code === 22) {
+        code = '대구광역시'
+    } else if (code === 23) {
+        code = '인천광역시'
+    } else if (code === 24) {
+        code = '광주광역시'
+    } else if (code === 25) {
+        code = '대전광역시'
+    } else if (code === 26) {
+        code = '울산광역시'
+    } else if (code === 29) {
+        code = '세종특별자치시'
+    } else if (code === 31) {
+        code = '경기도'
+    } else if (code === 32) {
+        code = '강원도'
+    } else if (code === 33) {
+        code = '충청북도'
+    } else if (code === 34) {
+        code = '충청남도'
+    } else if (code === 35) {
+        code = '전라북도'
+    } else if (code === 36) {
+        code = '전라남도'
+    } else if (code === 37) {
+        code = '경상북도'
+    } else if (code === 38) {
+        code = '경상남도'
+    } else if (code === 39) {
+        code = '제주도'
+    } else if (code === 2) {
+        code = '인천'
+    } else if (code === 4) {
+        code = '대구'
+    } else if (code === 6) {
+        code = '부산'
     }
-
-    // 1번째 파라미터: 위치 공유 승인 시, 2번째 파라미터: 위치 공유 거부 시 실행
-    navigator.geolocation.getCurrentPosition(onGeoOK, onGeoError);
+    return code
 }

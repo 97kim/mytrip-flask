@@ -65,14 +65,14 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/popular/list">ASWQF</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/trips/list">sQGQSD</a>
-                </li>
-            </ul>
+            {#            <ul class="navbar-nav me-auto">#}
+            {#                <li class="nav-item">#}
+            {#                    <a class="nav-link" href="/popular/list">기능 추가 예정</a>#}
+            {#                </li>#}
+            {#                <li class="nav-item">#}
+            {#                    <a class="nav-link" href="/trips/list">sQGQSD</a>#}
+            {#                </li>#}
+            {#            </ul>#}
             <ul class="navbar-nav d-flex">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
@@ -93,13 +93,25 @@
 </nav>
 
 <div class="sort">
-    <a id="trip" href="javascript:geoInfoList('trip')" style="text-decoration: none;">여행지</a>
+    <a id="가족" href="javascript:get_popular_trips2(1)" style="text-decoration: none;">기능 추가 예정</a>
     <span> &nbsp; | &nbsp;</span>
-    <a id="food" href="javascript:geoInfoList('food')" style="text-decoration: none;">음식점</a>
+    <a id="나홀로" href="javascript:get_popular_trips2(2)" style="text-decoration: none;">기능 추가 예정</a>
     <span> &nbsp; | &nbsp;</span>
-    <a id="accommodation" href="javascript:geoInfoList('accommodation')" style="text-decoration: none;">숙박</a>
+    <a id="힐링" href="javascript:get_popular_trips2(3)" style="text-decoration: none;">기능 추가 예정</a>
     <span> &nbsp; | &nbsp;</span>
-    <a id="festival" href="javascript:geoInfoList('festival')" style="text-decoration: none;">축제공연행사</a>
+    <a id="걷기 좋은" href="javascript:get_popular_trips2(4)" style="text-decoration: none;">기능 추가 예정</a>
+    <span> &nbsp; | &nbsp;</span>
+    <a id="캠핑" href="javascript:get_popular_trips2(5)" style="text-decoration: none;">기능 추가 예정</a>
+    <span> &nbsp; | &nbsp;</span>
+    <a id="맛집" href="javascript:get_popular_trips2(6)" style="text-decoration: none;">기능 추가 예정</a>
+    <span>
+        <select class="custom-select" style="width: 10%;margin: 0% 90%;" id="perPagingSelect">
+            <option value="20" onclick="geoInfoPopularList(20)">20</option>
+            <option value="25" onclick="geoInfoPopularList(25)">25</option>
+            <option value="30" onclick="geoInfoPopularList(30)">30</option>
+
+        </select>
+    </span>
 </div>
 
 <div class="before-render" style="width: 100%; height: 100vh;">

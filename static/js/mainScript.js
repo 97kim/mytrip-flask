@@ -295,6 +295,9 @@ function showPopularTrips() {
             let cat3 = response['cat3']
             let contentTypeId = response['contentTypeId']
 
+            data = {
+                cat1,cat2,cat3,contentTypeId
+            }
             sessionStorage.setItem('cat1', JSON.stringify(cat1));
             sessionStorage.setItem('cat2', JSON.stringify(cat2));
             sessionStorage.setItem('cat3', JSON.stringify(cat3));
