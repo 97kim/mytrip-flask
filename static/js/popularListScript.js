@@ -1,31 +1,58 @@
-//popularList 에서 content 수량 입력 받기
-function PopularPlaceQuantity(quantity) {
-//    타임어택 4차 테스트 답안 참고 예정
+function checkThema(type, quantity) {
+    type = parseInt(type)
+    let cat1 = "C01";
+    let cat2 = "";
+    let cat3 = "";
+    let contentTypeId = "C0112";
+
+    if (type === 1) {
+        cat2 = 'C0112'
+        cat3 = 'C01120001'
+    } else if (type === 2) {
+        cat2 = 'C0113'
+        cat3 = 'C01130001'
+    } else if (type === 3) {
+        cat2 = 'C0114'
+        cat3 = 'C01140001'
+    } else if (type === 4) {
+        cat2 = "C0115";
+        cat3 = "C01150001";
+    } else if (type === 5) {
+        cat2 = "C0116";
+        cat3 = "C01160001";
+    } else if (type === 6) {
+        cat2 = "C0117";
+        cat3 = "C01170001";
+    }
+    // 정보 덮어쓰기
+    sessionStorage.setItem('cat1', cat1);
+    sessionStorage.setItem('cat2', cat2);
+    sessionStorage.setItem('cat3', cat3);
+    sessionStorage.setItem('contenttypeid', contentTypeId);
+    popular_list(quantity)
 }
 
-// 추천여행지 출력
-function PopularList() {
+// 추천여행지 출력, 추천여행지 선택한 결과 출력
+function popular_list(quantity) {
     $('#popular_card').empty();
-
-    let cat1 = 'C01';
-    let cat2 = 'C0112';
-    let cat3 = 'C01120001';
-    let contenttypeid = 25;
+    // main.html 에서 가져온 정보들, main 의 정보를 그대로 list 창에서 보여주기 위함
+    let cat1 = sessionStorage.getItem('cat1')
+    let cat2 = sessionStorage.getItem('cat2')
+    let cat3 = sessionStorage.getItem('cat3')
+    let contentTypeId = sessionStorage.getItem('contentTypeId')
 
     $.ajax({
             type: "POST",
             url: "/popular/list",
-            data: {cat1: cat1, cat2: cat2, cat3: cat3, contenttypeid: contenttypeid},
+            data: {quantity: quantity, cat1: cat1, cat2: cat2, cat3: cat3, contenttypeid: contentTypeId},
             success: function (response) {
                 $('.before-render').hide();
                 $('#popular_card').empty();
                 let popular_list = response['popular_list'];
-                console.log(popular_list);
 
-                // popularListScript 정보 전달용
-                let cat1 = response['cat1']
-                let cat2 = response['cat2']
-                let cat3 = response['cat3']
+                let cat1 = response['cat1'];
+                let cat2 = response['cat2'];
+                let cat3 = response['cat3'];
                 let contentTypeId = response['contentTypeId']
 
                 sessionStorage.setItem('cat1', cat1);
@@ -33,7 +60,7 @@ function PopularList() {
                 sessionStorage.setItem('cat3', cat3);
                 sessionStorage.setItem('contenttypeid', contentTypeId);
 
-                //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
+                // 중복 코드 제거 예정
                 let obj = {};
 
                 for (let i = 0; i < popular_list.length; i++) {

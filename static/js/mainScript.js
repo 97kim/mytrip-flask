@@ -78,7 +78,6 @@ function slide2() {
                     }
                 }
             ]
-
         });
     })
 }
@@ -122,7 +121,6 @@ function slide() {
                     }
                 }
             ]
-
         });
     })
 }
@@ -262,15 +260,10 @@ function showPopularTrips() {
             let trip_theme = response['trip_theme'];
 
             // popularListScript 정보 전달용
-            let cat1 = response['cat1']
-            let cat2 = response['cat2']
-            let cat3 = response['cat3']
-            let contentTypeId = response['contentTypeId']
-
-            sessionStorage.setItem('cat1', cat1);
-            sessionStorage.setItem('cat2', cat2);
-            sessionStorage.setItem('cat3', cat3);
-            sessionStorage.setItem('contenttypeid', contentTypeId);
+            sessionStorage.setItem('cat1', response['cat1']);
+            sessionStorage.setItem('cat2', response['cat2']);
+            sessionStorage.setItem('cat3', response['cat3']);
+            sessionStorage.setItem('contenttypeid', response['contentTypeId']);
 
             //세션 스토리지 값에 객체 형태로 여러 개 넣기 위해 생성
             let obj = {};
