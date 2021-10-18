@@ -41,6 +41,9 @@ function popularList(quantity) {
     let cat3 = sessionStorage.getItem('cat3')
     let content_type_id = sessionStorage.getItem('content_type_id')
 
+
+
+
     $.ajax({
             type: "POST",
             url: "/popular/list",
@@ -99,7 +102,7 @@ function popularList(quantity) {
                                                 <span class="card__status">${address}</span>
                                             </div>
                                         </div>
-                                        <p class="card__description" ></p>
+                                        <p class="card__description" >COVID 정보 출력</p>
                                     </div>
                                 </a>
                             </li>`;

@@ -82,6 +82,7 @@ function slide2() {
     })
 }
 
+
 // slick 슬라이드
 function slide() {
     $(function () {
@@ -200,6 +201,20 @@ function onGeoError() { //위치 정보 공유 거부 시
     alert('현재 위치를 찾을 수 없습니다.')
 }
 
+function search() {
+    let search_test = $("#search_test").val();
+    alert(search_test)
+    $.ajax({
+        type: 'GET',
+        url: `/main/search?search_test=${search_test}`,
+        data: {},
+        success: function (response) {
+            alert(response['msg']);
+        }
+    });
+    $("#search_test").empty()
+}
+
 function showTrips() {
     $.ajax({
         type: "GET",
@@ -274,6 +289,10 @@ function showPopularTrips() {
                     file = "https://dk9q1cr2zzfmc.cloudfront.net/img/noImage.png";
                 let areacode = parseInt(popular_list[i]['areacode']);
                 let address = checkAddress(areacode);
+
+                let covid = checkCovid(address)
+
+
                 let mapx = popular_list[i]['mapx'];
                 let mapy = popular_list[i]['mapy'];
                 if (!mapx || !mapy) {
@@ -315,7 +334,30 @@ function showPopularTrips() {
     });
 }
 
+function covid() {
+    $.ajax({
+        type: 'GET',
+        url: 'https://api.corona-19.kr/korea/country/new/?serviceKey=eRyPhYXEzDktxKJ8QOUwcACLjHd5msf4M',
+        data: {},
+        success: function (response) {
+            sessionStorage.setItem('covid', response)
+        }
+    });
+}
 
+
+function checkCovid(address) {
+    let value = '';
+    if (address.length > 3) {
+        let a = address.charAt(0)
+        let b = address.charAt(2)
+        value = a + b
+    } else
+        value = address.substr(0, 2)
+    return value
+}
+
+// 중복 코드 정리 예정
 function checkAddress(code) {
     if (code === 1) {
         code = '서울'

@@ -33,6 +33,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
+COVID_KEY = os.getenv('COVID_KEY')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
@@ -117,7 +118,15 @@ def main():
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="Your_login_time_has_expired."))
     except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="login_error."))
+        return redirect(url_for("login", msg="login_error."))  # main.html 렌더링
+
+
+@application.route('/main/search', methods=['GET'])
+def tests():
+    value = request.args.get('search_test')
+
+
+
 
 
 @application.route('/near', methods=['POST'])
