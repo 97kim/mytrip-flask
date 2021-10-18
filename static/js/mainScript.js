@@ -130,6 +130,8 @@ function geoInfo() {
     function onGeoOK(position) { //위치 정보 공유 승인 시
         const lat = position.coords.latitude; //위도
         const lng = position.coords.longitude; //경도
+        sessionStorage.setItem('type', 'trip');
+
         $.ajax({
                 type: "POST",
                 url: "/near",
