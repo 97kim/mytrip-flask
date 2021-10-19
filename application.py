@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
-COVID_KEY = os.getenv('COVID_KEY')
+# COVID_KEY = os.getenv('COVID_KEY')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
@@ -444,7 +444,6 @@ def get_near_type():
 
     r = requests.get(url, headers=headers)
 
-
     dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
     json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환
     json_body = json.loads(json_dump)  # json 문자열을 파이썬 객체(딕셔너리)로 변환
@@ -627,10 +626,11 @@ def trips_detail():
     trip_id_receive = request.form['trip_id_give']
 
     trip = db.trips.find_one({'_id': ObjectId(trip_id_receive)}, {'_id': False})
+    comment_count = db.comments.count_documents({'trip_id': ObjectId(trip_id_receive)})
 
     trip['date'] = trip['date'].strftime('%Y.%m.%d')
 
-    return jsonify({'trip': trip})
+    return jsonify({'trip': trip, 'comment_count': comment_count})
 
 
 # 상황에 따라 write.html(작성폼), update.html(수정폼) 렌더링
