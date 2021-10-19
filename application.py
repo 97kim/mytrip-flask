@@ -627,10 +627,11 @@ def trips_detail():
     trip_id_receive = request.form['trip_id_give']
 
     trip = db.trips.find_one({'_id': ObjectId(trip_id_receive)}, {'_id': False})
+    comment_count = db.comments.count_documents({'trip_id': ObjectId(trip_id_receive)})
 
     trip['date'] = trip['date'].strftime('%Y.%m.%d')
 
-    return jsonify({'trip': trip})
+    return jsonify({'trip': trip, 'comment_count': comment_count})
 
 
 # 상황에 따라 write.html(작성폼), update.html(수정폼) 렌더링

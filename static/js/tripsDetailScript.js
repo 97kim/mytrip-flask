@@ -65,6 +65,7 @@ function kakaoShare() {
             let share_place = response['trip']['place'];
             let share_img = `https://dk9q1cr2zzfmc.cloudfront.net/trips/${response['trip']['file']}`;
             let share_like = response['trip']['like'];
+            let share_comment_count = response['comment_count'];
 
             Kakao.Link.sendDefault({
                 objectType: 'feed',
@@ -80,7 +81,7 @@ function kakaoShare() {
                 // 나중에 변수 추가할 것임!!
                 social: {
                     likeCount: parseInt(share_like),
-                    commentCount: 1,
+                    commentCount: share_comment_count,
                     sharedCount: 1
                 },
                 buttons: [
