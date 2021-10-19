@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
-COVID_KEY = os.getenv('COVID_KEY')
+# COVID_KEY = os.getenv('COVID_KEY')
 
 client = MongoClient(DB_INFO, int(DB_PORT))
 db = client.myTrip
@@ -443,7 +443,6 @@ def get_near_type():
           f'pageNo=1'
 
     r = requests.get(url, headers=headers)
-
 
     dictionary = xmltodict.parse(r.text)  # xml을 파이썬 객체(딕셔너리)로 변환
     json_dump = json.dumps(dictionary)  # 파이썬 객체(딕셔너리)를 json 문자열로 변환

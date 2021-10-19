@@ -51,6 +51,7 @@ function popularList(quantity) {
                 $('.before-render').hide();
                 $('#popular_card').empty();
                 let popular_list = response['popular_list'];
+                console.log('dd')
 
                 let cat1 = response['cat1'];
                 let cat2 = response['cat2'];
@@ -80,14 +81,6 @@ function popularList(quantity) {
                     let covid = checkCovid(address)
                     let covid_city_name = covid_check_city(covid)
                     let covid_count = JSON.parse(sessionStorage.getItem('covid_info'))[covid_city_name]['newCcase']
-
-                    obj[content_id] = {
-                        'title': title,
-                        'address': address,
-                        'file': file,
-                        'place_lat': mapy,
-                        'place_lng': mapx
-                    }
 
                     let temp_html = `<li style="margin: 0 10px; height: 300px;">
                                  <a href="/popular/place/${content_id}" class="card">
