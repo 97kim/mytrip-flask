@@ -86,7 +86,7 @@ function popularList(quantity) {
                                     <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                     <div class="card__overlay">
                                         <div class="card__header">
-                                            <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                                            <svg class="card__arc" xmlns="https://www.w3.org/TR/2018/CR-SVG2-20181004/">
                                                 <path/>
                                             </svg>
                                             <img class="card__thumb" src="${file}" alt="썸네일"/>
