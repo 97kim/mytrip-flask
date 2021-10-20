@@ -155,7 +155,7 @@ function geoInfo() {
                                                 <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                                 <div class="card__overlay">
                                                     <div class="card__header">
-                                                        <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                                                        <svg class="card__arc" xmlns="https://www.w3.org/TR/2018/CR-SVG2-20181004/">
                                                             <path/>
                                                         </svg>
                                                         <img class="card__thumb" src="${file}" alt="썸네일"/>
@@ -208,7 +208,7 @@ function showTrips() {
                                             <img src="https://dk9q1cr2zzfmc.cloudfront.net/trips/${trip_file}" class="card__image" alt="사용자가 올린 여행지 사진"/>
                                             <div class="card__overlay">
                                                 <div class="card__header">
-                                                    <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                                                    <svg class="card__arc" xmlns="https://www.w3.org/TR/2018/CR-SVG2-20181004/">
                                                         <path/>
                                                     </svg>
                                                     <div class="card__thumb2">
@@ -273,7 +273,7 @@ function showPopularTrips() {
                                     <img src="${file}" class="card__image" alt="내 위치 근처 여행지 사진"/>
                                     <div class="card__overlay">
                                         <div class="card__header">
-                                            <svg class="card__arc" xmlns="http://www.w3.org/2000/svg">
+                                            <svg class="card__arc" xmlns="https://www.w3.org/TR/2018/CR-SVG2-20181004/">
                                                 <path/>
                                             </svg>
                                             <img class="card__thumb" src="${file}" alt="썸네일"/>
