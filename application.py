@@ -422,8 +422,6 @@ def get_near_type():
     type_receive = request.form['type_give']
     quantity_receive = request.form['quantity_give']
 
-    print(type_receive)
-
     if type_receive == 'trip':
         type_code = 12
     elif type_receive == 'food':

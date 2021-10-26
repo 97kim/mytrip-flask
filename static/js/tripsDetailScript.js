@@ -213,7 +213,6 @@ function showComments() {
 }
 
 function deleteComment(comment_id) {
-    console.log(comment_id)
     $.ajax({
         type: "DELETE",
         url: `/trips/place/comment/${getId()}`,
