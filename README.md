@@ -41,6 +41,7 @@ https://velog.io/@rudwnd33/2%EC%B0%A8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-S.A
   
 - 강의를 보면서 배웠던 기술들이고, 아직 무거운 웹앱을 만드는 것이 아니기 때문에 Flask와 MongoDB가 적합하다고 생각했습니다.
 - css를 하나하나 조정하며 예쁘게 꾸미고 싶지만, 모두 백엔드 개발 희망자이기도 해서 UI는 부트스트랩, CodePen, Bulma를 참고했습니다.
+- AWS EB와 Github Action을 통해 자동배포 환경을 구축했습니다.
 
 <br>
 
