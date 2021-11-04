@@ -92,21 +92,6 @@ def check_dup():
 
 
 # main.html 렌더링
-
-def main():
-    token_receive = request.cookies.get('mytoken')
-
-    try:
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.users.find_one({"username": payload["id"]})
-        return render_template('main.html', user_info=user_info)
-    except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="Your_login_time_has_expired."))
-    except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="login_error."))
-
-
-# main.html 렌더링
 @application.route('/main', methods=['GET'])
 def main():
     token_receive = request.cookies.get('mytoken')
