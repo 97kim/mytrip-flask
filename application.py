@@ -858,9 +858,9 @@ def save_profile():
             new_doc['profile_img'] = full_file_name
 
         # 프로필 사진 바꾸면 프로필 사진이 필요한 db 업데이트
-        db.users.update_one({'username': user_info['username']}, {'$set': new_doc})
-        db.trips.update_one({'username': user_info['username']}, {'$set': new_doc})
-        db.comments.update_one({'username': user_info['username']}, {'$set': new_doc})
+        db.users.update_many({'username': user_info['username']}, {'$set': new_doc})
+        db.trips.update_many({'username': user_info['username']}, {'$set': new_doc})
+        db.comments.update_many({'username': user_info['username']}, {'$set': new_doc})
         return jsonify({'msg': '작성 완료!'})
 
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
